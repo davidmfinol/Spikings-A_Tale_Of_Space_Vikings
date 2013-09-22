@@ -52,9 +52,6 @@ public class CharacterScript : MonoBehaviour {
 		box.transform.parent = buffer.transform;
 		buffer.transform.parent = transform;
 		buffer.transform.position = transform.position;
-		/*Vector3 pos = box.transform.localPosition;
-		pos.x += 167;
-		box.transform.localPosition = pos;*/
 		Vector3 rot = new Vector3(0, 360 * (direction / 8.0f), 0);
 		buffer.transform.Rotate(rot);
 	}

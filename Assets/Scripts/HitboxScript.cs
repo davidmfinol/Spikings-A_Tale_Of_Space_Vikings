@@ -1,9 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum TEAMS : int {
+	PLAYER = 0,
+	ENEMY = 1
+}
+
 public class HitboxScript : MonoBehaviour {
 	
 	public float delay = 0.5f;
+	public int team = 0;
 	
 	// Use this for initialization
 	void Start () {
@@ -19,8 +25,10 @@ public class HitboxScript : MonoBehaviour {
 	private void OnTriggerEnter(Collider collider)
 	{
 		//print ("collision.collider.gameobject is " + collider.gameObject);
-		if(collider.gameObject.GetComponent<BearScript>() != null) {
+		if(team == (int) TEAMS.PLAYER && collider.gameObject.GetComponent<BearScript>() != null) {
 			Destroy(collider.gameObject);	
-		}	
+		} else if (team == (int) TEAMS.ENEMY && collider.gameObject.GetComponent<CharacterScript>() != null) {
+			Destroy(collider.gameObject);	
+		}
 	}
 }
