@@ -3,9 +3,9 @@ using System.Collections;
 
 public enum DIRECTIONS : int {
 	EAST = 0,
-	NORTH = 2,
+	NORTH = 6,
 	WEST = 4,
-	SOUTH = 6
+	SOUTH = 2
 }
 
 public enum ANIMATIONS : int {
@@ -32,9 +32,7 @@ public class CharacterScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetButtonDown("Fire1")) {
-			Vector3 pos = transform.position;
-			pos.x += 167;
-			Instantiate(hitBox, pos, Quaternion.identity);
+			spawnHitBox();
 		}
 		float x = Input.GetAxis("Horizontal") * speed;
 		float z = Input.GetAxis("Vertical") * speed;
@@ -44,6 +42,21 @@ public class CharacterScript : MonoBehaviour {
 		playAnimation();
 		movement *= Time.deltaTime;
 		controller.Move(movement);
+	}
+	
+	private void spawnHitBox() {
+		Vector3 pos = Vector3.zero;
+		pos.x += 167;
+		GameObject box = (GameObject) Instantiate(hitBox, pos, Quaternion.identity);
+		GameObject buffer = new GameObject();
+		box.transform.parent = buffer.transform;
+		buffer.transform.parent = transform;
+		buffer.transform.position = transform.position;
+		/*Vector3 pos = box.transform.localPosition;
+		pos.x += 167;
+		box.transform.localPosition = pos;*/
+		Vector3 rot = new Vector3(0, 360 * (direction / 8.0f), 0);
+		buffer.transform.Rotate(rot);
 	}
 	
 	private void playAnimation() {

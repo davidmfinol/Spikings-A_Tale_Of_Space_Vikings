@@ -12,13 +12,13 @@ public class HitboxScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Destroy (gameObject, delay);
-	
+		Destroy(gameObject, delay);
+		Destroy(transform.parent.gameObject, delay);
 	}
 	
 	private void OnTriggerEnter(Collider collider)
 	{
-		print ("collision.collider.gameobject is " + collider.gameObject);
+		//print ("collision.collider.gameobject is " + collider.gameObject);
 		if(collider.gameObject.GetComponent<BearScript>() != null) {
 			Destroy(collider.gameObject);	
 		}	
