@@ -15,6 +15,7 @@ public enum ANIMATIONS : int {
 
 public class CharacterScript : MonoBehaviour {
 	public int speed = 1000;
+	public GameObject hitBox;
 
 	private int direction = 0;
 	private int anima = 0;
@@ -30,9 +31,14 @@ public class CharacterScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (Input.GetButtonDown("Fire1")) {
+			Vector3 pos = transform.position;
+			pos.x += 167;
+			Instantiate(hitBox, pos, Quaternion.identity);
+		}
 		float x = Input.GetAxis("Horizontal") * speed;
 		float z = Input.GetAxis("Vertical") * speed;
-		Debug.Log(x + " " + z);
+		//Debug.Log(x + " " + z);
 		Vector3 movement = new Vector3(x, 0, z);
 		processInput(x, z);
 		playAnimation();
