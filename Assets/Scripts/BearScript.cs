@@ -10,5 +10,8 @@ public class BearScript : CharacterScript {
 	// Update is called once per frame
 	void Update () {
 		spawnHitBox(team);
+		Vector3 movement = new Vector3(100, 0, 0);
+		movement*= Time.deltaTime;
+		controller.Move(movement);
 	}
 }
