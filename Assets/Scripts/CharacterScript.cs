@@ -21,17 +21,20 @@ public class CharacterScript : MonoBehaviour {
 	protected int team = (int) TEAMS.PLAYER;
 	
 	protected CharacterController controller;
+	protected tk2dSprite sprite;
 	protected tk2dSpriteAnimator anim;
 
 	// Use this for initialization
 	virtual protected void Start () {
 		controller = GetComponent<CharacterController>();
+		sprite = GetComponent<tk2dSprite>();
 		anim = GetComponent<tk2dSpriteAnimator>();
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
+	virtual protected void Update () {
+		//TODO: MAKE THIS BASED OFF MAX Z VALUE FOR TILEMAP
+		sprite.SortingOrder = 1200-((int)transform.position.z);
 	}
 	
 	protected void spawnHitBox(int team) {

@@ -10,14 +10,15 @@ public class PlayerScript : CharacterScript {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	override protected void Update () {
+		base.Update();
 		if (Input.GetButtonDown("Fire1")) {
 			spawnHitBox(team);
 		}
 		float x = Input.GetAxis("Horizontal") * speed;
 		float z = Input.GetAxis("Vertical") * speed;
 		//Debug.Log(x + " " + z);
-		Vector3 movement = new Vector3(x, 0, z);
+		Vector3 movement = new Vector3(x, 0/*TODO: -speed */, z);
 		processInput(x, z);
 		playAnimation();
 		movement *= Time.deltaTime;
