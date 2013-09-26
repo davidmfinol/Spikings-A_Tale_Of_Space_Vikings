@@ -4,12 +4,10 @@ using System.Collections;
 
 public class BearScript : CharacterScript {
 	
-	public float timeToRepath = 3;
-	
-	public float speed = 500;
-    
     //The max distance from the AI to a waypoint for it to continue to the next waypoint
-    public float nextWaypointDistance = 1;
+    public float nextWaypointDistance = 5;
+	public float timeToRepath = 1;
+	public float speed = 500;
 	
 	// A* Pathfinding Variables
 	private PlayerScript player;
@@ -37,7 +35,7 @@ public class BearScript : CharacterScript {
 		}
 		if(currentPath == null)
 		{
-			Debug.Log("No Path");
+			//Debug.Log("No Path");
 			return;
 		}
 		
@@ -50,7 +48,7 @@ public class BearScript : CharacterScript {
 	public void OnPathComplete(Path p)
 	{
         if (!p.error) {
-			Debug.Log ("path complete");
+			//Debug.Log ("path complete");
             currentPath = p;
 			searchingForPath = false;
 			timeSinceLastPath = 0;
@@ -61,19 +59,22 @@ public class BearScript : CharacterScript {
 	private void DoMovement()
 	{
         if (currentWaypoint >= currentPath.vectorPath.Count) {
-            Debug.Log ("End Of Path Reached");
+			currentPath = null;
+            //Debug.Log ("End Of Path Reached");
             return;
         }
         
         //Direction to the next waypoint
 		Vector3 targetLocation = currentPath.vectorPath[currentWaypoint];
-		targetLocation.y = 0;
+		targetLocation.y = transform.position.y;
         Vector3 dir = (targetLocation-transform.position).normalized;
         dir *= speed * Time.deltaTime;
 		
 		//Debug.Log(currentWaypoint);
 		//Debug.Log("We are going to move: " + dir);
-        controller.Move (dir);
+        controller.Move(dir);
+		//Debug.Log("Current location: " + transform.position);
+		//Debug.Log("Waypoint location: " + targetLocation);
         
         //Check if we are close enough to the next waypoint
         //If we are, proceed to follow the next waypoint

@@ -38,9 +38,8 @@ public class CharacterScript : MonoBehaviour {
 	virtual protected void Update () {
 		//TODO: MAKE THIS BASED OFF MAX Z VALUE FOR TILEMAP
 		sprite.SortingOrder = 1200-((int)transform.position.z);
-		/*Vector3 correction = transform.position;
-		correction.y = initialY;
-		transform.position = correction;*/
+		Vector3 correction = new Vector3(0, initialY - transform.position.y, 0);
+		transform.Translate(correction);
 	}
 	
 	protected void spawnHitBox(int team) {
