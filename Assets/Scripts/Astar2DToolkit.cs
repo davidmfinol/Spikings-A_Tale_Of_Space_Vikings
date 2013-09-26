@@ -18,7 +18,7 @@ public class Astar2DToolkit : MonoBehaviour {
 		newMeshGroup.rotation = new Vector3(45, 0, 0);
 				
 		// Add it
-		//TODO: GetComponent<AstarPath>().astarData.AddGraph( newMeshGroup );
+		//GetComponent<AstarPath>().astarData.AddGraph( newMeshGroup );
 	}
 	
 }

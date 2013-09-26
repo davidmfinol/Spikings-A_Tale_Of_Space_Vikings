@@ -4,10 +4,12 @@ using System.Collections;
 
 public class BearScript : CharacterScript {
 	
-	public float speed = 100;
+	public float timeToRepath = 3;
+	
+	public float speed = 500;
     
     //The max distance from the AI to a waypoint for it to continue to the next waypoint
-    public float nextWaypointDistance = 3;
+    public float nextWaypointDistance = 1;
 	
 	// A* Pathfinding Variables
 	private PlayerScript player;
@@ -29,7 +31,7 @@ public class BearScript : CharacterScript {
 		timeSinceLastPath += Time.deltaTime;
 		
 		// First, make sure we have an up-to-date path to the player
-		if((currentPath == null || timeSinceLastPath > 2) && !searchingForPath) {
+		if((currentPath == null || timeSinceLastPath > timeToRepath) && !searchingForPath) {
 			seeker.StartPath(transform.position, player.transform.position, OnPathComplete);
 			searchingForPath = true;
 		}
@@ -39,17 +41,16 @@ public class BearScript : CharacterScript {
 			return;
 		}
 		
-		Debug.Log ((currentPath.vectorPath));
-		
 		DoMovement();
 		
 		// TODO LATER: MAKE THE BEAR ATTACK
-		spawnHitBox(team);
+		//spawnHitBox(team);
 	}
 	
 	public void OnPathComplete(Path p)
 	{
         if (!p.error) {
+			Debug.Log ("path complete");
             currentPath = p;
 			searchingForPath = false;
 			timeSinceLastPath = 0;
@@ -65,14 +66,20 @@ public class BearScript : CharacterScript {
         }
         
         //Direction to the next waypoint
-        Vector3 dir = (currentPath.vectorPath[currentWaypoint]-transform.position).normalized;
-        dir *= speed * Time.fixedDeltaTime;
+		Vector3 targetLocation = currentPath.vectorPath[currentWaypoint];
+		targetLocation.y = 0;
+        Vector3 dir = (targetLocation-transform.position).normalized;
+        dir *= speed * Time.deltaTime;
+		
+		//Debug.Log(currentWaypoint);
+		//Debug.Log("We are going to move: " + dir);
         controller.Move (dir);
         
         //Check if we are close enough to the next waypoint
         //If we are, proceed to follow the next waypoint
-        if (Vector3.Distance (transform.position,currentPath.vectorPath[currentWaypoint]) < nextWaypointDistance) {
-            currentWaypoint++;
+        if (Vector3.Distance (transform.position, targetLocation) < nextWaypointDistance) {
+            //Debug.Log("moving to next");
+			currentWaypoint++;
             return;
         }
 	}

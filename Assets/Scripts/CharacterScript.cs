@@ -23,18 +23,24 @@ public class CharacterScript : MonoBehaviour {
 	protected CharacterController controller;
 	protected tk2dSprite sprite;
 	protected tk2dSpriteAnimator anim;
-
+	
+	private float initialY;
+	
 	// Use this for initialization
 	virtual protected void Start () {
 		controller = GetComponent<CharacterController>();
 		sprite = GetComponent<tk2dSprite>();
 		anim = GetComponent<tk2dSpriteAnimator>();
+		initialY = transform.position.y;
 	}
 	
 	// Update is called once per frame
 	virtual protected void Update () {
 		//TODO: MAKE THIS BASED OFF MAX Z VALUE FOR TILEMAP
 		sprite.SortingOrder = 1200-((int)transform.position.z);
+		/*Vector3 correction = transform.position;
+		correction.y = initialY;
+		transform.position = correction;*/
 	}
 	
 	protected void spawnHitBox(int team) {
