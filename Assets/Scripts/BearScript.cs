@@ -68,6 +68,10 @@ public class BearScript : CharacterScript {
 		Vector3 targetLocation = currentPath.vectorPath[currentWaypoint];
 		targetLocation.y = transform.position.y;
         Vector3 dir = (targetLocation-transform.position).normalized;
+		
+		processInput(dir.x, dir.z);
+		playAnimation();
+		
         dir *= speed * Time.deltaTime;
 		
 		//Debug.Log(currentWaypoint);
