@@ -3,9 +3,9 @@ using System.Collections;
 
 public enum DIRECTIONS : int {
 	EAST = 0,
-	NORTH = 6,
+	NORTH = 2,
 	WEST = 4,
-	SOUTH = 2
+	SOUTH = 6
 }
 
 public enum ANIMATIONS : int {
