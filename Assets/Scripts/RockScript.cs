@@ -14,7 +14,7 @@ public class RockScript : MonoBehaviour {
 	private void Update () {
 		if(destroying && !anim.IsPlaying("destroy")) {
 			Debug.Log("destroyed rock");
-			renderer.enabled = false;
+			Destroy(gameObject);
 			destroying = false;
 		}
 	}
