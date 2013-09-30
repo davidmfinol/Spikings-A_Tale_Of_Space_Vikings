@@ -52,7 +52,7 @@ public class CharacterScript : MonoBehaviour {
 		box.transform.parent = buffer.transform;
 		buffer.transform.parent = transform;
 		buffer.transform.position = transform.position;
-		Vector3 rot = new Vector3(0, 360 * (direction / 8.0f), 0);
+		Vector3 rot = new Vector3(0, -360 * (direction / 8.0f), 0);
 		buffer.transform.Rotate(rot);
 	}
 	
