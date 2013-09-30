@@ -77,7 +77,11 @@ public class CharacterScript : MonoBehaviour {
 			anima = 1;
 		} else {
 			// TODO: Fix this
-			direction = (int) DIRECTIONS.EAST;
+			if (x > 0) {
+				direction = (int) DIRECTIONS.EAST;
+			} else {
+				direction = (int) DIRECTIONS.WEST;
+			}
 			anima = 1;
 		}
 	}
