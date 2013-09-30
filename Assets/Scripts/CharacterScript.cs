@@ -41,8 +41,6 @@ public class CharacterScript : MonoBehaviour {
 		Vector3 correction = transform.position;
 		correction.y = initialY;
 		transform.position = correction;
-		//Vector3 correction = new Vector3(0, initialY - transform.position.y, 0);
-		//transform.Translate(correction);
 	}
 	
 	protected void spawnHitBox(int team) {
@@ -59,8 +57,6 @@ public class CharacterScript : MonoBehaviour {
 	}
 	
 	protected void processInput(float x, float z) {
-		//bool xIsZero = isZero(x);
-		//bool zIsZero = isZero(z);
 		bool xIsZero = x == 0;
 		bool zIsZero = z == 0;
 		if (xIsZero && zIsZero) {

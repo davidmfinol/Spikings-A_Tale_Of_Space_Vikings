@@ -24,14 +24,4 @@ public class PlayerScript : CharacterScript {
 		movement *= Time.deltaTime;
 		controller.Move(movement);
 	}
-	
-	/*private bool isZero(float num) {
-		if (num > 0.01) {
-			return false;
-		} else if (num < -0.01) {
-			return false;
-		} else {
-			return true;
-		}
-	}*/
 }
