@@ -88,4 +88,8 @@ public class BearScript : CharacterScript {
             return;
         }
 	}
+	
+	protected override void changeCollider() {
+		return;
+	}
 }

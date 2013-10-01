@@ -10,10 +10,11 @@ public enum DIRECTIONS : int {
 
 public enum ANIMATIONS : int {
 	IDLE = 0,
-	WALK = 1
+	WALK = 1,
+	ATTACK = 2
 }
 
-public class CharacterScript : MonoBehaviour {
+public abstract class CharacterScript : MonoBehaviour {
 	public GameObject hitBox;
 
 	protected int direction = (int) DIRECTIONS.EAST;
@@ -25,6 +26,7 @@ public class CharacterScript : MonoBehaviour {
 	protected tk2dSpriteAnimator anim;
 	
 	private float initialY;
+	private bool isAttacking;
 	
 	// Use this for initialization
 	virtual protected void Start () {
@@ -32,6 +34,7 @@ public class CharacterScript : MonoBehaviour {
 		sprite = GetComponent<tk2dSprite>();
 		anim = GetComponent<tk2dSpriteAnimator>();
 		initialY = transform.position.y;
+		isAttacking = false;
 	}
 	
 	// Update is called once per frame
@@ -41,6 +44,9 @@ public class CharacterScript : MonoBehaviour {
 		Vector3 correction = transform.position;
 		correction.y = initialY;
 		transform.position = correction;
+		if (isAttacking && !anim.IsPlaying("attack" + direction)) {
+			isAttacking = false;
+		}
 	}
 	
 	protected void spawnHitBox(int team) {
@@ -62,28 +68,28 @@ public class CharacterScript : MonoBehaviour {
 		if (xIsZero && zIsZero) {
 			anima = 0;
 		} else if (xIsZero) {
-			if (z > 0) {
-				direction = (int) DIRECTIONS.NORTH;
-			} else {
-				direction = (int) DIRECTIONS.SOUTH;
-			}
-			anima = 1;
+			checkZ(z);
 		} else if (zIsZero) {
-			if (x > 0) {
-				direction = (int) DIRECTIONS.EAST;
-			} else {
-				direction = (int) DIRECTIONS.WEST;
-			}
-			anima = 1;
+			checkX(x);
 		} else {
-			// TODO: Fix this
-			if (x > 0) {
-				direction = (int) DIRECTIONS.EAST;
-			} else {
-				direction = (int) DIRECTIONS.WEST;
-			}
-			anima = 1;
+			checkX(x);
 		}
+	}
+	private void checkZ(float z) {
+		if (z > 0) {
+			direction = (int) DIRECTIONS.NORTH;
+		} else {
+			direction = (int) DIRECTIONS.SOUTH;
+		}
+		anima = 1;
+	}
+	private void checkX(float x) {
+		if (x > 0) {
+			direction = (int) DIRECTIONS.EAST;
+		} else {
+			direction = (int) DIRECTIONS.WEST;
+		}
+		anima = 1;
 	}
 	
 	protected void playAnimation() {
@@ -93,8 +99,32 @@ public class CharacterScript : MonoBehaviour {
 			}
 		} else if (anima == (int) ANIMATIONS.WALK) {
 			if (!anim.IsPlaying("walk" + direction)) {
-				anim.Play ("walk" + direction);
+				anim.Play("walk" + direction);
+			}
+		} else if (anima == (int) ANIMATIONS.ATTACK) {
+			if (!anim.IsPlaying("attack" + direction)) {
+				isAttacking = true;
+				anim.Play("attack" + direction);
 			}
 		}
 	}
+	
+	protected void move(float x, float z) {
+		if (!isAttacking) {
+			processInput(x, z);
+			changeCollider();
+			playAnimation();
+			Vector3 movement = new Vector3(x, 0/*TODO: -speed */, z);
+			movement *= Time.deltaTime;
+			controller.Move(movement);
+		}
+	}
+	
+	protected void attack() {
+		anima = (int) ANIMATIONS.ATTACK;
+		playAnimation();
+		spawnHitBox(team);
+	}
+	
+	protected abstract void changeCollider();
 }

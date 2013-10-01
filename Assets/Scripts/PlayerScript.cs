@@ -18,32 +18,22 @@ public class PlayerScript : CharacterScript {
 	override protected void Update () {
 		base.Update();
 		if (Input.GetButtonDown("Fire1")) {
-			spawnHitBox(team);
+			attack ();
 		}
 		float x = Input.GetAxis("Horizontal") * speed;
 		float z = Input.GetAxis("Vertical") * speed;
-		//Debug.Log(x + " " + z);
-		Vector3 movement = new Vector3(x, 0/*TODO: -speed */, z);
-		processInput(x, z);
-		changeCollider();
-		playAnimation();
-		movement *= Time.deltaTime;
-		controller.Move(movement);
+		move(x, z);
 	}
 	
-	private void changeCollider() {
+	protected override void changeCollider() {
 		if (direction == (int) DIRECTIONS.EAST) {
 			controller.center = east;
-//			controller.transform.localPosition = east;
 		} else if (direction == (int) DIRECTIONS.NORTH) {
 			controller.center = north;
-//			controller.transform.localPosition = north;
 		} else if (direction == (int) DIRECTIONS.WEST) {
 			controller.center = west;
-//			controller.transform.localPosition = west;
 		} else if (direction == (int) DIRECTIONS.SOUTH) {
 			controller.center = south;
-//			controller.transform.localPosition = south;
 		}
 	}
 }

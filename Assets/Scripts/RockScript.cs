@@ -13,16 +13,13 @@ public class RockScript : MonoBehaviour {
 	
 	private void Update () {
 		if(destroying && !anim.IsPlaying("destroy")) {
-			Debug.Log("destroyed rock");
 			Destroy(gameObject);
 			destroying = false;
 		}
 	}
 	
 	 public void Smash () {
-		Debug.Log("smash");
 		if(!anim.IsPlaying("destroy")) {
-			Debug.Log ("play animation");
 			anim.Play("destroy");
 			destroying = true;
 		}
