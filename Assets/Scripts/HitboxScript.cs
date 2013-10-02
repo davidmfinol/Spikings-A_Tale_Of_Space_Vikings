@@ -24,11 +24,13 @@ public class HitboxScript : MonoBehaviour {
 	
 	private void OnTriggerEnter(Collider collider)
 	{
-		//print ("collision.collider.gameobject is " + collider.gameObject);
+		print ("collision.collider.gameobject is " + collider.gameObject);
 		if(team == (int) TEAMS.PLAYER && collider.gameObject.GetComponent<BearScript>() != null) {
-			Destroy(collider.gameObject);	
+			Destroy(collider.gameObject);
 		} else if (team == (int) TEAMS.ENEMY && collider.gameObject.GetComponent<PlayerScript>() != null) {
-			Destroy(collider.gameObject);	
+			Destroy(collider.gameObject);
+		} else if (team == (int) TEAMS.PLAYER && collider.gameObject.GetComponent<RockScript>() != null) {
+			collider.gameObject.GetComponent<RockScript>().Smash();
 		}
 	}
 }

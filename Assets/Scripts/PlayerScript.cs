@@ -13,25 +13,10 @@ public class PlayerScript : CharacterScript {
 	override protected void Update () {
 		base.Update();
 		if (Input.GetButtonDown("Fire1")) {
-			spawnHitBox(team);
+			attack ();
 		}
 		float x = Input.GetAxis("Horizontal") * speed;
 		float z = Input.GetAxis("Vertical") * speed;
-		//Debug.Log(x + " " + z);
-		Vector3 movement = new Vector3(x, 0/*TODO: -speed */, z);
-		processInput(x, z);
-		playAnimation();
-		movement *= Time.deltaTime;
-		controller.Move(movement);
+		move(x, z);
 	}
-	
-	/*private bool isZero(float num) {
-		if (num > 0.01) {
-			return false;
-		} else if (num < -0.01) {
-			return false;
-		} else {
-			return true;
-		}
-	}*/
 }
