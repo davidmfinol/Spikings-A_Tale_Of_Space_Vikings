@@ -4,8 +4,8 @@ using System.Collections;
 
 public class BearScript : CharacterScript {
 	
-    //The max distance from the AI to a waypoint for it to continue to the next waypoint
-    public float nextWaypointDistance = 5;
+	public int numHits = 0;
+	
 	public float timeToRepath = 1;
 	public float speed = 500;
 	
@@ -30,7 +30,7 @@ public class BearScript : CharacterScript {
 		
 		// First, make sure we have an up-to-date path to the player
 		if((currentPath == null || timeSinceLastPath > timeToRepath) && !searchingForPath) {
-			seeker.StartPath(transform.position, player.transform.position, OnPathComplete);
+			seeker.StartPath(collider.transform.position, player.transform.position, OnPathComplete);
 			searchingForPath = true;
 		}
 		if(currentPath == null)
@@ -45,29 +45,27 @@ public class BearScript : CharacterScript {
 		//spawnHitBox(team);
 	}
 	
-	public void OnPathComplete(Path p)
-	{
+	public void OnPathComplete(Path p) {
         if (!p.error) {
 			//Debug.Log ("path complete");
             currentPath = p;
-			searchingForPath = false;
 			timeSinceLastPath = 0;
             currentWaypoint = 0;
         }
+		searchingForPath = false;
 	}
 	
-	private void DoMovement()
-	{
+	private void DoMovement() {
         if (currentWaypoint >= currentPath.vectorPath.Count) {
 			currentPath = null;
             //Debug.Log ("End Of Path Reached");
             return;
         }
-        
+		
         //Direction to the next waypoint
 		Vector3 targetLocation = currentPath.vectorPath[currentWaypoint];
-		targetLocation.y = transform.position.y;
-        Vector3 dir = (targetLocation-transform.position).normalized;
+		targetLocation.y = collider.transform.position.y;
+        Vector3 dir = (targetLocation-collider.transform.position).normalized;
 		
 		processInput(dir.x, dir.z);
 		playAnimation();
@@ -82,7 +80,7 @@ public class BearScript : CharacterScript {
         
         //Check if we are close enough to the next waypoint
         //If we are, proceed to follow the next waypoint
-        if (Vector3.Distance (transform.position, targetLocation) < nextWaypointDistance) {
+        if (collider.bounds.Contains(currentPath.vectorPath[currentWaypoint])) {
             //Debug.Log("moving to next");
 			currentWaypoint++;
             return;

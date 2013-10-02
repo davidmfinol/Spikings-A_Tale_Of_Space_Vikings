@@ -15,6 +15,8 @@ public enum ANIMATIONS : int {
 }
 
 public abstract class CharacterScript : MonoBehaviour {
+	public static int PointCount = 0;
+	
 	public GameObject hitBox;
 
 	protected int direction = (int) DIRECTIONS.EAST;
@@ -122,6 +124,17 @@ public abstract class CharacterScript : MonoBehaviour {
 	protected void attack() {
 		anima = (int) ANIMATIONS.ATTACK;
 		playAnimation();
+		audio.Play();
 		spawnHitBox(team);
 	}
+<<<<<<< HEAD
+=======
+	
+	protected abstract void changeCollider();
+	
+	void OnGUI()
+	{
+		GUI.TextField(new Rect(10, 10, 200, 20), "Points: " + PointCount);
+	}
+>>>>>>> Improved Bear AI.
 }
