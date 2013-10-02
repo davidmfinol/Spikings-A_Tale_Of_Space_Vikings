@@ -112,7 +112,6 @@ public abstract class CharacterScript : MonoBehaviour {
 	protected void move(float x, float z) {
 		if (!isAttacking) {
 			processInput(x, z);
-			changeCollider();
 			playAnimation();
 			Vector3 movement = new Vector3(x, 0/*TODO: -speed */, z);
 			movement *= Time.deltaTime;
@@ -125,6 +124,4 @@ public abstract class CharacterScript : MonoBehaviour {
 		playAnimation();
 		spawnHitBox(team);
 	}
-	
-	protected abstract void changeCollider();
 }
