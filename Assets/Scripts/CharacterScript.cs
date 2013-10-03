@@ -127,6 +127,7 @@ public abstract class CharacterScript : MonoBehaviour {
 		audio.Play();
 		spawnHitBox(team);
 	}
+	
 	void OnGUI()
 	{
 		GUI.TextField(new Rect(10, 10, 200, 20), "Points: " + PointCount);
