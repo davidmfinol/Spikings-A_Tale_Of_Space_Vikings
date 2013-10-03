@@ -15,16 +15,18 @@ public class PlatformScript : MonoBehaviour {
 	private void OnTriggerEnter(Collider collider) {
 		if(collider.gameObject.GetComponent<PlayerScript>() != null) {
 			PlayerScript player = collider.gameObject.GetComponent<PlayerScript>();
-			transform.position += pushVector(player.transform.position);
+			Vector3 position = transform.position + getPushVector(player.transform.position);
+			if (checkMud(position)) {
+				transform.position = position;
+			}
 		}
 	}
 	
-	private Vector3 pushVector(Vector3 playerPosition) {
+	private Vector3 getPushVector(Vector3 playerPosition) {
 		Vector3 pushVector = new Vector3(0, 0, 0);
 		playerPosition -= transform.position;
 		float x = Mathf.Abs(playerPosition.x);
 		float z = Mathf.Abs(playerPosition.z);
-		Debug.Log(x + " " + z);
 		if (x > z) {
 			if (playerPosition.x < 0) {
 				pushVector = new Vector3(128, 0, 0);
@@ -39,5 +41,13 @@ public class PlatformScript : MonoBehaviour {
 			}
 		}
 		return pushVector;
+	}
+	
+	private bool checkMud(Vector3 position) {
+		int layerMask = 1 << 10;
+		if (Physics.Raycast(position, Vector3.down, 6)) {
+			return true;
+		}
+		return false;
 	}
 }
