@@ -25,19 +25,22 @@ public class HitboxScript : MonoBehaviour {
 	private void OnTriggerEnter(Collider collider)
 	{
 		print ("collision.collider.gameobject is " + collider.gameObject);
-		if(team == (int) TEAMS.PLAYER && collider.gameObject.GetComponent<BearScript>() != null) {
-			BearScript bear = collider.gameObject.GetComponent<BearScript>();
+		GameObject gameObject = collider.gameObject;
+		BearScript bear = gameObject.GetComponent<BearScript>();
+		PlayerScript player = gameObject.GetComponent<PlayerScript>();
+		RockScript rock = gameObject.GetComponent<RockScript>();
+		if(team == (int) TEAMS.PLAYER && bear != null) {
 			collider.audio.PlayDelayed(0.2f);
 			bear.numHits++;
 			if(bear.numHits >= 3)
 			{
 				CharacterScript.PointCount++;
-				Destroy(collider.gameObject, 0.4f);
+				Destroy(gameObject, 0.4f);
 			}
-		} else if (team == (int) TEAMS.ENEMY && collider.gameObject.GetComponent<PlayerScript>() != null) {
-			Destroy(collider.gameObject);
-		} else if (team == (int) TEAMS.PLAYER && collider.gameObject.GetComponent<RockScript>() != null) {
-			collider.gameObject.GetComponent<RockScript>().Smash();
+		} else if (team == (int) TEAMS.ENEMY && player != null) {
+			Destroy(gameObject);
+		} else if (team == (int) TEAMS.PLAYER && rock != null) {
+			rock.Smash();
 		}
 	}
 }
