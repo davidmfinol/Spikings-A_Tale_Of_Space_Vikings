@@ -45,7 +45,7 @@ public class PlatformScript : MonoBehaviour {
 	
 	private bool checkMud(Vector3 position) {
 		int layerMask = 1 << 10;
-		if (Physics.Raycast(position, Vector3.down, 6)) {
+		if (Physics.Raycast(position, Vector3.down, 6, layerMask)) {
 			return true;
 		}
 		return false;
