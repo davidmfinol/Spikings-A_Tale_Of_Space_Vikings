@@ -21,39 +21,44 @@ public class PlayerScript : CharacterScript {
 	}
 	
 	private void OnControllerColliderHit(ControllerColliderHit hit) {
-		PlatformScript platform = hit.collider.gameObject.GetComponent<PlatformScript>();
-		if(platform != null) {
-			Vector3 position = platform.transform.position + getPushVector(platform.transform.position);
-			if (checkMud(position)) {
-				platform.transform.position = position;
+		GameObject gameObject = hit.collider.gameObject;
+		if(gameObject.CompareTag("Platform")) {
+			Vector3 position = gameObject.transform.position + getMoveVector();
+			if (checkDownCollision(position, 1 << 10)) {
+				gameObject.transform.position = position;
+			}
+		} else if (gameObject.CompareTag("Cliff")) {
+			Vector3 moveVector = getMoveVector();
+			if (checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 13)) {
+				Debug.Log("cliff");
+				transform.position += moveVector;
+				//controller.Move(moveVector);
 			}
 		}
 	}
 	
-	private Vector3 getPushVector(Vector3 platformPosition) {
-		Vector3 pushVector = new Vector3(0, 0, 0);
-		platformPosition = transform.position - platformPosition;
-		float x = Mathf.Abs(platformPosition.x);
-		float z = Mathf.Abs(platformPosition.z);
-		if (x > z) {
-			if (platformPosition.x < 0) {
-				pushVector = new Vector3(128, 0, 0);
-			} else if (platformPosition.x > 0) {
-				pushVector = new Vector3(-128, 0, 0);
-			}
-		} else {
-			if (platformPosition.z < 0) {
-				pushVector = new Vector3(0, 0, 128);
-			} else if (platformPosition.z > 0) {
-				pushVector = new Vector3(0, 0, -128);
-			}
+	private Vector3 getMoveVector() {
+		if (direction == (int) DIRECTIONS.EAST) {
+			return new Vector3(128, 0, 0);
+		} else if (direction == (int) DIRECTIONS.NORTH) {
+			return new Vector3(0, 0, 128);
+		} else if (direction == (int) DIRECTIONS.WEST) {
+			return new Vector3(-128, 0, 0);
+		} else if (direction == (int) DIRECTIONS.SOUTH) {
+			return new Vector3(0, 0, -128);
 		}
-		return pushVector;
+		return new Vector3(0, 0, 0);
 	}
 	
-	private bool checkMud(Vector3 position) {
-		int layerMask = 1 << 10;
+	private bool checkDownCollision(Vector3 position, int layerMask) {
 		if (Physics.Raycast(position, Vector3.down, 6, layerMask)) {
+			return true;
+		}
+		return false;
+	}
+	
+	private bool checkAcrossCollision(Vector3 position, Vector3 direction, int layerMask) {
+		if (Physics.Raycast(position, direction, 63, layerMask)) {
 			return true;
 		}
 		return false;
