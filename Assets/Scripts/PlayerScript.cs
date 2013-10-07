@@ -13,7 +13,7 @@ public class PlayerScript : CharacterScript {
 	override protected void Update () {
 		base.Update();
 		if (Input.GetButtonDown("Fire1")) {
-			attack ();
+			attack();
 		}
 		float x = Input.GetAxis("Horizontal") * speed;
 		float z = Input.GetAxis("Vertical") * speed;
@@ -23,14 +23,18 @@ public class PlayerScript : CharacterScript {
 	private void OnControllerColliderHit(ControllerColliderHit hit) {
 		GameObject gameObject = hit.collider.gameObject;
 		if(gameObject.CompareTag("Platform")) {
-			Vector3 position = gameObject.transform.position + getMoveVector();
-			if (checkDownCollision(position, 1 << 10)) {
-				gameObject.transform.position = position;
+			if (Input.GetButton("Jump")) {
+				transform.position = transform.position + getMoveVector();
+			} else if (Input.GetButton("Fire2")) {
+				Vector3 position = gameObject.transform.position + getMoveVector();
+				if (checkDownCollision(position, 1 << 10)) {
+					gameObject.transform.position = position;
+				}
 			}
 		} else if (gameObject.CompareTag("Cliff")) {
 			Vector3 moveVector = getMoveVector();
 			if (checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 13)) {
-				Debug.Log("cliff");
+				Debug.Log("cliff jumping");
 				transform.position += moveVector;
 				//controller.Move(moveVector);
 			}
@@ -58,7 +62,7 @@ public class PlayerScript : CharacterScript {
 	}
 	
 	private bool checkAcrossCollision(Vector3 position, Vector3 direction, int layerMask) {
-		if (Physics.Raycast(position, direction, 63, layerMask)) {
+		if (Physics.Raycast(position, direction, 64, layerMask)) {
 			return true;
 		}
 		return false;
