@@ -19,4 +19,8 @@ public class PlayerScript : CharacterScript {
 		float z = Input.GetAxis("Vertical") * speed;
 		move(x, z);
 	}
+	
+	override protected void OnDeath () {
+		// TODO: Player should respawn on death
+	}
 }
