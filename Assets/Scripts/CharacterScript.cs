@@ -41,8 +41,8 @@ public abstract class CharacterScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	virtual protected void Update () {
-		//TODO: MAKE THIS BASED OFF MAX Z VALUE FOR TILEMAP
-		sprite.SortingOrder = 1200-((int)transform.position.z);
+		Debug.Log(GameManager.Instance.MapData.height);
+		sprite.SortingOrder = GameManager.Instance.MapData.height-((int)transform.position.z);
 		Vector3 correction = transform.position;
 		correction.y = initialY;
 		transform.position = correction;
