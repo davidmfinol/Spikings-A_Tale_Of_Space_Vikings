@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BearSpawn : MonoBehaviour {
+public class EnemySpawn : MonoBehaviour {
 	
-	public Transform bearPrefab;
+	public Transform enemyPrefab;
 	public int TimeBetweenSpawns = 2;
 	
 	private float time = 0;
@@ -14,7 +14,7 @@ public class BearSpawn : MonoBehaviour {
 		time+= Time.deltaTime;
 		if(time > TimeBetweenSpawns)
 		{
-			Instantiate(bearPrefab, transform.position, transform.rotation);
+			Instantiate(enemyPrefab, transform.position, enemyPrefab.rotation);
 			time = 0;
 		}
 	}

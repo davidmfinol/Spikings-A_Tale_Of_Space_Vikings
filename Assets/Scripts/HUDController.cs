@@ -9,6 +9,6 @@ public class HUDController : MonoBehaviour {
 	
     void Update() {
 		PlayerScript player = GameManager.Instance.Player;
-        healthBar.Value = Mathf.SmoothDamp( healthBar.Value, player.currentHealth/player.maxHealth, ref healthBarVelocity, smoothTime, Mathf.Infinity, tk2dUITime.deltaTime );
+        healthBar.Value = Mathf.SmoothDamp( healthBar.Value, ((float)player.currentHealth)/player.maxHealth, ref healthBarVelocity, smoothTime, Mathf.Infinity, tk2dUITime.deltaTime );
     }
 }

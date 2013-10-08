@@ -21,6 +21,7 @@ public class PlayerScript : CharacterScript {
 	}
 	
 	override protected void OnDeath () {
-		// TODO: Player should respawn on death
+		currentHealth = maxHealth;
+		transform.position = GameManager.Instance.startPoint.position;
 	}
 }

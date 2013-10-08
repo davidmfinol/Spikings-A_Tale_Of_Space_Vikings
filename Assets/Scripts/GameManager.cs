@@ -3,6 +3,9 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour {
 	
+	public Transform startPoint;
+	public Transform playerPrefab;
+	
 	private static GameManager _instance;
 	
 	private tk2dTileMap mapData;
@@ -10,7 +13,8 @@ public class GameManager : MonoBehaviour {
 
 	void Start () {
 		mapData = (tk2dTileMap) FindObjectOfType(typeof(tk2dTileMap));
-		player = FindObjectOfType(typeof(PlayerScript)) as PlayerScript;
+		player = ((Transform)Instantiate(playerPrefab, startPoint.position, playerPrefab.rotation)).GetComponent<PlayerScript>();
+		Camera.main.GetComponent<SmoothFollow2D>().target = player.transform;
 	}
 	
 	public tk2dTileMap MapData {

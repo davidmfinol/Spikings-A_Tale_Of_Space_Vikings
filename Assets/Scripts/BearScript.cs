@@ -39,8 +39,8 @@ public class BearScript : CharacterScript {
 		
 		DoMovement();
 		
-		// TODO LATER: MAKE THE BEAR ATTACK
-		//spawnHitBox(team);
+		// TODO LATER: MAKE THE BEAR ATTACK WITH ANIMATIONS
+		spawnHitBox(team);
 	}
 	
 	override protected void OnDeath ()
