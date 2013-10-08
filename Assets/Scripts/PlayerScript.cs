@@ -39,7 +39,7 @@ public class PlayerScript : CharacterScript {
 					collision = checkCliffCollision(collision + moveVector);
 				}
 				if (collision != Vector3.one && !checkAcrossCollision(collision, moveVector, 1 << 12)) {
-					transform.position = collision + moveVector;
+					transform.position = collision + moveVector - new Vector3(0, 0, -75);
 					//controller.Move(moveVector);
 				}
 			}
