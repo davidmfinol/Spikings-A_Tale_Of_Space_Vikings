@@ -19,7 +19,6 @@ public class BearScript : CharacterScript {
 		base.Start();
 		team = (int) TEAMS.ENEMY;
 		seeker = GetComponent<Seeker>();
-		player = (PlayerScript) FindObjectOfType(typeof(PlayerScript));
 	}
 	
 	override protected void Update () {
@@ -28,7 +27,7 @@ public class BearScript : CharacterScript {
 		
 		// First, make sure we have an up-to-date path to the player
 		if((currentPath == null || timeSinceLastPath > timeToRepath) && !searchingForPath) {
-			seeker.StartPath(collider.transform.position, player.transform.position, OnPathComplete);
+			seeker.StartPath(collider.transform.position, GameManager.Instance.Player.transform.position, OnPathComplete);
 			searchingForPath = true;
 		}
 		if(currentPath == null)
