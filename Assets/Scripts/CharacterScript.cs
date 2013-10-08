@@ -15,8 +15,8 @@ public enum ANIMATIONS : int {
 }
 
 public abstract class CharacterScript : MonoBehaviour {
-	public static int PointCount = 0;
-	
+	public int maxHealth = 50;
+	public int currentHealth = 0;
 	public GameObject hitBox;
 
 	protected int direction = (int) DIRECTIONS.EAST;
@@ -38,8 +38,8 @@ public abstract class CharacterScript : MonoBehaviour {
 	private int currentCombo = -1;
 	private float comboTimeout = .0f;
 	
-	// Use this for initialization
 	virtual protected void Start () {
+		currentHealth = maxHealth;
 		controller = GetComponent<CharacterController>();
 		sprite = GetComponent<tk2dSprite>();
 		anim = GetComponent<tk2dSpriteAnimator>();
@@ -47,10 +47,10 @@ public abstract class CharacterScript : MonoBehaviour {
 		isAttacking = false;
 	}
 	
-	// Update is called once per frame
 	virtual protected void Update () {
-		//TODO: MAKE THIS BASED OFF MAX Z VALUE FOR TILEMAP
-		sprite.SortingOrder = 1200-((int)transform.position.z);
+		if(currentHealth <= 0)
+			OnDeath();
+		sprite.SortingOrder = GameManager.Instance.MapData.height*GameManager.Instance.MapData.partitionSizeY-((int)transform.position.z);
 		Vector3 correction = transform.position;
 		correction.y = initialY;
 		transform.position = correction;
@@ -60,6 +60,10 @@ public abstract class CharacterScript : MonoBehaviour {
 		//added this in for combos
 		if(comboTimeout > 0) DecreaseTime();
 		
+	}
+	
+	virtual protected void OnDeath() {
+		Destroy(gameObject);
 	}
 	
 	protected void spawnHitBox(int team) {
@@ -180,10 +184,5 @@ public abstract class CharacterScript : MonoBehaviour {
 		AudioClip comboSound;
 		
 		
-	}
-	
-	void OnGUI()
-	{
-		GUI.TextField(new Rect(10, 10, 200, 20), "Points: " + PointCount);
 	}
 }

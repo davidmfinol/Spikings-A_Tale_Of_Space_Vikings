@@ -10,32 +10,22 @@ public class HitboxScript : MonoBehaviour {
 	
 	public float delay = 0.5f;
 	public int team = 0;
+	public int damage = 10;
 	
-	// Use this for initialization
 	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
 		Destroy(gameObject, delay);
 		Destroy(transform.parent.gameObject, delay);
 	}
 	
 	private void OnTriggerEnter(Collider collider)
 	{
-		print ("collision.collider.gameobject is " + collider.gameObject);
+		//print ("collision.collider.gameobject is " + collider.gameObject);
 		if(team == (int) TEAMS.PLAYER && collider.gameObject.GetComponent<BearScript>() != null) {
 			BearScript bear = collider.gameObject.GetComponent<BearScript>();
 			collider.audio.PlayDelayed(0.2f);
-			bear.numHits++;
-			if(bear.numHits >= 3)
-			{
-				CharacterScript.PointCount++;
-				Destroy(collider.gameObject, 0.4f);
-			}
+			bear.currentHealth -= damage;
 		} else if (team == (int) TEAMS.ENEMY && collider.gameObject.GetComponent<PlayerScript>() != null) {
-			Destroy(collider.gameObject);
+			collider.gameObject.GetComponent<PlayerScript>().currentHealth -= damage;
 		} else if (team == (int) TEAMS.PLAYER && collider.gameObject.GetComponent<RockScript>() != null) {
 			collider.gameObject.GetComponent<RockScript>().Smash();
 		}

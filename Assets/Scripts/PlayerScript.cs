@@ -19,4 +19,9 @@ public class PlayerScript : CharacterScript {
 		float z = Input.GetAxis("Vertical") * speed;
 		move(x, z);
 	}
+	
+	override protected void OnDeath () {
+		currentHealth = maxHealth;
+		transform.position = GameManager.Instance.startPoint.position;
+	}
 }

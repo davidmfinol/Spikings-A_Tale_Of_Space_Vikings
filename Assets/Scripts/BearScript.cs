@@ -4,8 +4,6 @@ using System.Collections;
 
 public class BearScript : CharacterScript {
 	
-	public int numHits = 0;
-	
 	public float timeToRepath = 1;
 	public float speed = 500;
 	
@@ -41,8 +39,13 @@ public class BearScript : CharacterScript {
 		
 		DoMovement();
 		
-		// TODO LATER: MAKE THE BEAR ATTACK
-		//spawnHitBox(team);
+		// TODO LATER: MAKE THE BEAR ATTACK WITH ANIMATIONS
+		spawnHitBox(team);
+	}
+	
+	override protected void OnDeath ()
+	{
+		Destroy(gameObject, 0.4f);
 	}
 	
 	public void OnPathComplete(Path p) {
