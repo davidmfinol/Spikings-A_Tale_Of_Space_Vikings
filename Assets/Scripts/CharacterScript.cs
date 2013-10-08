@@ -30,6 +30,14 @@ public abstract class CharacterScript : MonoBehaviour {
 	private float initialY;
 	private bool isAttacking;
 	
+// for combos
+	public static ComboSequence[] combos = new ComboSequence[3]; //Combo class. Fill this out in Inspector.
+	float comboMaxTime = 1.0f; //How long a timer for combo lasts in seconds. Fill this out in Inspector.
+	float comboSpanTime = .25f; //The span of when a combo can start. Fill this out in Inspector.
+	float comboMidPoint = .5f; //The position within the maxtime of a combo the span is active. Fill this out in Inspector.
+	private int currentCombo = -1;
+	private float comboTimeout = .0f;
+	
 	// Use this for initialization
 	virtual protected void Start () {
 		controller = GetComponent<CharacterController>();
@@ -49,6 +57,9 @@ public abstract class CharacterScript : MonoBehaviour {
 		if (isAttacking && !anim.IsPlaying("attack" + direction)) {
 			isAttacking = false;
 		}
+		//added this in for combos
+		if(comboTimeout > 0) DecreaseTime();
+		
 	}
 	
 	protected void spawnHitBox(int team) {
@@ -123,10 +134,54 @@ public abstract class CharacterScript : MonoBehaviour {
 	
 	protected void attack() {
 		anima = (int) ANIMATIONS.ATTACK;
+		//added in for combos
+		ComboTime(); //Doing logic for timing before animation
+		//dirty implementation to test animations
+		if(currentCombo==0){
+		anima = (int) ANIMATIONS.ATTACK;
+		}
+		else if(currentCombo ==1){
+		anima = (int) ANIMATIONS.WALK;
+		}
+		else{
+		anima = (int) ANIMATIONS.IDLE;
+		}
+		
 		playAnimation();
 		audio.Play();
 		spawnHitBox(team);
+		
+		
 	}
+	
+	//Combo method
+	void ComboTime(){
+		if(currentCombo<combos.Length-1 &&
+			comboTimeout>0 &&
+			comboTimeout>comboMidPoint - comboSpanTime &&
+			comboTimeout<comboMidPoint+comboSpanTime ||
+			currentCombo==-1){
+			currentCombo++;
+		}
+		else{
+		currentCombo = -1;	
+		}
+		comboTimeout = comboMaxTime;
+		
+	}
+	
+	void DecreaseTime (){
+		comboTimeout-= 1*Time.deltaTime;	
+	}
+	
+	public class ComboSequence{
+		string comboName;
+		string comboAnimation;
+		AudioClip comboSound;
+		
+		
+	}
+	
 	void OnGUI()
 	{
 		GUI.TextField(new Rect(10, 10, 200, 20), "Points: " + PointCount);
