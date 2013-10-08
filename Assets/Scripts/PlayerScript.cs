@@ -34,9 +34,14 @@ public class PlayerScript : CharacterScript {
 		} else if (gameObject.CompareTag("Cliff")) {
 			Vector3 moveVector = getMoveVector();
 			if (checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 13)) {
-				Debug.Log("cliff jumping");
-				transform.position += moveVector;
-				//controller.Move(moveVector);
+				Vector3 collision = gameObject.transform.position;
+				if (direction == (int) DIRECTIONS.SOUTH) {
+					collision = checkCliffCollision(collision + moveVector);
+				}
+				if (collision != Vector3.one && !checkAcrossCollision(collision, moveVector, 1 << 12)) {
+					transform.position = collision + moveVector;
+					//controller.Move(moveVector);
+				}
 			}
 		}
 	}
@@ -62,9 +67,17 @@ public class PlayerScript : CharacterScript {
 	}
 	
 	private bool checkAcrossCollision(Vector3 position, Vector3 direction, int layerMask) {
-		if (Physics.Raycast(position, direction, 64, layerMask)) {
+		if (Physics.Raycast(position, direction, 90, layerMask)) {
 			return true;
 		}
 		return false;
+	}
+	
+	private Vector3 checkCliffCollision(Vector3 position) {
+		RaycastHit hit;
+		if (Physics.Raycast(position, Vector3.back, out hit, Mathf.Infinity, 1 << 13)) {
+			return hit.transform.position;
+		}
+		return Vector3.one;
 	}
 }
