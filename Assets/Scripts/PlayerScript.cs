@@ -49,6 +49,9 @@ public class PlayerScript : CharacterScript {
 					//controller.Move(moveVector);
 				}
 			}
+		} else if (gameObject.CompareTag("Hammer")) {
+			hasAttack = 1;
+			Destroy(gameObject);
 		}
 	}
 	

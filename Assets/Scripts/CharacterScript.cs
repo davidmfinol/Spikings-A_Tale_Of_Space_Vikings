@@ -56,7 +56,7 @@ public abstract class CharacterScript : MonoBehaviour {
 		Vector3 correction = transform.position;
 		correction.y = initialY;
 		transform.position = correction;
-		if (isAttacking && !anim.IsPlaying("attack" + direction)) {
+		if (isAttacking && !anim.IsPlaying("attack" + direction + hasAttack)) {
 			isAttacking = false;
 		}
 		//added this in for combos
@@ -114,15 +114,15 @@ public abstract class CharacterScript : MonoBehaviour {
 	
 	protected void playAnimation() {
 		if (anima == (int) ANIMATIONS.IDLE) {
-			if (!anim.IsPlaying("idle" + direction)) {
+			if (!anim.IsPlaying("idle" + direction + hasAttack)) {
 				anim.Play("idle" + direction + hasAttack);
 			}
 		} else if (anima == (int) ANIMATIONS.WALK) {
-			if (!anim.IsPlaying("walk" + direction)) {
+			if (!anim.IsPlaying("walk" + direction + hasAttack)) {
 				anim.Play("walk" + direction + hasAttack);
 			}
 		} else if (anima == (int) ANIMATIONS.ATTACK) {
-			if (!anim.IsPlaying("attack" + direction)) {
+			if (!anim.IsPlaying("attack" + direction + hasAttack)) {
 				isAttacking = true;
 				anim.Play("attack" + direction + hasAttack);
 			}
