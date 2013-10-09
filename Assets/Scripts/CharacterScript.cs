@@ -144,12 +144,12 @@ public abstract class CharacterScript : MonoBehaviour {
 		ComboTime(); //Doing logic for timing before animation
 		
 		//dirty implementation to test animations
-		if (currentCombo==0) {
+		if (currentCombo == 0) {
 			anima = (int) ANIMATIONS.ATTACK;
-		} else if(currentCombo ==1) {
-			anima = (int) ANIMATIONS.WALK;
+		} else if(currentCombo == 1) {
+			anima = (int) ANIMATIONS.ATTACK;
 		} else {
-			anima = (int) ANIMATIONS.IDLE;
+			anima = (int) ANIMATIONS.ATTACK;
 		}
 		
 		playAnimation();
