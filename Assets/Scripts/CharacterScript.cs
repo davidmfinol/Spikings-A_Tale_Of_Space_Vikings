@@ -50,13 +50,14 @@ public abstract class CharacterScript : MonoBehaviour {
 	}
 	
 	virtual protected void Update () {
-		if(currentHealth <= 0)
+		if(currentHealth <= 0) {
 			OnDeath();
+		}
 		sprite.SortingOrder = GameManager.Instance.MapData.height*GameManager.Instance.MapData.partitionSizeY-((int)transform.position.z);
 		Vector3 correction = transform.position;
 		correction.y = initialY;
 		transform.position = correction;
-		if (isAttacking && !anim.IsPlaying("attack" + direction + hasAttack)) {
+		if (isAttacking && !anim.IsPlaying("attack0" + hasAttack) && !anim.IsPlaying("attack2" + hasAttack) && !anim.IsPlaying("attack4" + hasAttack) && !anim.IsPlaying("attack6" + hasAttack)) {
 			isAttacking = false;
 		}
 		//added this in for combos
@@ -122,7 +123,7 @@ public abstract class CharacterScript : MonoBehaviour {
 				anim.Play("walk" + direction + hasAttack);
 			}
 		} else if (anima == (int) ANIMATIONS.ATTACK) {
-			if (!anim.IsPlaying("attack" + direction + hasAttack)) {
+			if (!isAttacking && !anim.IsPlaying("attack" + direction + hasAttack)) {
 				isAttacking = true;
 				anim.Play("attack" + direction + hasAttack);
 			}
@@ -153,10 +154,11 @@ public abstract class CharacterScript : MonoBehaviour {
 		} else {
 			anima = (int) ANIMATIONS.ATTACK;
 		}
-		
+		if (!isAttacking) {
+			spawnHitBox(team);
+		}
 		playAnimation();
 		audio.Play();
-		spawnHitBox(team);
 	}
 	
 	//Combo method

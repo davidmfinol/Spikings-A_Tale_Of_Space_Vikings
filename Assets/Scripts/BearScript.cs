@@ -39,7 +39,10 @@ public class BearScript : CharacterScript {
 		DoMovement();
 		
 		// TODO LATER: MAKE THE BEAR ATTACK WITH ANIMATIONS
-		spawnHitBox(team);
+		//spawnHitBox(team);
+		if ((GameManager.Instance.Player.transform.position - transform.position).magnitude <= 200) {
+			attack();
+		}
 	}
 	
 	override protected void OnDeath ()
@@ -69,6 +72,7 @@ public class BearScript : CharacterScript {
 		targetLocation.y = collider.transform.position.y;
         Vector3 dir = (targetLocation-collider.transform.position).normalized;
 		
+		/*
 		processInput(dir.x, dir.z);
 		playAnimation();
 		
@@ -76,7 +80,8 @@ public class BearScript : CharacterScript {
 		
 		//Debug.Log(currentWaypoint);
 		//Debug.Log("We are going to move: " + dir);
-        controller.Move(dir);
+        controller.Move(dir);*/
+		move (dir.x * speed, dir.z * speed);
 		//Debug.Log("Current location: " + transform.position);
 		//Debug.Log("Waypoint location: " + targetLocation);
         
