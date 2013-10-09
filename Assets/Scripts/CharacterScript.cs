@@ -58,8 +58,9 @@ public abstract class CharacterScript : MonoBehaviour {
 			isAttacking = false;
 		}
 		//added this in for combos
-		if(comboTimeout > 0) DecreaseTime();
-		
+		if(comboTimeout > 0) {
+			DecreaseTime();
+		}
 	}
 	
 	virtual protected void OnDeath() {
@@ -138,51 +139,45 @@ public abstract class CharacterScript : MonoBehaviour {
 	
 	protected void attack() {
 		anima = (int) ANIMATIONS.ATTACK;
+		
 		//added in for combos
 		ComboTime(); //Doing logic for timing before animation
+		
 		//dirty implementation to test animations
-		if(currentCombo==0){
-		anima = (int) ANIMATIONS.ATTACK;
-		}
-		else if(currentCombo ==1){
-		anima = (int) ANIMATIONS.WALK;
-		}
-		else{
-		anima = (int) ANIMATIONS.IDLE;
+		if (currentCombo==0) {
+			anima = (int) ANIMATIONS.ATTACK;
+		} else if(currentCombo ==1) {
+			anima = (int) ANIMATIONS.WALK;
+		} else {
+			anima = (int) ANIMATIONS.IDLE;
 		}
 		
 		playAnimation();
 		audio.Play();
 		spawnHitBox(team);
-		
-		
 	}
 	
 	//Combo method
-	void ComboTime(){
+	void ComboTime() {
 		if(currentCombo<combos.Length-1 &&
 			comboTimeout>0 &&
 			comboTimeout>comboMidPoint - comboSpanTime &&
 			comboTimeout<comboMidPoint+comboSpanTime ||
-			currentCombo==-1){
+			currentCombo==-1) {
 			currentCombo++;
-		}
-		else{
-		currentCombo = -1;	
+		} else {
+			currentCombo = -1;	
 		}
 		comboTimeout = comboMaxTime;
-		
 	}
 	
-	void DecreaseTime (){
-		comboTimeout-= 1*Time.deltaTime;	
+	void DecreaseTime () {
+		comboTimeout -= 1 * Time.deltaTime;	
 	}
 	
-	public class ComboSequence{
+	public class ComboSequence {
 		string comboName;
 		string comboAnimation;
 		AudioClip comboSound;
-		
-		
 	}
 }
