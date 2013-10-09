@@ -89,4 +89,12 @@ public class PlayerScript : CharacterScript {
 		}
 		return Vector3.one;
 	}
+	
+	void OnGUI()
+	{
+		GUI.TextField(new Rect(10, 30, 200, 20), "Move with WASD or Arrow Keys.");
+		GUI.TextField(new Rect(10, 50, 200, 20), "Attack with Q or F.");
+		GUI.TextField(new Rect(10, 70, 200, 20), "E to push rock on mud.");
+		GUI.TextField(new Rect(10, 90, 200, 20), "Space to jump on rock on mud.");
+	}
 }
