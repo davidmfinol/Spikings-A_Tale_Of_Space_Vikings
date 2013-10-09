@@ -7,6 +7,11 @@ public class HUDController : MonoBehaviour {
 	public float smoothTime = 0.5f;
     private float healthBarVelocity = 0.0f;
 	
+	void Start () {
+		PlayerScript player = GameManager.Instance.Player;
+		healthBar.Value = ((float)player.currentHealth)/player.maxHealth;
+	}
+	
     void Update() {
 		PlayerScript player = GameManager.Instance.Player;
         healthBar.Value = Mathf.SmoothDamp( healthBar.Value, ((float)player.currentHealth)/player.maxHealth, ref healthBarVelocity, smoothTime, Mathf.Infinity, tk2dUITime.deltaTime );

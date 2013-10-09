@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour {
 		mapData = (tk2dTileMap) FindObjectOfType(typeof(tk2dTileMap));
 		player = ((Transform)Instantiate(playerPrefab, startPoint.position, playerPrefab.rotation)).GetComponent<PlayerScript>();
 		Camera.main.GetComponent<SmoothFollow2D>().target = player.transform;
+		_instance = this;
 	}
 	
 	public tk2dTileMap MapData {

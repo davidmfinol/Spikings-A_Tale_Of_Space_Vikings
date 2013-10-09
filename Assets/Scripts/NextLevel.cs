@@ -5,7 +5,7 @@ public class NextLevel : MonoBehaviour {
 	
 	
 	void OnTriggerEnter (Collider collider) {
-		PlayerScript player = gameObject.GetComponent<PlayerScript>();
+		PlayerScript player = collider.gameObject.GetComponent<PlayerScript>();
 		if(player != null)
 			Application.LoadLevel("EnemyTest");
 	}
