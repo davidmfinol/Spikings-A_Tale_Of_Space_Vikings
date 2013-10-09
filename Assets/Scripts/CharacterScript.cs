@@ -22,6 +22,7 @@ public abstract class CharacterScript : MonoBehaviour {
 	protected int direction = (int) DIRECTIONS.EAST;
 	protected int anima = (int) ANIMATIONS.IDLE;
 	protected int team = (int) TEAMS.PLAYER;
+	protected int hasAttack;
 	
 	protected CharacterController controller;
 	protected tk2dSprite sprite;
@@ -45,6 +46,7 @@ public abstract class CharacterScript : MonoBehaviour {
 		anim = GetComponent<tk2dSpriteAnimator>();
 		initialY = transform.position.y;
 		isAttacking = false;
+		hasAttack = 1;
 	}
 	
 	virtual protected void Update () {
@@ -113,16 +115,16 @@ public abstract class CharacterScript : MonoBehaviour {
 	protected void playAnimation() {
 		if (anima == (int) ANIMATIONS.IDLE) {
 			if (!anim.IsPlaying("idle" + direction)) {
-				anim.Play("idle" + direction);
+				anim.Play("idle" + direction + hasAttack);
 			}
 		} else if (anima == (int) ANIMATIONS.WALK) {
 			if (!anim.IsPlaying("walk" + direction)) {
-				anim.Play("walk" + direction);
+				anim.Play("walk" + direction + hasAttack);
 			}
 		} else if (anima == (int) ANIMATIONS.ATTACK) {
 			if (!anim.IsPlaying("attack" + direction)) {
 				isAttacking = true;
-				anim.Play("attack" + direction);
+				anim.Play("attack" + direction + hasAttack);
 			}
 		}
 	}

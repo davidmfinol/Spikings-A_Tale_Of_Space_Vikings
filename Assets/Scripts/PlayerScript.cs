@@ -7,12 +7,13 @@ public class PlayerScript : CharacterScript {
 	override protected void Start () {
 		base.Start();
 		team = (int) TEAMS.PLAYER;
+		hasAttack = 0;
 	}
 	
 	// Update is called once per frame
 	override protected void Update () {
 		base.Update();
-		if (Input.GetButtonDown("Fire1")) {
+		if (Input.GetButtonDown("Fire1") && hasAttack != 0) {
 			attack();
 		}
 		float x = Input.GetAxis("Horizontal") * speed;
