@@ -77,7 +77,7 @@ public abstract class CharacterScript : MonoBehaviour {
 		GameObject buffer = new GameObject();
 		box.transform.parent = buffer.transform;
 		buffer.transform.parent = transform;
-		buffer.transform.position = transform.position;
+		buffer.transform.position = transform.position + new Vector3(0, 0, -75);
 		Vector3 rot = new Vector3(0, -360 * (direction / 8.0f), 0);
 		buffer.transform.Rotate(rot);
 	}
