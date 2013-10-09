@@ -160,7 +160,7 @@ public abstract class CharacterScript : MonoBehaviour {
 	}
 	
 	//Combo method
-	void ComboTime() {
+	private void ComboTime() {
 		if(currentCombo<combos.Length-1 &&
 			comboTimeout>0 &&
 			comboTimeout>comboMidPoint - comboSpanTime &&
@@ -173,7 +173,7 @@ public abstract class CharacterScript : MonoBehaviour {
 		comboTimeout = comboMaxTime;
 	}
 	
-	void DecreaseTime () {
+	private void DecreaseTime () {
 		comboTimeout -= 1 * Time.deltaTime;	
 	}
 	
