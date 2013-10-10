@@ -3,6 +3,7 @@ using System.Collections;
 
 public class PlayerScript : CharacterScript {
 	public int speed = 1000;
+	public int script = 0;
 	
 	override protected void Start () {
 		base.Start();
@@ -90,11 +91,22 @@ public class PlayerScript : CharacterScript {
 		return Vector3.one;
 	}
 	
-	void OnGUI()
+	private void OnGUI()
 	{
-		GUI.TextField(new Rect(10, 70, 200, 20), "Move with WASD or Arrow Keys.");
-		GUI.TextField(new Rect(10, 90, 200, 20), "Attack with Q or F.");
-		GUI.TextField(new Rect(10, 110, 200, 20), "E to push rock on mud.");
-		GUI.TextField(new Rect(10, 130, 200, 20), "Space to jump on rock on mud.");
+		GUIStyle style = new GUIStyle();
+		style.normal.textColor = Color.white;
+		style.fontSize = 30;
+		if (script == 0) {
+			GUI.TextField(new Rect(10, 70, 250, 20), "Move with WASD or Arrow Keys.", style);
+		} else if (script == 1) {
+			GUI.TextField(new Rect(10, 70, 250, 20), "If I had my hammer I could smash these", style);
+			GUI.TextField(new Rect(10, 110, 250, 20), "I think my hammer flew to the east", style);
+		} else if (script == 2) {
+			GUI.TextField(new Rect(10, 70, 250, 20), "Attack with your hammer Q or F.", style);
+			GUI.TextField(new Rect(10, 110, 250, 20), "You can smash rocks with your hammer", style);
+		} else if (script == 3) {
+			GUI.TextField(new Rect(10, 70, 250, 20), "E to push platform on dirt.", style);
+			GUI.TextField(new Rect(10, 110, 250, 20), "Space to jump on platform on dirt.", style);
+		}
 	}
 }
