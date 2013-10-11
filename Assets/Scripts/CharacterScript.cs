@@ -11,7 +11,8 @@ public enum DIRECTIONS : int {
 public enum ANIMATIONS : int {
 	IDLE = 0,
 	WALK = 1,
-	ATTACK = 2
+	ATTACK = 2,
+	HIT = 3
 }
 
 public abstract class CharacterScript : MonoBehaviour {
@@ -30,6 +31,7 @@ public abstract class CharacterScript : MonoBehaviour {
 	
 	private float initialY;
 	private bool isAttacking;
+	private bool isBeingHit;
 	
 // for combos
 	public static ComboSequence[] combos = new ComboSequence[3]; //Combo class. Fill this out in Inspector.
@@ -46,6 +48,7 @@ public abstract class CharacterScript : MonoBehaviour {
 		anim = GetComponent<tk2dSpriteAnimator>();
 		initialY = transform.position.y;
 		isAttacking = false;
+		isBeingHit = false;
 		hasAttack = 1;
 	}
 	
@@ -59,6 +62,11 @@ public abstract class CharacterScript : MonoBehaviour {
 		transform.position = correction;
 		if (isAttacking && !anim.IsPlaying("attack0" + hasAttack) && !anim.IsPlaying("attack2" + hasAttack) && !anim.IsPlaying("attack4" + hasAttack) && !anim.IsPlaying("attack6" + hasAttack)) {
 			isAttacking = false;
+		}
+		
+		if(isBeingHit && !anim.IsPlaying("hit0" + hasAttack) && !anim.IsPlaying("hit2" + hasAttack) && !anim.IsPlaying("hit4" + hasAttack) && !anim.IsPlaying("hit6" + hasAttack)){
+			isBeingHit = false;
+			
 		}
 		//added this in for combos
 		if(comboTimeout > 0) {
@@ -127,11 +135,19 @@ public abstract class CharacterScript : MonoBehaviour {
 				isAttacking = true;
 				anim.Play("attack" + direction + hasAttack);
 			}
+		}else if (anima == (int) ANIMATIONS.HIT) {
+			if (!anim.IsPlaying("hit" + direction + hasAttack)) {
+			
+				anim.Play("hit" + direction + hasAttack);
+				
+				
+				Debug.Log ("The following is playing damage "+ GetType());
+			}
 		}
 	}
 	
 	protected void move(float x, float z) {
-		if (!isAttacking) {
+		if (!isAttacking && !isBeingHit) {
 			processInput(x, z);
 			playAnimation();
 			Vector3 movement = new Vector3(x, 0/*TODO: -speed */, z);
@@ -141,6 +157,10 @@ public abstract class CharacterScript : MonoBehaviour {
 	}
 	
 	protected void attack() {
+		if(anima == (int) ANIMATIONS.HIT){
+			return;
+		}
+		
 		anima = (int) ANIMATIONS.ATTACK;
 		
 		//added in for combos
@@ -159,6 +179,15 @@ public abstract class CharacterScript : MonoBehaviour {
 		}
 		playAnimation();
 		audio.Play();
+	}
+	
+	
+	public void takeHit(HitboxScript hit){
+		this.currentHealth-=hit.damage;
+		anima = (int) ANIMATIONS.HIT;
+		isBeingHit = true;
+		playAnimation();
+			
 	}
 	
 	//Combo method
