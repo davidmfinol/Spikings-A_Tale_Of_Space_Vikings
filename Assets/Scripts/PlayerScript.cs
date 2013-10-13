@@ -40,12 +40,13 @@ public class PlayerScript : CharacterScript {
 			}
 		} else if (gameObject.CompareTag("Cliff")) {
 			Vector3 moveVector = getMoveVector();
-			if (checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 13)) {
+			Vector3 hitVector = checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 14);
+			if (hitVector.Equals(hit.transform.position)) {
 				Vector3 collision = gameObject.transform.position;
 				if (direction == (int) DIRECTIONS.SOUTH) {
 					collision = checkCliffCollision(collision + moveVector);
 				}
-				if (collision != Vector3.one && !checkAcrossCollision(collision, moveVector, 1 << 12)) {
+				if (collision != Vector3.one && checkAcrossCollision(collision, moveVector, 1 << 12) == Vector3.one) {
 					transform.position = collision + moveVector - new Vector3(0, 0, -75);
 					//controller.Move(moveVector);
 				}
@@ -76,11 +77,12 @@ public class PlayerScript : CharacterScript {
 		return false;
 	}
 	
-	private bool checkAcrossCollision(Vector3 position, Vector3 direction, int layerMask) {
-		if (Physics.Raycast(position, direction, 90, layerMask)) {
-			return true;
+	private Vector3 checkAcrossCollision(Vector3 position, Vector3 direction, int layerMask) {
+		RaycastHit hit;
+		if (Physics.Raycast(position, direction, out hit, 90, layerMask)) {
+			return hit.transform.position;
 		}
-		return false;
+		return Vector3.one;
 	}
 	
 	private Vector3 checkCliffCollision(Vector3 position) {
