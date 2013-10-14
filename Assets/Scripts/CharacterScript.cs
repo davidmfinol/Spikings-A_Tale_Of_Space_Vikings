@@ -66,7 +66,6 @@ public abstract class CharacterScript : MonoBehaviour {
 		
 		if(isBeingHit && !anim.IsPlaying("hit0" + hasAttack) && !anim.IsPlaying("hit2" + hasAttack) && !anim.IsPlaying("hit4" + hasAttack) && !anim.IsPlaying("hit6" + hasAttack)){
 			isBeingHit = false;
-			
 		}
 		//added this in for combos
 		if(comboTimeout > 0) {
@@ -137,11 +136,8 @@ public abstract class CharacterScript : MonoBehaviour {
 			}
 		}else if (anima == (int) ANIMATIONS.HIT) {
 			if (!anim.IsPlaying("hit" + direction + hasAttack)) {
-			
+				isBeingHit = true;
 				anim.Play("hit" + direction + hasAttack);
-				
-				
-				Debug.Log ("The following is playing damage "+ GetType());
 			}
 		}
 	}
@@ -185,7 +181,6 @@ public abstract class CharacterScript : MonoBehaviour {
 	public void takeHit(HitboxScript hit){
 		this.currentHealth-=hit.damage;
 		anima = (int) ANIMATIONS.HIT;
-		isBeingHit = true;
 		playAnimation();
 			
 	}

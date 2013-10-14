@@ -27,11 +27,10 @@ public class BearScript : CharacterScript {
 		
 		// First, make sure we have an up-to-date path to the player
 		if((currentPath == null || timeSinceLastPath > timeToRepath) && !searchingForPath) {
-			seeker.StartPath(collider.transform.position, GameManager.Instance.Player.transform.position, OnPathComplete);
+			seeker.StartPath(collider.transform.position, GameManager.Instance.Player.collider.transform.position, OnPathComplete);
 			searchingForPath = true;
 		}
-		if(currentPath == null)
-		{
+		if(currentPath == null) {
 			//Debug.Log("No Path");
 			return;
 		}
@@ -59,7 +58,8 @@ public class BearScript : CharacterScript {
 	}
 	
 	private void DoMovement() {
-        if (currentWaypoint >= currentPath.vectorPath.Count) {
+		Node endNode = currentPath.path[currentPath.path.Count-1];
+        if (currentWaypoint >= currentPath.vectorPath.Count || !endNode.walkable) {
 			currentPath = null;
             //Debug.Log ("End Of Path Reached");
             return;
@@ -69,7 +69,6 @@ public class BearScript : CharacterScript {
 		Vector3 targetLocation = currentPath.vectorPath[currentWaypoint];
 		targetLocation.y = collider.transform.position.y;
         Vector3 dir = (targetLocation-collider.transform.position).normalized;
-		
 		
 		move (dir.x * speed, dir.z * speed);
 		//Debug.Log("Current location: " + transform.position);
