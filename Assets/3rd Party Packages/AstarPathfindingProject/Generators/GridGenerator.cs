@@ -297,7 +297,7 @@ A grid graph will update that area and a small margin around it equal to \link P
 			
 			position = inverseMatrix.MultiplyPoint3x4 (position);
 			
-			float xf = position.x-0.5F;
+			float xf = position.x-0.5f;
 			float zf = position.z-0.5f;
 			int x = Mathf.Clamp (Mathf.RoundToInt (xf)  , 0, width-1);
 			int z = Mathf.Clamp (Mathf.RoundToInt (zf)  , 0, depth-1);

@@ -24,10 +24,9 @@ public class HitboxScript : MonoBehaviour {
 		PlayerScript player = gameObject.GetComponent<PlayerScript>();
 		RockScript rock = gameObject.GetComponent<RockScript>();
 		if(team == (int) TEAMS.PLAYER && bear != null) {
-			collider.audio.PlayDelayed(0.2f);
-			bear.currentHealth -= damage;
+			bear.takeHit(this);
 		} else if (team == (int) TEAMS.ENEMY && player != null) {
-			player.currentHealth -= damage;
+			player.takeHit(this);
 		} else if (team == (int) TEAMS.PLAYER && rock != null) {
 			rock.Smash();
 		}

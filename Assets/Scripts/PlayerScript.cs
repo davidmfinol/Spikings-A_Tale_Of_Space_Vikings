@@ -8,7 +8,7 @@ public class PlayerScript : CharacterScript {
 	override protected void Start () {
 		base.Start();
 		team = (int) TEAMS.PLAYER;
-		hasAttack = 0;
+		hasAttack = GameObject.FindGameObjectWithTag("Hammer") == null ? 1 : 0;
 	}
 	
 	// Update is called once per frame
