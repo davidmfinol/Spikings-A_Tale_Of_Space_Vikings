@@ -90,7 +90,7 @@ public abstract class CharacterScript : MonoBehaviour {
 		buffer.transform.Rotate(rot);
 	}
 	
-	protected void processInput(float x, float z) {
+	protected virtual void processInput(float x, float z) {
 		bool xIsZero = x == 0;
 		bool zIsZero = z == 0;
 		if (xIsZero && zIsZero) {
@@ -146,14 +146,14 @@ public abstract class CharacterScript : MonoBehaviour {
 		if (!isAttacking && !isBeingHit) {
 			processInput(x, z);
 			playAnimation();
-			Vector3 movement = new Vector3(x, 0/*TODO: -speed */, z);
+			Vector3 movement = new Vector3(x, 0, z);
 			movement *= Time.deltaTime;
 			controller.Move(movement);
 		}
 	}
 	
 	protected void attack() {
-		if(anima == (int) ANIMATIONS.HIT){
+		if(anima == (int) ANIMATIONS.HIT) {
 			return;
 		}
 		
