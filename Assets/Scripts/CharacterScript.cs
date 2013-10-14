@@ -41,6 +41,9 @@ public abstract class CharacterScript : MonoBehaviour {
 	private int currentCombo = -1;
 	private float comboTimeout = .0f;
 	
+//hitBoxHolder
+	public GameObject HitPic;
+	
 	virtual protected void Start () {
 		currentHealth = maxHealth;
 		controller = GetComponent<CharacterController>();
@@ -182,7 +185,11 @@ public abstract class CharacterScript : MonoBehaviour {
 		this.currentHealth-=hit.damage;
 		anima = (int) ANIMATIONS.HIT;
 		playAnimation();
-			
+		
+		//hitPic display
+		GameObject instance = Instantiate(HitPic, transform.position, transform.rotation) as GameObject;
+
+		Destroy(instance, 0.25f);	
 	}
 	
 	//Combo method
