@@ -23,7 +23,12 @@ public abstract class CharacterScript : MonoBehaviour {
 	protected int direction = (int) DIRECTIONS.EAST;
 	protected int anima = (int) ANIMATIONS.IDLE;
 	protected int team = (int) TEAMS.PLAYER;
-	protected int hasAttack;
+	
+	/*  1 = attack
+	 *  2 = smash
+	 *  4 = pull
+	 */
+	protected int powers;
 	
 	protected CharacterController controller;
 	protected tk2dSprite sprite;
@@ -52,7 +57,7 @@ public abstract class CharacterScript : MonoBehaviour {
 		initialY = transform.position.y;
 		isAttacking = false;
 		isBeingHit = false;
-		hasAttack = 1;
+		powers = 1;
 	}
 	
 	virtual protected void Update () {
@@ -63,6 +68,7 @@ public abstract class CharacterScript : MonoBehaviour {
 		Vector3 correction = transform.position;
 		correction.y = initialY;
 		transform.position = correction;
+		int hasAttack = powers % 2;
 		if (isAttacking && !anim.IsPlaying("attack0" + hasAttack) && !anim.IsPlaying("attack2" + hasAttack) && !anim.IsPlaying("attack4" + hasAttack) && !anim.IsPlaying("attack6" + hasAttack)) {
 			isAttacking = false;
 		}
@@ -85,6 +91,9 @@ public abstract class CharacterScript : MonoBehaviour {
 		pos.x += 167;
 		GameObject box = (GameObject) Instantiate(hitBox, pos, Quaternion.identity);
 		box.GetComponent<HitboxScript>().team = team;
+		if (powers >> 1 % 2 == 1) {
+			box.GetComponent<HitboxScript>().smash = true;
+		}
 		GameObject buffer = new GameObject();
 		box.transform.parent = buffer.transform;
 		buffer.transform.parent = transform;
@@ -124,6 +133,7 @@ public abstract class CharacterScript : MonoBehaviour {
 	}
 	
 	protected void playAnimation() {
+		int hasAttack = powers % 2;
 		if (anima == (int) ANIMATIONS.IDLE) {
 			if (!anim.IsPlaying("idle" + direction + hasAttack)) {
 				anim.Play("idle" + direction + hasAttack);

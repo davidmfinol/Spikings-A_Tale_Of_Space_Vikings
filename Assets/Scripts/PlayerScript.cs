@@ -11,13 +11,13 @@ public class PlayerScript : CharacterScript {
 	override protected void Start () {
 		base.Start();
 		team = (int) TEAMS.PLAYER;
-		hasAttack = GameObject.FindGameObjectWithTag("Hammer") == null ? 1 : 0;
+		powers = 0;
 	}
 	
 	// Update is called once per frame
 	override protected void Update () {
 		base.Update();
-		if (Input.GetButtonDown("Fire1") && hasAttack != 0) {
+		if (Input.GetButtonDown("Fire1") && powers % 2 == 1) {
 			attack();
 		}
 		float x = Input.GetAxis("Horizontal") * speed;
@@ -60,8 +60,8 @@ public class PlayerScript : CharacterScript {
 					//controller.Move(moveVector);
 				}
 			}
-		} else if (gameObject.CompareTag("Hammer")) {
-			hasAttack = 1;
+		} else if (gameObject.CompareTag("Item")) {
+			powers += gameObject.GetComponent<ItemScript>().power;
 			Destroy(gameObject);
 		}
 	}
@@ -80,7 +80,7 @@ public class PlayerScript : CharacterScript {
 	}
 	
 	private bool checkDownCollision(Vector3 position, int layerMask) {
-		if (Physics.Raycast(position, Vector3.down, 6, layerMask)) {
+		if (Physics.Raycast(position, Vector3.down, 8, layerMask)) {
 			return true;
 		}
 		return false;
