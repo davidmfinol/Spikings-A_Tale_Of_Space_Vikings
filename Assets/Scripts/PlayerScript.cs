@@ -8,13 +8,13 @@ public class PlayerScript : CharacterScript {
 	override protected void Start () {
 		base.Start();
 		team = (int) TEAMS.PLAYER;
-		hasAttack = 0;
+		powers = 0;
 	}
 	
 	// Update is called once per frame
 	override protected void Update () {
 		base.Update();
-		if (Input.GetButtonDown("Fire1") && hasAttack != 0) {
+		if (Input.GetButtonDown("Fire1") && powers % 2 == 1) {
 			attack();
 		}
 		float x = Input.GetAxis("Horizontal") * speed;
@@ -51,8 +51,8 @@ public class PlayerScript : CharacterScript {
 					//controller.Move(moveVector);
 				}
 			}
-		} else if (gameObject.CompareTag("Hammer")) {
-			hasAttack = 1;
+		} else if (gameObject.CompareTag("Item")) {
+			powers += gameObject.GetComponent<ItemScript>().power;
 			Destroy(gameObject);
 		}
 	}

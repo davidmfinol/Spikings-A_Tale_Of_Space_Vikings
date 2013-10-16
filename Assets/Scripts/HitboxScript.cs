@@ -11,6 +11,7 @@ public class HitboxScript : MonoBehaviour {
 	public float delay = 0.5f;
 	public int team = 0;
 	public int damage = 10;
+	public bool smash = false;
 	
 	void Start () {
 		Destroy(gameObject, delay);
@@ -28,7 +29,7 @@ public class HitboxScript : MonoBehaviour {
 			bear.currentHealth -= damage;
 		} else if (team == (int) TEAMS.ENEMY && player != null) {
 			player.currentHealth -= damage;
-		} else if (team == (int) TEAMS.PLAYER && rock != null) {
+		} else if (smash && team == (int) TEAMS.PLAYER && rock != null) {
 			rock.Smash();
 		}
 	}
