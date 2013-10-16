@@ -41,13 +41,14 @@ public class PlayerScript : CharacterScript {
 		if(gameObject.CompareTag("Platform")) {
 			if (Input.GetButton("Jump")) {
 				transform.position = transform.position + getMoveVector();
-			} else if (Input.GetButton("Fire2")) {
+			} else if (Input.GetButtonDown("Fire2")) {
 				Vector3 position = gameObject.transform.position + getMoveVector();
 				if (checkDownCollision(position, 1 << 11)) {
 					gameObject.transform.position = position;
+					transform.position += getMoveVector();
 				}
 			}
-		} else if (gameObject.CompareTag("Cliff")) {
+		} else if (gameObject.CompareTag("Cliff Top")) {
 			Vector3 moveVector = getMoveVector();
 			Vector3 hitVector = checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 14);
 			if (hitVector.Equals(hit.transform.position)) {
