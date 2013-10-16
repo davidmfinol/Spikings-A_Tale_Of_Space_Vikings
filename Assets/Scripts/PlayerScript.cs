@@ -4,6 +4,9 @@ using System.Collections;
 public class PlayerScript : CharacterScript {
 	public int speed = 1000;
 	public int script = 0;
+	//for checkpoint stuff
+	public bool pastCheck = false;
+	
 	
 	override protected void Start () {
 		base.Start();
@@ -24,7 +27,13 @@ public class PlayerScript : CharacterScript {
 	
 	override protected void OnDeath () {
 		currentHealth = maxHealth;
-		transform.position = GameManager.Instance.startPoint.position;
+		//editing for checkpoint
+		//if(pastCheck){
+		 // transform.position = GameManager.Instance.spawnPoint.position;
+		//}
+		//else{
+		transform.position = GameManager.Instance.spawnPoint.position;
+		//}
 	}
 	
 	private void OnControllerColliderHit(ControllerColliderHit hit) {
