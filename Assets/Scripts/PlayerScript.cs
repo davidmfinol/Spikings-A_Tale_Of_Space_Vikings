@@ -81,7 +81,7 @@ public class PlayerScript : CharacterScript {
 	}
 	
 	private bool checkDownCollision(Vector3 position, int layerMask) {
-		if (Physics.Raycast(position, Vector3.down, 8, layerMask)) {
+		if (Physics.Raycast(position, Vector3.down, Mathf.Infinity, layerMask)) {
 			return true;
 		}
 		return false;
