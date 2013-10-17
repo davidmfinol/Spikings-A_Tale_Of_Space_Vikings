@@ -15,7 +15,7 @@ public enum ANIMATIONS : int {
 	HIT = 3
 }
 
-public abstract class CharacterScript : MonoBehaviour {
+public abstract class CharacterScript : TileScript {
 	public int maxHealth = 50;
 	public int currentHealth = 0;
 	public GameObject hitBox;
@@ -49,12 +49,13 @@ public abstract class CharacterScript : MonoBehaviour {
 //hitBoxHolder
 	public GameObject HitPic;
 	
-	virtual protected void Start () {
+	override protected void Start () {
+		base.Start();
 		currentHealth = maxHealth;
 		controller = GetComponent<CharacterController>();
 		sprite = GetComponent<tk2dSprite>();
 		anim = GetComponent<tk2dSpriteAnimator>();
-		initialY = transform.position.y;
+		//initialY = transform.position.y;
 		isAttacking = false;
 		isBeingHit = false;
 		powers = 1;
@@ -64,10 +65,15 @@ public abstract class CharacterScript : MonoBehaviour {
 		if(currentHealth <= 0) {
 			OnDeath();
 		}
-		sprite.SortingOrder = GameManager.Instance.MapData.height*GameManager.Instance.MapData.partitionSizeY-((int)transform.position.z);
-		Vector3 correction = transform.position;
-		correction.y = initialY;
-		transform.position = correction;
+		Vector3 pos = transform.position;
+		pos.y = (GameManager.Instance.MapData.height*128-((int)transform.position.z)) / 128 + 1.5f;
+		transform.position = pos;
+		//sprite.SortingOrder = (GameManager.Instance.MapData.height*128-((int)transform.position.z)) / 1;
+		//sprite.SortingOrder = (int) transform.position.z;
+		//sprite.SortingOrder = 100;
+		//Vector3 correction = transform.position;
+		//correction.y = initialY;
+		//transform.position = correction;
 		int hasAttack = powers % 2;
 		if (isAttacking && !anim.IsPlaying("attack0" + hasAttack) && !anim.IsPlaying("attack2" + hasAttack) && !anim.IsPlaying("attack4" + hasAttack) && !anim.IsPlaying("attack6" + hasAttack)) {
 			isAttacking = false;

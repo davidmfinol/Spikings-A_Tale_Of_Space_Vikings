@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class RockScript : MonoBehaviour {
+public class RockScript : TileScript {
 	private tk2dSpriteAnimator anim;
 	private bool destroying;
 
-	// Use this for initialization
-	private void Start () {
+	override protected void Start () {
+		base.Start();
 		anim = GetComponent<tk2dSpriteAnimator>();
 		destroying = false;
 	}
