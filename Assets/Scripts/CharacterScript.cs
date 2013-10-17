@@ -64,7 +64,7 @@ public abstract class CharacterScript : MonoBehaviour {
 		if(currentHealth <= 0) {
 			OnDeath();
 		}
-		sprite.SortingOrder = GameManager.Instance.MapData.height*GameManager.Instance.MapData.partitionSizeY-((int)transform.position.z);
+		sprite.SortingOrder = 3*GameManager.Instance.MapData.height*GameManager.Instance.MapData.partitionSizeY-((int)transform.position.z);
 		Vector3 correction = transform.position;
 		correction.y = initialY;
 		transform.position = correction;
