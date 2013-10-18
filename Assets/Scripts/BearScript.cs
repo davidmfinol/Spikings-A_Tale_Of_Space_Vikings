@@ -26,7 +26,7 @@ public class BearScript : CharacterScript {
 		base.Update();
 		timeSinceLastPath += Time.deltaTime;
 		
-		if (isInAttackRange())
+		if (isInAttackRange() && currentPath != null)
 			attack();
 		
 		if(isInNoticeRange())
@@ -37,7 +37,9 @@ public class BearScript : CharacterScript {
 	
 	override protected void OnDeath ()
 	{
-		Destroy(gameObject, 0.4f);
+		anima = (int) (ANIMATIONS.DIE);
+		playAnimation();
+		Destroy(gameObject, 1.0f);
 	}
 	
 	override protected void processInput(float x, float z) {
@@ -75,6 +77,7 @@ public class BearScript : CharacterScript {
 		}
 		if(currentPath == null) {
 			//Debug.Log("No Path");
+			movePatrol();
 			return;
 		}
 		

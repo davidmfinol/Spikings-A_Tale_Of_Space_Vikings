@@ -2,20 +2,23 @@
 using System.Collections;
 
 public class CheckPointScript : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
 	
+	protected tk2dSprite sprite;
+	protected tk2dSpriteAnimator anim;
+	
+	void Awake() {
+		sprite = GetComponent<tk2dSprite>();
+		anim = GetComponent<tk2dSpriteAnimator>();
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 	void OnTriggerEnter(Collider collider) {
 		PlayerScript player = collider.gameObject.GetComponent<PlayerScript>();
 		if (player != null) {
+			CheckPointScript prevCheck = GameManager.Instance.spawnPoint.GetComponent<CheckPointScript>();
+			if(prevCheck != null)
+				prevCheck.anim.Play("SpawnPointStatic");
 			GameManager.Instance.spawnPoint = transform;
+			anim.Play("SpawnPointAnimation");
 		}
 	}
 }

@@ -12,7 +12,8 @@ public enum ANIMATIONS : int {
 	IDLE = 0,
 	WALK = 1,
 	ATTACK = 2,
-	HIT = 3
+	HIT = 3,
+	DIE = 4
 }
 
 public abstract class CharacterScript : MonoBehaviour {
@@ -64,7 +65,7 @@ public abstract class CharacterScript : MonoBehaviour {
 		if(currentHealth <= 0) {
 			OnDeath();
 		}
-		sprite.SortingOrder = 3*GameManager.Instance.MapData.height*GameManager.Instance.MapData.partitionSizeY-((int)transform.position.z);
+		sprite.SortingOrder = 64*GameManager.Instance.MapData.height-((int)transform.position.z);
 		Vector3 correction = transform.position;
 		correction.y = initialY;
 		transform.position = correction;
@@ -152,11 +153,16 @@ public abstract class CharacterScript : MonoBehaviour {
 				isBeingHit = true;
 				anim.Play("hit" + direction + hasAttack);
 			}
+		}else if (anima == (int) ANIMATIONS.DIE) {
+			if (!anim.IsPlaying("die" + direction + hasAttack)) {
+				isBeingHit = true;
+				anim.Play("die" + direction + hasAttack);
+			}
 		}
 	}
 	
 	protected void move(float x, float z) {
-		if (!isAttacking && !isBeingHit) {
+		if (!isAttacking && !isBeingHit && anima != (int) (ANIMATIONS.DIE)) {
 			processInput(x, z);
 			playAnimation();
 			Vector3 movement = new Vector3(x, 0, z);
@@ -166,7 +172,7 @@ public abstract class CharacterScript : MonoBehaviour {
 	}
 	
 	protected void attack() {
-		if(anima == (int) ANIMATIONS.HIT) {
+		if(anima == (int) ANIMATIONS.HIT || anima == (int) ANIMATIONS.DIE) {
 			return;
 		}
 		
@@ -192,13 +198,15 @@ public abstract class CharacterScript : MonoBehaviour {
 	
 	
 	public void takeHit(HitboxScript hit){
+		if(anima == (int) (ANIMATIONS.DIE))
+			return;
+		
 		this.currentHealth-=hit.damage;
 		anima = (int) ANIMATIONS.HIT;
 		playAnimation();
 		
 		//hitPic display
 		GameObject instance = Instantiate(HitPic, transform.position, transform.rotation) as GameObject;
-
 		Destroy(instance, 0.25f);	
 	}
 	
