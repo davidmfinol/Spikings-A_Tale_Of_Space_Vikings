@@ -39,7 +39,7 @@ public class BearScript : CharacterScript {
 	{
 		anima = (int) (ANIMATIONS.DIE);
 		playAnimation();
-		Destroy(gameObject, 1.0f);
+		Destroy(gameObject, 0.95f);
 	}
 	
 	override protected void processInput(float x, float z) {
