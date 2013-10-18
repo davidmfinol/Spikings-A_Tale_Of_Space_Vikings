@@ -5,16 +5,20 @@ public class GameManager : MonoBehaviour {
 	
 	public Transform spawnPoint;
 	public Transform playerPrefab;
-	
-	private static GameManager _instance;
+	public Transform hudPrefab;
 	
 	private tk2dTileMap mapData;
 	private PlayerScript player;
+	private HUDController hud;
+	
+	private static GameManager _instance;
 
 	void Start () {
 		mapData = (tk2dTileMap) FindObjectOfType(typeof(tk2dTileMap));
 		player = ((Transform)Instantiate(playerPrefab, spawnPoint.position, playerPrefab.rotation)).GetComponent<PlayerScript>();
 		Camera.main.GetComponent<SmoothFollow2D>().target = player.transform;
+		hud = ((Transform)Instantiate(hudPrefab, hudPrefab.position, hudPrefab.rotation)).GetComponent<HUDController>();
+		hud.hideThought();
 		_instance = this;
 	}
 	
@@ -28,6 +32,13 @@ public class GameManager : MonoBehaviour {
 			return player;
 		}
 	}
+	public HUDController Hud {
+		get {
+			return hud;
+		}
+	}
+	
+	
 	
 	public static GameManager Instance {
 		get {
