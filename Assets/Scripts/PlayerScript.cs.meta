@@ -2,7 +2,9 @@ fileFormatVersion: 2
 guid: d421f76cb9085564f8a6242b8164cede
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - hitBox: {fileID: 100000, guid: 12e2c34a249ceb14b8f450a19154d56b, type: 2}
+  - HitPic: {fileID: 100000, guid: ee9b79364597e4ec1b8f4ea1d21a8cb9, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

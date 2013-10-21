@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class PlayerScript : CharacterScript {
-	public int speed = 1000;
+	public int speed = 500;
 	//for checkpoint stuff
 	public bool pastCheck = false;
 	
@@ -56,7 +56,8 @@ public class PlayerScript : CharacterScript {
 					collision = checkCliffCollision(collision + moveVector);
 				}
 				if (collision != Vector3.one && checkAcrossCollision(collision, moveVector, 1 << 12) == Vector3.one) {
-					transform.position = collision + moveVector - new Vector3(0, 0, -75);
+					transform.position = collision + moveVector;
+					Debug.Log("We're cliff jumping");
 					//controller.Move(moveVector);
 				}
 			}
@@ -80,7 +81,7 @@ public class PlayerScript : CharacterScript {
 	}
 	
 	private bool checkDownCollision(Vector3 position, int layerMask) {
-		if (Physics.Raycast(position, Vector3.down, 8, layerMask)) {
+		if (Physics.Raycast(position, Vector3.down, Mathf.Infinity, layerMask)) {
 			return true;
 		}
 		return false;

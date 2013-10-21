@@ -72,7 +72,11 @@ public class BearScript : CharacterScript {
 		
 		// First, make sure we have an up-to-date path to the player
 		if((currentPath == null || timeSinceLastPath > timeToRepath) && !searchingForPath) {
-			seeker.StartPath(collider.transform.position, GameManager.Instance.Player.collider.transform.position, OnPathComplete);
+			Vector3 startPoint = transform.position;
+			startPoint.y = 0;
+			Vector3 endPoint = GameManager.Instance.Player.transform.position;
+			endPoint.y = 0;
+			seeker.StartPath(startPoint, endPoint, OnPathComplete);
 			searchingForPath = true;
 		}
 		if(currentPath == null) {
@@ -91,8 +95,7 @@ public class BearScript : CharacterScript {
 		
         // Then get the direction to the next waypoint
 		Vector3 targetLocation = currentPath.vectorPath[currentWaypoint];
-		targetLocation.y = collider.transform.position.y;
-        Vector3 dir = (targetLocation-collider.transform.position).normalized;
+        Vector3 dir = (targetLocation-transform.position).normalized;
 		
 		// Then actually do the movement
 		move (dir.x * speed, dir.z * speed);
@@ -101,7 +104,11 @@ public class BearScript : CharacterScript {
         
         //Check if we are close enough to the next waypoint
         //If we are, proceed to follow the next waypoint
-        if (collider.bounds.Contains(currentPath.vectorPath[currentWaypoint])) {
+		Bounds bounds = collider.bounds;
+		Vector3 boundsCenter = bounds.center;
+		boundsCenter.y = 0;
+		bounds.center = boundsCenter;
+        if (bounds.Contains(currentPath.vectorPath[currentWaypoint])) {
             //Debug.Log("moving to next");
 			currentWaypoint++;
             return;
@@ -124,7 +131,7 @@ public class BearScript : CharacterScript {
 	}
 	
 	private bool isInAttackRange() {
-		Bounds hitArea = new Bounds(collider.transform.position, new Vector3(150, 100, 150));
+		Bounds hitArea = new Bounds(transform.position, new Vector3(150, 100, 150));
 		if(direction == (int) (DIRECTIONS.EAST)) {
 			hitArea = new Bounds(transform.position + new Vector3(167, 0, 0), new Vector3(150, 100, 150));
 		} else if(direction == (int) (DIRECTIONS.NORTH)) {
@@ -152,6 +159,10 @@ public class BearScript : CharacterScript {
 	}
 	
 	private bool isInNoticeRange() {
-		return (GameManager.Instance.Player.transform.position - transform.position).magnitude <= noticeRadius;
+		Vector3 startPoint = transform.position;
+		startPoint.y = 0;
+		Vector3 endPoint = GameManager.Instance.Player.transform.position;
+		endPoint.y = 0;
+		return (endPoint - startPoint).magnitude <= noticeRadius;
 	}
 }
