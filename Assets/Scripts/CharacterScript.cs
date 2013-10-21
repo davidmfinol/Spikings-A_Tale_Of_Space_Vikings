@@ -33,7 +33,6 @@ public abstract class CharacterScript : TileScript {
 	protected CharacterController controller;
 	protected tk2dSprite sprite;
 	protected tk2dSpriteAnimator anim;
-	protected GameObject parent;
 	
 	private float initialY;
 	private bool isAttacking;
@@ -53,12 +52,9 @@ public abstract class CharacterScript : TileScript {
 	override protected void Start () {
 		//base.Start();
 		currentHealth = maxHealth;
-		parent = transform.parent.gameObject;
-		controller = parent.GetComponent<CharacterController>();
-		//sprite = GetComponent<tk2dSprite>();
-		//anim = GetComponent<tk2dSpriteAnimator>();
-		sprite = GetComponent<tk2dSprite>();
-		anim = GetComponent<tk2dSpriteAnimator>();
+		controller = GetComponent<CharacterController>();
+		sprite = GetComponentInChildren<tk2dSprite>();
+		anim = GetComponentInChildren<tk2dSpriteAnimator>();
 		//initialY = transform.position.y;
 		isAttacking = false;
 		isBeingHit = false;
@@ -69,9 +65,9 @@ public abstract class CharacterScript : TileScript {
 		if(currentHealth <= 0) {
 			OnDeath();
 		}
-		Vector3 pos = parent.transform.position;
+		Vector3 pos = transform.position;
 		pos.y = GameManager.Instance.MapData.height-((int)pos.z) / 128 + 1f;
-		parent.transform.position = pos;
+		transform.position = pos;
 		//sprite.SortingOrder = (GameManager.Instance.MapData.height*128-((int)transform.position.z)) / 1;
 		//sprite.SortingOrder = (int) transform.position.z;
 		//sprite.SortingOrder = 100;
@@ -207,7 +203,7 @@ public abstract class CharacterScript : TileScript {
 		playAnimation();
 		
 		//hitPic display
-		GameObject instance = Instantiate(HitPic, parent.transform.position, parent.transform.rotation) as GameObject;
+		GameObject instance = Instantiate(HitPic, transform.position, transform.rotation) as GameObject;
 
 		Destroy(instance, 0.25f);	
 	}

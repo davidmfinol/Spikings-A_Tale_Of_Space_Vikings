@@ -32,20 +32,21 @@ public class PlayerScript : CharacterScript {
 		 // transform.position = GameManager.Instance.spawnPoint.position;
 		//}
 		//else{
-		parent.transform.position = GameManager.Instance.spawnPoint.position;
+		transform.position = GameManager.Instance.spawnPoint.position;
 		//}
 	}
 	
 	private void OnControllerColliderHit(ControllerColliderHit hit) {
+		Debug.Log("We hit something!");
 		GameObject gameObject = hit.collider.gameObject;
 		if(gameObject.CompareTag("Platform")) {
 			if (Input.GetButton("Jump")) {
-				parent.transform.position = parent.transform.position + getMoveVector();
+				transform.position = transform.position + getMoveVector();
 			} else if (Input.GetButtonDown("Fire2")) {
 				Vector3 position = gameObject.transform.position + getMoveVector();
 				if (checkDownCollision(position, 1 << 11)) {
 					gameObject.transform.position = position;
-					parent.transform.position += getMoveVector();
+					transform.position += getMoveVector();
 				}
 			}
 		} else if (gameObject.CompareTag("Cliff Top")) {
@@ -57,7 +58,7 @@ public class PlayerScript : CharacterScript {
 					collision = checkCliffCollision(collision + moveVector);
 				}
 				if (collision != Vector3.one && checkAcrossCollision(collision, moveVector, 1 << 12) == Vector3.one) {
-					parent.transform.position = collision + moveVector;
+					transform.position = collision + moveVector;
 					//controller.Move(moveVector);
 				}
 			}
