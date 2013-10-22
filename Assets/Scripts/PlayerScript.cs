@@ -100,7 +100,8 @@ public class PlayerScript : CharacterScript {
 	}
 	
 	IEnumerator JumpPlatform() {
-		noInterrupt = true;
+		noInterrupt = true; // this animation/action cannot be interrupted
+		// TODO: HAVE ANIMATION
 		// anima = (int)(ANIMATIONS.JUMP);
 		// PlayAnimation();
 		
@@ -108,7 +109,7 @@ public class PlayerScript : CharacterScript {
 		moveVector = moveVector.normalized;
 		
 		float distTraveled = 0;
-		while (distTraveled < 128) {
+		while (distTraveled < 75) {
 			Vector3 movement = Time.deltaTime * moveVector * speed;
 			transform.position = transform.position + movement;
 			distTraveled += movement.magnitude;
@@ -121,6 +122,8 @@ public class PlayerScript : CharacterScript {
 	
 	// Make the player automatically jump all th way down a cliff, if possible
 	IEnumerator JumpCliff(ControllerColliderHit hit) {
+		GameObject gameObject = hit.collider.gameObject;
+		
 		// Returns us how far and in what direction we need to move to get across one tile
 		Vector3 moveVector = getMoveVector(); 
 		
@@ -135,24 +138,40 @@ public class PlayerScript : CharacterScript {
 			
 			// Long cliffs are only located to the south
 			// So if that cliff is to the south, we want to look at the bottom of the cliff
+			bool isSouth = false;
 			if (direction == (int) DIRECTIONS.SOUTH) {
+				isSouth = true;
 				collision = checkCliffCollision(collision + moveVector); //DOES THIS WORK CORRECTLY?
 			}
 			if (collision != Vector3.one && checkAcrossCollision(collision, moveVector, 1 << 12) == Vector3.one) {
 				noInterrupt = true;
+				// TODO: HAVE ANIMATION!
 				// anima = (int)(ANIMATIONS.JUMP);
 				// PlayAnimation();
 				
-				moveVector+= (collision - transform.position) ; //+ new Vector3(0, 0, -65)
+				// We define how far and in what direction we need to move to get across the cliff
+				moveVector+= (collision - transform.position) ; //+ new Vector3(0, 0, -75)
 				Vector3 normalizedMove = moveVector.normalized;
 				
-				// TODO: THIS SHOULD MOVE YOU DOWN ONE TILE AS WELL
+				// Move across the cliff
 				float distTraveled = 0;
 				while (distTraveled < moveVector.magnitude) {
 					Vector3 movement = Time.deltaTime * normalizedMove * speed;
 					transform.position = transform.position + movement;
 					distTraveled += movement.magnitude;
 					yield return null;
+				}
+				
+				// If we're moving left or right, we also move down one tile
+				if(!isSouth) {
+					//TODO: MAKE SURE THAT THE SPOT BELOW IS OPEN
+					distTraveled = 0;
+					while (distTraveled < 128) {
+						Vector3 movement = Time.deltaTime * Vector3.back * speed;
+						transform.position = transform.position + movement;
+						distTraveled += movement.magnitude;
+						yield return null;
+					}
 				}
 				
 				noInterrupt = false;
