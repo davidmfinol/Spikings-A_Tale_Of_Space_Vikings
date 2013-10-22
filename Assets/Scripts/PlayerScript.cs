@@ -38,15 +38,7 @@ public class PlayerScript : CharacterScript {
 	private void OnControllerColliderHit(ControllerColliderHit hit) {
 		GameObject gameObject = hit.collider.gameObject;
 		if(gameObject.CompareTag("Platform")) {
-			if (Input.GetButton("Jump")) {
-				transform.position = transform.position + getMoveVector();
-			} else if (Input.GetButtonDown("Fire2")) {
-				Vector3 position = gameObject.transform.position + getMoveVector();
-				if (checkDownCollision(position, 1 << 11)) {
-					gameObject.transform.position = position;
-					transform.position += getMoveVector();
-				}
-			}
+			InteractWithPlatform(gameObject);
 		} else if (gameObject.CompareTag("Cliff Top")) {
 			Vector3 moveVector = getMoveVector();
 			Vector3 hitVector = checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 14);
@@ -57,13 +49,25 @@ public class PlayerScript : CharacterScript {
 				}
 				if (collision != Vector3.one && checkAcrossCollision(collision, moveVector, 1 << 12) == Vector3.one) {
 					transform.position = collision + moveVector;
-					Debug.Log("We're cliff jumping");
-					//controller.Move(moveVector);
+					// TODO: START COROUTINE HERE THAT WILL ANIMATE AND TRANSLATE THE CHARACTER UNTIL THIS ACTION ENDS
 				}
 			}
 		} else if (gameObject.CompareTag("Item")) {
 			powers += gameObject.GetComponent<ItemScript>().power;
 			Destroy(gameObject);
+		}
+	}
+	
+	private void InteractWithPlatform(GameObject gameObject) {
+		if (Input.GetButton("Jump")) {
+			transform.position = transform.position + getMoveVector();
+			// TODO: PLATFORMING JUMPING SOLUTION
+		} else if (Input.GetButtonDown("Fire2")) {
+			Vector3 position = gameObject.transform.position + getMoveVector();
+			if (checkDownCollision(position, 1 << 11)) {
+				gameObject.transform.position = position;
+				transform.position += getMoveVector();
+			}
 		}
 	}
 	
