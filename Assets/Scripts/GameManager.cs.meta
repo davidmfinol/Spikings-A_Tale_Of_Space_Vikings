@@ -6,6 +6,6 @@ MonoImporter:
   - spawnPoint: {instanceID: 0}
   - playerPrefab: {fileID: 400000, guid: 3ad39bb92a7a30a43a7bb9f9639307e1, type: 2}
   - hudPrefab: {fileID: 400010, guid: 94828c7358233204a87a16e1196bdcf4, type: 2}
-  executionOrder: -2
+  executionOrder: -31200
   icon: {instanceID: 0}
   userData: 
