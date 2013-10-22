@@ -40,6 +40,8 @@ public class PlayerScript : CharacterScript {
 		if(gameObject.CompareTag("Platform")) {
 			InteractWithPlatform(gameObject);
 		} else if (gameObject.CompareTag("Cliff Top")) {
+			// TODO: ALLOW YOU TO CLIMB UP CLIFFS IF YOU'RE ON A PLATFORM
+			// SOMETHING LIKE: TAKE A VECTOR FROM THE CLIFF'S POSITION, SHOOT IT TOWARDS THE PLAYER, AND ALLOW JUMPING IF YOU HIT A PLATFORM OBJECT
 			Vector3 moveVector = getMoveVector();
 			Vector3 hitVector = checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 14);
 			if (hitVector.Equals(hit.transform.position)) {
@@ -61,6 +63,8 @@ public class PlayerScript : CharacterScript {
 		if (Input.GetButton("Jump")) {
 			StartCoroutine("JumpPlatform");
 		} else if (Input.GetButtonDown("Fire2")) {
+			// TODO: DON'T FORCE THIS TO BE GRID-BASED
+			// SHOULD PROBABLY BE ABLE TO JUST SET ANIMA = PUSHING AND CALL PLAYANIMATION() OVER AND OVER WHILE ALLOWING REGULAR MOVEMENT?
 			Vector3 position = gameObject.transform.position + getMoveVector();
 			if (checkDownCollision(position, 1 << 11)) {
 				gameObject.transform.position = position;
