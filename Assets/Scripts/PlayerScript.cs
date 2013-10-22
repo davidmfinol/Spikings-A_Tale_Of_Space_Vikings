@@ -42,17 +42,7 @@ public class PlayerScript : CharacterScript {
 		} else if (gameObject.CompareTag("Cliff Top")) {
 			// TODO: ALLOW YOU TO CLIMB UP CLIFFS IF YOU'RE ON A PLATFORM
 			// SOMETHING LIKE: TAKE A VECTOR FROM THE CLIFF'S POSITION, SHOOT IT TOWARDS THE PLAYER, AND ALLOW JUMPING IF YOU HIT A PLATFORM OBJECT
-			Vector3 moveVector = getMoveVector();
-			Vector3 hitVector = checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 14);
-			if (hitVector.Equals(hit.transform.position)) {
-				Vector3 collision = gameObject.transform.position;
-				if (direction == (int) DIRECTIONS.SOUTH) {
-					collision = checkCliffCollision(collision + moveVector);
-				}
-				if (collision != Vector3.one && checkAcrossCollision(collision, moveVector, 1 << 12) == Vector3.one) {
-					StartCoroutine("JumpCliff");
-				}
-			}
+			StartCoroutine("JumpCliff", hit);
 		} else if (gameObject.CompareTag("Item")) {
 			powers += gameObject.GetComponent<ItemScript>().power;
 			Destroy(gameObject);
@@ -129,24 +119,46 @@ public class PlayerScript : CharacterScript {
 		StopCoroutine("JumpPlatform");
 	}
 	
-	IEnumerator JumpCliff() {
-		noInterrupt = true;
-		// anima = (int)(ANIMATIONS.JUMP);
-		// PlayAnimation();
+	// Make the player automatically jump all th way down a cliff, if possible
+	IEnumerator JumpCliff(ControllerColliderHit hit) {
+		// Returns us how far and in what direction we need to move to get across one tile
+		Vector3 moveVector = getMoveVector(); 
 		
-		Vector3 moveVector = getMoveVector();
-		moveVector = moveVector.normalized;
+		// Returns the location of the nearest cliff wall in the direction of moveVector
+		Vector3 hitVector = checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 14);
 		
-		// TODO: THIS SHOULD MOVE YOU DOWN ONE TILE AS WELL
-		float distTraveled = 0;
-		while (distTraveled < 128) {
-			Vector3 movement = Time.deltaTime * moveVector * speed;
-			transform.position = transform.position + movement;
-			distTraveled += movement.magnitude;
-			yield return null;
+		// Make sure that we're actually looking at the the nearest cliff
+		if (hitVector.Equals(hit.transform.position)) {
+			
+			// Now get the actual position of the cliff that we are trying to jump over
+			Vector3 collision = gameObject.transform.position;
+			
+			// Long cliffs are only located to the south
+			// So if that cliff is to the south, we want to look at the bottom of the cliff
+			if (direction == (int) DIRECTIONS.SOUTH) {
+				collision = checkCliffCollision(collision + moveVector); //DOES THIS WORK CORRECTLY?
+			}
+			if (collision != Vector3.one && checkAcrossCollision(collision, moveVector, 1 << 12) == Vector3.one) {
+				noInterrupt = true;
+				// anima = (int)(ANIMATIONS.JUMP);
+				// PlayAnimation();
+				
+				moveVector+= (collision - transform.position) ; //+ new Vector3(0, 0, -65)
+				Vector3 normalizedMove = moveVector.normalized;
+				
+				// TODO: THIS SHOULD MOVE YOU DOWN ONE TILE AS WELL
+				float distTraveled = 0;
+				while (distTraveled < moveVector.magnitude) {
+					Vector3 movement = Time.deltaTime * normalizedMove * speed;
+					transform.position = transform.position + movement;
+					distTraveled += movement.magnitude;
+					yield return null;
+				}
+				
+				noInterrupt = false;
+			}
 		}
 		
-		noInterrupt = false;
 		StopCoroutine("JumpCliff");
 	}
 }
