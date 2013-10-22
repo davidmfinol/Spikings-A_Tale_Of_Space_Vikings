@@ -3,7 +3,7 @@ guid: 4484fd9afc125c942a27abd44e0b0a83
 MonoImporter:
   serializedVersion: 2
   defaultReferences:
-  - hitBox: {fileID: 100000, guid: 12e2c34a249ceb14b8f450a19154d56b, type: 2}
+  - hitBox: {fileID: 100000, guid: ae541bbfd948fc745b2c55de33b4c2bc, type: 2}
   - HitPic: {fileID: 100000, guid: ee9b79364597e4ec1b8f4ea1d21a8cb9, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}

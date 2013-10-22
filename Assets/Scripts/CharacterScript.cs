@@ -64,20 +64,21 @@ public abstract class CharacterScript : TileScript {
 		if(currentHealth <= 0) {
 			OnDeath();
 		}
-		Vector3 pos = transform.position;
-		pos.y = GameManager.Instance.MapData.height-((int)pos.z) / 128 + 1f;
-		transform.position = pos;
-		//sprite.SortingOrder = (GameManager.Instance.MapData.height*128-((int)transform.position.z)) / 1;
-		//sprite.SortingOrder = (int) transform.position.z;
-		//sprite.SortingOrder = 100;
+		
+		// Make our sprite layer correctly
+		Vector3 pos = sprite.transform.position;
+		pos.y = GameManager.Instance.MapData.height-((int)pos.z) / 128 + 0.5f;
+		sprite.transform.position = pos;
+		
+		// Some combat control overhead
 		int hasAttack = powers % 2;
 		if (isAttacking && !anim.IsPlaying("attack0" + hasAttack) && !anim.IsPlaying("attack2" + hasAttack) && !anim.IsPlaying("attack4" + hasAttack) && !anim.IsPlaying("attack6" + hasAttack)) {
 			isAttacking = false;
 		}
-		
 		if(isBeingHit && !anim.IsPlaying("hit0" + hasAttack) && !anim.IsPlaying("hit2" + hasAttack) && !anim.IsPlaying("hit4" + hasAttack) && !anim.IsPlaying("hit6" + hasAttack)){
 			isBeingHit = false;
 		}
+		
 		//added this in for combos
 		if(comboTimeout > 0) {
 			DecreaseTime();
@@ -169,6 +170,11 @@ public abstract class CharacterScript : TileScript {
 			Vector3 movement = new Vector3(x, 0, z);
 			movement *= Time.deltaTime;
 			controller.Move(movement);
+			
+			// Make sure we stay on y = 0
+			Vector3 pos = transform.position;
+			pos.y = 0;
+			transform.position = pos;
 		}
 	}
 	

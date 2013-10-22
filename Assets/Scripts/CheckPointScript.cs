@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CheckPointScript : MonoBehaviour {
+public class CheckPointScript : TileScript {
 	
 	protected tk2dSprite sprite;
 	protected tk2dSpriteAnimator anim;
 	
-	void Awake() {
+	override protected void Start() {
+		base.Start();
 		sprite = GetComponent<tk2dSprite>();
 		anim = GetComponent<tk2dSpriteAnimator>();
 	}
