@@ -37,6 +37,7 @@ public abstract class CharacterScript : TileScript {
 	
 	private bool isAttacking;
 	private bool isBeingHit;
+	protected bool noInterrupt;
 	
 // for combos
 	public static ComboSequence[] combos = new ComboSequence[3]; //Combo class. Fill this out in Inspector.
@@ -57,6 +58,7 @@ public abstract class CharacterScript : TileScript {
 		anim = GetComponentInChildren<tk2dSpriteAnimator>();
 		isAttacking = false;
 		isBeingHit = false;
+		noInterrupt = false;
 		powers = 1;
 	}
 	
@@ -164,22 +166,23 @@ public abstract class CharacterScript : TileScript {
 	}
 	
 	protected void move(float x, float z) {
-		if (!isAttacking && !isBeingHit && anima != (int) (ANIMATIONS.DIE)) {
-			processInput(x, z);
-			playAnimation();
-			Vector3 movement = new Vector3(x, 0, z);
-			movement *= Time.deltaTime;
-			controller.Move(movement);
-			
-			// Make sure we stay on y = 0
-			Vector3 pos = transform.position;
-			pos.y = 0;
-			transform.position = pos;
-		}
+		if (isAttacking || isBeingHit || anima == (int) (ANIMATIONS.DIE) || noInterrupt)
+			return;
+		
+		processInput(x, z);
+		playAnimation();
+		Vector3 movement = new Vector3(x, 0, z);
+		movement *= Time.deltaTime;
+		controller.Move(movement);
+		
+		// Make sure we stay on y = 0
+		Vector3 pos = transform.position;
+		pos.y = 0;
+		transform.position = pos;
 	}
 	
 	protected void attack() {
-		if(anima == (int) ANIMATIONS.HIT || anima == (int) ANIMATIONS.DIE) {
+		if(anima == (int) ANIMATIONS.HIT || anima == (int) ANIMATIONS.DIE || noInterrupt) {
 			return;
 		}
 		
@@ -205,7 +208,7 @@ public abstract class CharacterScript : TileScript {
 	
 	
 	public void takeHit(HitboxScript hit){
-		if(anima == (int) (ANIMATIONS.DIE))
+		if(anima == (int) (ANIMATIONS.DIE) || noInterrupt)
 			return;
 		
 		this.currentHealth-=hit.damage;

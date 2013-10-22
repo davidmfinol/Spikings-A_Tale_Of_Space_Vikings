@@ -48,8 +48,7 @@ public class PlayerScript : CharacterScript {
 					collision = checkCliffCollision(collision + moveVector);
 				}
 				if (collision != Vector3.one && checkAcrossCollision(collision, moveVector, 1 << 12) == Vector3.one) {
-					transform.position = collision + moveVector;
-					// TODO: START COROUTINE HERE THAT WILL ANIMATE AND TRANSLATE THE CHARACTER UNTIL THIS ACTION ENDS
+					StartCoroutine("JumpCliff");
 				}
 			}
 		} else if (gameObject.CompareTag("Item")) {
@@ -60,8 +59,7 @@ public class PlayerScript : CharacterScript {
 	
 	private void InteractWithPlatform(GameObject gameObject) {
 		if (Input.GetButton("Jump")) {
-			transform.position = transform.position + getMoveVector();
-			// TODO: PLATFORMING JUMPING SOLUTION
+			StartCoroutine("JumpPlatform");
 		} else if (Input.GetButtonDown("Fire2")) {
 			Vector3 position = gameObject.transform.position + getMoveVector();
 			if (checkDownCollision(position, 1 << 11)) {
@@ -105,5 +103,46 @@ public class PlayerScript : CharacterScript {
 			return hit.transform.position;
 		}
 		return Vector3.one;
+	}
+	
+	IEnumerator JumpPlatform() {
+		noInterrupt = true;
+		// anima = (int)(ANIMATIONS.JUMP);
+		// PlayAnimation();
+		
+		Vector3 moveVector = getMoveVector();
+		moveVector = moveVector.normalized;
+		
+		float distTraveled = 0;
+		while (distTraveled < 128) {
+			Vector3 movement = Time.deltaTime * moveVector * speed;
+			transform.position = transform.position + movement;
+			distTraveled += movement.magnitude;
+			yield return null;
+		}
+		
+		noInterrupt = false;
+		StopCoroutine("JumpPlatform");
+	}
+	
+	IEnumerator JumpCliff() {
+		noInterrupt = true;
+		// anima = (int)(ANIMATIONS.JUMP);
+		// PlayAnimation();
+		
+		Vector3 moveVector = getMoveVector();
+		moveVector = moveVector.normalized;
+		
+		// TODO: THIS SHOULD MOVE YOU DOWN ONE TILE AS WELL
+		float distTraveled = 0;
+		while (distTraveled < 128) {
+			Vector3 movement = Time.deltaTime * moveVector * speed;
+			transform.position = transform.position + movement;
+			distTraveled += movement.magnitude;
+			yield return null;
+		}
+		
+		noInterrupt = false;
+		StopCoroutine("JumpCliff");
 	}
 }
