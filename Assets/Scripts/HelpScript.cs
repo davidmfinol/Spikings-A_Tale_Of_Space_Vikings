@@ -8,9 +8,10 @@ public class HelpScript : MonoBehaviour {
 	void OnTriggerEnter(Collider collider) {
 		PlayerScript player = collider.gameObject.GetComponent<PlayerScript>();
 		if (player != null) {
-			if( message != null && message != "" && !alreadyTriggered)
+			if( message != null && message != "" )
 			{
-				GameManager.Instance.Hud.showThought(message);
+				if(!alreadyTriggered)
+					GameManager.Instance.Hud.showThought(message);
 				alreadyTriggered = true;
 			}
 			else
