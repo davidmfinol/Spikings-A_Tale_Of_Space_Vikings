@@ -127,10 +127,10 @@ public class PlayerScript : CharacterScript {
 		
 		Vector3 moveVector = getMoveVector(); // Returns us how far and in what direction we need to move to get across one tile
 		Vector3 hitVector = checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 14);// Check to see if we're approaching the cliff from the correct side
-		Vector3 platformVector = checkAcrossCollision(gameObject.transform.position, -moveVector, 1 << 15);// Check to see if the player is on a platform
-
+		bool onPlatform = checkDownCollision(transform.position + new Vector3(0, 1000, 0), 1 << 15);// Check to see if the player is on a platform
+		
 		// Climb up cliff if on platform
-		if (platformVector != Vector3.one && hitVector == Vector3.one) {
+		if (onPlatform) {
 			
 			if (checkAcrossCollision(gameObject.transform.position-moveVector, moveVector, 1 << 12) == Vector3.one) {
 				noInterrupt = true;
