@@ -17,6 +17,7 @@ public class BearScript : CharacterScript {
 	public PatrolTypes patrolType;
 	private int hitObstacleCount = 0;
 	private float lastHit = 0;
+	private float lastChange = 0;
 	private System.Random randomGen;
 	
 	// A* Pathfinding Variables
@@ -163,17 +164,27 @@ public class BearScript : CharacterScript {
 	}
 	
 	private void moveVertical() {
+		lastChange += Time.deltaTime;
+		if(lastChange > 10) {
+			hitObstacleCount++;
+			lastChange = 0;
+		}
 		Vector3 dir = hitObstacleCount % 2 == 1 ? Vector3.forward : Vector3.back ;
 		move (0, dir.z * speed);
 	}
 	
 	private void moveHorizontal() {
+		lastChange += Time.deltaTime;
+		if(lastChange > 10) {
+			hitObstacleCount++;
+			lastChange = 0;
+		}
 		Vector3 dir = hitObstacleCount % 2 == 1 ? Vector3.left : Vector3.right ;
 		move (dir.x * speed, 0);
 	}
 	
 	private void moveRandom() {
-		lastHit += Time.deltaTime;
+		lastChange += Time.deltaTime;
 		
 		Vector3 dir = Vector3.right;
 		if(direction == (int) (DIRECTIONS.SOUTH))
@@ -183,7 +194,7 @@ public class BearScript : CharacterScript {
 		else if(direction == (int) (DIRECTIONS.NORTH))
 			dir = Vector3.forward;
 		
-		if( lastHit > 2) {
+		if( lastChange > 2) {
 			int randomNum = randomGen.Next(4);
 			dir = Vector3.right;
 			if(randomNum == 1)
@@ -192,7 +203,7 @@ public class BearScript : CharacterScript {
 				dir = Vector3.left;
 			else if(randomNum == 3)
 				dir = Vector3.forward;
-			lastHit = 0;
+			lastChange = 0;
 		}
 		move (dir.x * speed, dir.z * speed);
 	}
