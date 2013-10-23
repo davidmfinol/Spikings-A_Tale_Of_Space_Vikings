@@ -103,6 +103,8 @@ public class PlayerScript : CharacterScript {
 		// anima = (int)(ANIMATIONS.JUMP);
 		// PlayAnimation();
 		
+		// TODO: Fix movement so you can avoid getting on platform
+		
 		Vector3 moveVector = getMoveVector();
 		moveVector = moveVector.normalized;
 		
@@ -139,6 +141,7 @@ public class PlayerScript : CharacterScript {
 				// Move up the cliff
 				float distTraveled = 0;
 				if (direction == (int) DIRECTIONS.NORTH) {
+					//TODO: Check to make sure that is legal movement, i.e. cliff is 1 high
 					moveVector *= 2;
 				}
 				while (distTraveled < moveVector.magnitude) {
@@ -166,6 +169,7 @@ public class PlayerScript : CharacterScript {
 			if (isSouthOrNorth) {
 				spaceEmpty = checkAcrossCollision(collision, moveVector, 1 << 12) == Vector3.one;
 			} else {
+				//TODO: does not check for collisions with cliff side
 				spaceEmpty = checkAcrossCollision(collision + Vector3.back * 128, moveVector, 1 << 12) == Vector3.one;
 			}
 			if (collision != Vector3.one && spaceEmpty) {
@@ -183,7 +187,7 @@ public class PlayerScript : CharacterScript {
 					yield return null;
 				}
 				if(!isSouthOrNorth) {
-					//TODO: MAKE SURE THAT THE SPOT BELOW IS OPEN (also, perhaps merge motion)
+					//TODO: (also, perhaps merge motion)
 					distTraveled = 0;
 					while (distTraveled < 128) {
 						Vector3 movement = Time.deltaTime * Vector3.back * speed;
