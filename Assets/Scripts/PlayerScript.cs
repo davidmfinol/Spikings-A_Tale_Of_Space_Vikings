@@ -39,7 +39,7 @@ public class PlayerScript : CharacterScript {
 		GameObject gameObject = hit.collider.gameObject;
 		if(gameObject.CompareTag("Platform")) {
 			InteractWithPlatform(gameObject);
-		} else if (gameObject.CompareTag("Cliff Top")) {
+		} else if (gameObject.CompareTag("Cliff Top") || gameObject.CompareTag("Cliff Side")) {
 			StartCoroutine("JumpCliff", hit);
 		} else if (gameObject.CompareTag("Item")) {
 			powers += gameObject.GetComponent<ItemScript>().power;
@@ -121,6 +121,7 @@ public class PlayerScript : CharacterScript {
 	// Make the player automatically jump all the way down a cliff, if possible
 	IEnumerator JumpCliff(ControllerColliderHit hit) {
 		GameObject gameObject = hit.collider.gameObject;
+		bool isCliffTop = gameObject.CompareTag("Cliff Top");
 		
 		Vector3 moveVector = getMoveVector(); // Returns us how far and in what direction we need to move to get across one tile
 		Vector3 hitVector = checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 14);// Check to see if we're approaching the cliff from the correct side
@@ -137,6 +138,9 @@ public class PlayerScript : CharacterScript {
 				Vector3 normalizedMove = moveVector.normalized;
 				// Move up the cliff
 				float distTraveled = 0;
+				if (direction == (int) DIRECTIONS.NORTH) {
+					moveVector *= 2;
+				}
 				while (distTraveled < moveVector.magnitude) {
 					Vector3 movement = Time.deltaTime * normalizedMove * speed;
 					transform.position = transform.position + movement;
@@ -148,15 +152,23 @@ public class PlayerScript : CharacterScript {
 			
 		}
 		// climb up cliff if on the correct side of the cliff
-		else if (hitVector.Equals(hit.transform.position)) { 
+		else if (isCliffTop && hitVector.Equals(hit.transform.position)) { 
 			
 			Vector3 collision = gameObject.transform.position;
-			bool isSouth = false;
+			bool isSouthOrNorth = false;
 			if (direction == (int) DIRECTIONS.SOUTH) {
-				isSouth = true;
+				isSouthOrNorth = true;
 				collision = checkCliffCollision(collision + moveVector);
+			} else if (direction == (int) DIRECTIONS.NORTH) {
+				isSouthOrNorth = true;
 			}
-			if (collision != Vector3.one && checkAcrossCollision(collision, moveVector, 1 << 12) == Vector3.one) {
+			bool spaceEmpty = false;
+			if (isSouthOrNorth) {
+				spaceEmpty = checkAcrossCollision(collision, moveVector, 1 << 12) == Vector3.one;
+			} else {
+				spaceEmpty = checkAcrossCollision(collision + Vector3.back * 128, moveVector, 1 << 12) == Vector3.one;
+			}
+			if (collision != Vector3.one && spaceEmpty) {
 				noInterrupt = true;
 				// TODO: HAVE ANIMATION!
 				// anima = (int)(ANIMATIONS.JUMP);
@@ -170,7 +182,7 @@ public class PlayerScript : CharacterScript {
 					distTraveled += movement.magnitude;
 					yield return null;
 				}
-				if(!isSouth) {
+				if(!isSouthOrNorth) {
 					//TODO: MAKE SURE THAT THE SPOT BELOW IS OPEN (also, perhaps merge motion)
 					distTraveled = 0;
 					while (distTraveled < 128) {
