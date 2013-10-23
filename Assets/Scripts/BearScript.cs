@@ -4,9 +4,20 @@ using System.Collections;
 
 public class BearScript : CharacterScript {
 	
+	public enum PatrolTypes : int {
+		Square = 0,
+		Vertical = 1,
+		Horizontal = 2,
+		Randomly = 3
+	}
+	
 	public float timeToRepath = 1;
 	public float speed = 500;
 	public float noticeRadius = 500;
+	public PatrolTypes patrolType;
+	private int hitObstacleCount = 0;
+	private float lastHit = 0;
+	private System.Random randomGen;
 	
 	// A* Pathfinding Variables
 	private PlayerScript player;
@@ -20,6 +31,7 @@ public class BearScript : CharacterScript {
 		base.Start();
 		team = (int) TEAMS.ENEMY;
 		seeker = GetComponent<Seeker>();
+		randomGen = new System.Random();
 	}
 	
 	override protected void Update () {
@@ -116,6 +128,26 @@ public class BearScript : CharacterScript {
 	}
 	
 	private void movePatrol() {
+		switch (patrolType) {
+		case PatrolTypes.Randomly : 
+			moveRandom();
+			break;
+		case PatrolTypes.Horizontal :
+			moveHorizontal();
+			break;
+		case PatrolTypes.Vertical :
+			moveVertical();
+			break;
+		case PatrolTypes.Square :
+			moveSquare();
+			break;
+		default :
+			moveSquare();
+			break;
+		}
+	}
+	
+	private void moveSquare() {
 		// Get the direction based off time
 		float timeSplit = ((int)Time.timeSinceLevelLoad) % 8;
 		Vector3 dir = Vector3.right;
@@ -127,6 +159,41 @@ public class BearScript : CharacterScript {
 			dir = Vector3.forward;
 		
 		// Then actually do the movement
+		move (dir.x * speed, dir.z * speed);
+	}
+	
+	private void moveVertical() {
+		Vector3 dir = hitObstacleCount % 2 == 1 ? Vector3.forward : Vector3.back ;
+		move (0, dir.z * speed);
+	}
+	
+	private void moveHorizontal() {
+		Vector3 dir = hitObstacleCount % 2 == 1 ? Vector3.left : Vector3.right ;
+		move (dir.x * speed, 0);
+	}
+	
+	private void moveRandom() {
+		lastHit += Time.deltaTime;
+		
+		Vector3 dir = Vector3.right;
+		if(direction == (int) (DIRECTIONS.SOUTH))
+			dir = Vector3.back;
+		else if(direction == (int) (DIRECTIONS.WEST))
+			dir = Vector3.left;
+		else if(direction == (int) (DIRECTIONS.NORTH))
+			dir = Vector3.forward;
+		
+		if( lastHit > 2) {
+			int randomNum = randomGen.Next(4);
+			dir = Vector3.right;
+			if(randomNum == 1)
+				dir = Vector3.back;
+			else if(randomNum == 2)
+				dir = Vector3.left;
+			else if(randomNum == 3)
+				dir = Vector3.forward;
+			lastHit = 0;
+		}
 		move (dir.x * speed, dir.z * speed);
 	}
 	
@@ -164,5 +231,12 @@ public class BearScript : CharacterScript {
 		Vector3 endPoint = GameManager.Instance.Player.transform.position;
 		endPoint.y = 0;
 		return (endPoint - startPoint).magnitude <= noticeRadius;
+	}
+	
+	void OnControllerColliderHit(ControllerColliderHit hit) {
+		if(Time.time - lastHit > 1) {
+			hitObstacleCount++;
+			lastHit = Time.time;
+		}
 	}
 }
