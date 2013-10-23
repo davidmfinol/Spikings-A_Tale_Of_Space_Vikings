@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 		mapData = (tk2dTileMap) FindObjectOfType(typeof(tk2dTileMap));
 		player = ((Transform)Instantiate(playerPrefab, spawnPoint.position, playerPrefab.rotation)).GetComponentInChildren<PlayerScript>();
+		GetComponent<Seeker>().StartPath(player.transform.position, player.transform.position);
 		Camera.main.GetComponent<SmoothFollow2D>().target = player.transform;
 		hud = ((Transform)Instantiate(hudPrefab, hudPrefab.position, hudPrefab.rotation)).GetComponent<HUDController>();
 		hud.hideThought();
