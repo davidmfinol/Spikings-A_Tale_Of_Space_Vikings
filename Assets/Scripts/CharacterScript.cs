@@ -221,7 +221,7 @@ public abstract class CharacterScript : TileScript {
 		playAnimation();
 		
 		//hitPic display
-		GameObject instance = Instantiate(HitPic, sprite.transform.position, sprite.transform.rotation) as GameObject;
+		GameObject instance = Instantiate(HitPic, sprite.transform.position + Vector3.up, sprite.transform.rotation) as GameObject;
 		Destroy(instance, 0.25f);	
 	}
 	
