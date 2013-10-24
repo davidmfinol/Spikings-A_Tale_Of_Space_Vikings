@@ -13,7 +13,8 @@ public enum ANIMATIONS : int {
 	WALK = 1,
 	ATTACK = 2,
 	HIT = 3,
-	DIE = 4
+	DIE = 4,
+	FALL = 5
 }
 
 public abstract class CharacterScript : TileScript {
@@ -162,6 +163,10 @@ public abstract class CharacterScript : TileScript {
 				isBeingHit = true;
 				anim.Play("die" + direction + hasAttack);
 			}
+		}else if (anima == (int) ANIMATIONS.FALL) {
+			if (!anim.IsPlaying("fall" + direction + hasAttack)) {
+				anim.Play("fall" + direction + hasAttack);
+			}
 		}
 	}
 	
@@ -216,7 +221,7 @@ public abstract class CharacterScript : TileScript {
 		playAnimation();
 		
 		//hitPic display
-		GameObject instance = Instantiate(HitPic, transform.position, transform.rotation) as GameObject;
+		GameObject instance = Instantiate(HitPic, sprite.transform.position, sprite.transform.rotation) as GameObject;
 		Destroy(instance, 0.25f);	
 	}
 	

@@ -134,9 +134,8 @@ public class PlayerScript : CharacterScript {
 			
 			if (checkAcrossCollision(gameObject.transform.position-moveVector, moveVector, 1 << 12) == Vector3.one) {
 				noInterrupt = true;
-				// TODO: HAVE ANIMATION!
-				// anima = (int)(ANIMATIONS.JUMP);
-				// PlayAnimation();
+				anima = (int)(ANIMATIONS.FALL);
+				playAnimation();
 				Vector3 normalizedMove = moveVector.normalized;
 				// Move up the cliff
 				float distTraveled = 0;
@@ -174,9 +173,8 @@ public class PlayerScript : CharacterScript {
 			}
 			if (collision != Vector3.one && spaceEmpty) {
 				noInterrupt = true;
-				// TODO: HAVE ANIMATION!
-				// anima = (int)(ANIMATIONS.JUMP);
-				// PlayAnimation();
+				anima = (int)(ANIMATIONS.FALL);
+				playAnimation();
 				moveVector+= (collision - transform.position) ;
 				Vector3 normalizedMove = moveVector.normalized;
 				float distTraveled = 0;
