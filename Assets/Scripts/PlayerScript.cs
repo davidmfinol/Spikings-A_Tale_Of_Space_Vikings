@@ -53,10 +53,31 @@ public class PlayerScript : CharacterScript {
 		} else if (Input.GetButtonDown("Fire2")) {
 			// TODO: DON'T FORCE THIS TO BE GRID-BASED
 			// SHOULD PROBABLY BE ABLE TO JUST SET ANIMA = PUSHING AND CALL PLAYANIMATION() OVER AND OVER WHILE ALLOWING REGULAR MOVEMENT?
-			Vector3 position = gameObject.transform.position + getMoveVector();
-			if (checkDownCollision(position, 1 << 11)) {
+			Vector3 position = gameObject.transform.position;
+			position.y = 0;
+			Vector3 displacement = getMoveVector();
+			Debug.Log (displacement);
+			Debug.Log (gameObject.transform.position + " " + transform.position);
+			Vector3 hitVector = checkAcrossCollision(position, displacement, 1 << 14);//check to see if pushing by a cliff
+			Debug.Log(hitVector);
+			if (hitVector == Vector3.one) { // no cliff
+				Debug.Log ("no cliff");
+				position = gameObject.transform.position + displacement;
+			} else {
+				hitVector.y = 0;
+				Debug.Log(position + " " + hitVector);
+				if (hitVector == position) { // over cliff
+					Debug.Log ("over cliff");
+					displacement += Vector3.back;
+					position = gameObject.transform.position + displacement;
+				} else { //into cliff
+					Debug.Log ("into cliff");
+					position = Vector3.one;
+				}
+			}
+			if (position != Vector3.one && checkDownCollision(position, 1 << 11)) {
 				gameObject.transform.position = position;
-				transform.position += getMoveVector();
+				transform.position += displacement;
 			}
 		}
 	}
