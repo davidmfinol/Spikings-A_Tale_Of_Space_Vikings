@@ -6,6 +6,8 @@ public class PlayerScript : CharacterScript {
 	//for checkpoint stuff
 	public bool pastCheck = false;
 	
+	public GameObject hammerThrowPrefab;
+	
 	
 	override protected void Start () {
 		base.Start();
@@ -19,10 +21,36 @@ public class PlayerScript : CharacterScript {
 		if (Input.GetButtonDown("Fire1") && powers % 2 == 1) {
 			attack();
 		}
+		else if (Input.GetButtonDown("Fire3") && powers %2 ==1){
+			hammerThrow();
+		}
 		float x = Input.GetAxis("Horizontal") * speed;
 		float z = Input.GetAxis("Vertical") * speed;
 		move(x, z);
 	}
+	
+	
+	
+	//HammerThrow Method
+	protected void hammerThrow() {
+		if(anima == (int) ANIMATIONS.HIT || anima == (int) ANIMATIONS.DIE || noInterrupt) {
+			return;
+		}
+		
+		anima = (int) ANIMATIONS.THROW;
+		powers--;
+		
+		GameObject spawnedHammer = (GameObject) Instantiate(hammerThrowPrefab, transform.position, hammerThrowPrefab.transform.rotation);
+		HammerThrow hammer = spawnedHammer.GetComponent<HammerThrow>();
+		
+		hammer.parentOb = gameObject;
+		hammer.throwDirection = getMoveVector().normalized;
+		
+		playAnimation();
+		//GetComponentInChildren<AudioSource>().Play();
+	}
+	
+	
 	
 	override protected void OnDeath () {
 		currentHealth = maxHealth;

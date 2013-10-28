@@ -12,8 +12,12 @@ public class HitboxScript : MonoBehaviour {
 	public int team = 0;
 	public int damage = 10;
 	public bool smash = false;
+	public bool autoSelfDestruct = true;
 	
 	void Start () {
+		if(!autoSelfDestruct)
+			return;
+		
 		Destroy(gameObject, delay);
 		Destroy(transform.parent.gameObject, delay);
 	}

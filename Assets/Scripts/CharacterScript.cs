@@ -14,7 +14,10 @@ public enum ANIMATIONS : int {
 	ATTACK = 2,
 	HIT = 3,
 	DIE = 4,
-	FALL = 5
+	FALL = 5,
+	THROW = 6,
+	CATCH = 7,
+	JUMP = 8
 }
 
 public abstract class CharacterScript : TileScript {
@@ -210,6 +213,9 @@ public abstract class CharacterScript : TileScript {
 		playAnimation();
 		GetComponentInChildren<AudioSource>().Play();
 	}
+	
+	//HammerThrow Method
+	
 	
 	
 	public void takeHit(HitboxScript hit){
