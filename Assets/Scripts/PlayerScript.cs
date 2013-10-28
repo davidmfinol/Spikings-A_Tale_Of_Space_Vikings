@@ -157,18 +157,22 @@ public class PlayerScript : CharacterScript {
 		bool onPlatform = checkDownCollision(transform.position + new Vector3(0, 1000, 0), 1 << 15);// Check to see if the player is on a platform
 		// Climb up cliff if on platform
 		if (onPlatform) {
-			
-			if (checkAcrossCollision(gameObject.transform.position-moveVector, moveVector, 1 << 12) == Vector3.one) {
+			Vector3 displacement = moveVector;
+			if (direction == (int) DIRECTIONS.NORTH) {
+				//TODO: Check to make sure that is legal movement, i.e. if cliff is 1 high
+				moveVector *= 2;
+				displacement *= 2;
+			} else if (direction != (int) DIRECTIONS.SOUTH) {
+				moveVector += Vector3.forward * 128;
+				displacement += Vector3.back * 128;
+			}
+			if (checkAcrossCollision(gameObject.transform.position-displacement, getMoveVector(), 1 << 12) == Vector3.one) {
 				noInterrupt = true;
 				anima = (int)(ANIMATIONS.FALL);
 				playAnimation();
-				Vector3 normalizedMove = moveVector.normalized;
 				// Move up the cliff
 				float distTraveled = 0;
-				if (direction == (int) DIRECTIONS.NORTH) {
-					//TODO: Check to make sure that is legal movement, i.e. cliff is 1 high
-					moveVector *= 2;
-				}
+				Vector3 normalizedMove = moveVector.normalized;
 				while (distTraveled < moveVector.magnitude) {
 					Vector3 movement = Time.deltaTime * normalizedMove * speed;
 					transform.position = transform.position + movement;
