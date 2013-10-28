@@ -56,30 +56,37 @@ public class PlayerScript : CharacterScript {
 			Vector3 position = gameObject.transform.position;
 			position.y = 0;
 			Vector3 displacement = getMoveVector();
-			Debug.Log (displacement);
-			Debug.Log (gameObject.transform.position + " " + transform.position);
 			Vector3 hitVector = checkAcrossCollision(position, displacement, 1 << 14);//check to see if pushing by a cliff
-			Debug.Log(hitVector);
 			if (hitVector == Vector3.one) { // no cliff
-				Debug.Log ("no cliff");
 				position = gameObject.transform.position + displacement;
 			} else {
-				hitVector.y = 0;
-				Debug.Log(position + " " + hitVector);
-				if (hitVector == position) { // over cliff
-					Debug.Log ("over cliff");
-					displacement += Vector3.back;
+				if (checkVector(hitVector, position)) { // over cliff
+					displacement += Vector3.back * 128;
 					position = gameObject.transform.position + displacement;
 				} else { //into cliff
-					Debug.Log ("into cliff");
 					position = Vector3.one;
 				}
 			}
 			if (position != Vector3.one && checkDownCollision(position, 1 << 11)) {
 				gameObject.transform.position = position;
-				transform.position += displacement;
+				transform.position += getMoveVector() / 2;
 			}
 		}
+	}
+	
+	private bool checkVector(Vector3 one, Vector3 two) {
+		float x = one.x - two.x;
+		float z = one.z - two.z;
+		if (x < 0) {
+			x *= -1;
+		}
+		if (z < 0) {
+			z *= -1;
+		}
+		if (x > .001 || z > .001) {
+			return false;
+		}
+		return true;
 	}
 	
 	private Vector3 getMoveVector() {
@@ -145,11 +152,9 @@ public class PlayerScript : CharacterScript {
 	IEnumerator JumpCliff(ControllerColliderHit hit) {
 		GameObject gameObject = hit.collider.gameObject;
 		bool isCliffTop = gameObject.CompareTag("Cliff Top");
-		
 		Vector3 moveVector = getMoveVector(); // Returns us how far and in what direction we need to move to get across one tile
 		Vector3 hitVector = checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 14);// Check to see if we're approaching the cliff from the correct side
 		bool onPlatform = checkDownCollision(transform.position + new Vector3(0, 1000, 0), 1 << 15);// Check to see if the player is on a platform
-		
 		// Climb up cliff if on platform
 		if (onPlatform) {
 			
@@ -176,7 +181,6 @@ public class PlayerScript : CharacterScript {
 		}
 		// climb up cliff if on the correct side of the cliff
 		else if (isCliffTop && hitVector.Equals(hit.transform.position)) { 
-			
 			Vector3 collision = gameObject.transform.position;
 			bool isSouthOrNorth = false;
 			if (direction == (int) DIRECTIONS.SOUTH) {
