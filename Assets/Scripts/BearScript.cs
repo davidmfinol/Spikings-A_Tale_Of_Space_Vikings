@@ -33,6 +33,7 @@ public class BearScript : CharacterScript {
 		team = (int) TEAMS.ENEMY;
 		seeker = GetComponent<Seeker>();
 		randomGen = new System.Random();
+		currentPath = null;
 	}
 	
 	override protected void Update () {
@@ -48,8 +49,7 @@ public class BearScript : CharacterScript {
 			movePatrol();
 	}
 	
-	override protected void OnDeath ()
-	{
+	override protected void OnDeath () {
 		anima = (int) (ANIMATIONS.DIE);
 		playAnimation();
 		Destroy(gameObject, 0.95f);
