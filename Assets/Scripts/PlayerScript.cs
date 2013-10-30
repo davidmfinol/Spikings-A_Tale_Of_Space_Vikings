@@ -13,6 +13,7 @@ public class PlayerScript : CharacterScript {
 		base.Start();
 		team = (int) TEAMS.PLAYER;
 		powers = 0;
+		combo = true;
 	}
 	
 	// Update is called once per frame

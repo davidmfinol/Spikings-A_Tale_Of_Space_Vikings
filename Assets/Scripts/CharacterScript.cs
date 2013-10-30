@@ -12,18 +12,21 @@ public enum ANIMATIONS : int {
 	IDLE = 0,
 	WALK = 1,
 	ATTACK = 2,
-	HIT = 3,
-	DIE = 4,
-	FALL = 5,
-	THROW = 6,
-	CATCH = 7,
-	JUMP = 8
+	SMASH = 3,
+	SPIN = 4,
+	HIT = 5,
+	DIE = 6,
+	FALL = 7,
+	THROW = 8,
+	CATCH = 9,
+	JUMP = 10
 }
 
 public abstract class CharacterScript : TileScript {
 	public int maxHealth = 50;
 	public int currentHealth = 0;
 	public GameObject hitBox;
+	public bool combo = false;
 
 	protected int direction = (int) DIRECTIONS.EAST;
 	protected int anima = (int) ANIMATIONS.IDLE;
@@ -78,7 +81,7 @@ public abstract class CharacterScript : TileScript {
 		
 		// Some combat control overhead
 		int hasAttack = powers % 2;
-		if (isAttacking && !anim.IsPlaying("attack0" + hasAttack) && !anim.IsPlaying("attack2" + hasAttack) && !anim.IsPlaying("attack4" + hasAttack) && !anim.IsPlaying("attack6" + hasAttack)) {
+		if (isAttacking && checkAttackAnimations()) {
 			isAttacking = false;
 		}
 		if(isBeingHit && !anim.IsPlaying("hit0" + hasAttack) && !anim.IsPlaying("hit2" + hasAttack) && !anim.IsPlaying("hit4" + hasAttack) && !anim.IsPlaying("hit6" + hasAttack)){
@@ -153,20 +156,33 @@ public abstract class CharacterScript : TileScript {
 			}
 		} else if (anima == (int) ANIMATIONS.ATTACK) {
 			if (!isAttacking && !anim.IsPlaying("attack" + direction + hasAttack)) {
+				Debug.Log ("play jab");
 				isAttacking = true;
 				anim.Play("attack" + direction + hasAttack);
 			}
-		}else if (anima == (int) ANIMATIONS.HIT) {
+		} else if (anima == (int) ANIMATIONS.SMASH) {
+			if (!isAttacking && !anim.IsPlaying("smash" + direction + hasAttack)) {
+				Debug.Log ("play smash");
+				isAttacking = true;
+				anim.Play("smash" + direction + hasAttack);
+			}
+		} else if (anima == (int) ANIMATIONS.SPIN) {
+			if (!isAttacking && !anim.IsPlaying("spin" + direction + hasAttack)) {
+				Debug.Log ("play spin");
+				isAttacking = true;
+				anim.Play("spin" + direction + hasAttack);
+			}
+		} else if (anima == (int) ANIMATIONS.HIT) {
 			if (!anim.IsPlaying("hit" + direction + hasAttack)) {
 				isBeingHit = true;
 				anim.Play("hit" + direction + hasAttack);
 			}
-		}else if (anima == (int) ANIMATIONS.DIE) {
+		} else if (anima == (int) ANIMATIONS.DIE) {
 			if (!anim.IsPlaying("die" + direction + hasAttack)) {
 				isBeingHit = true;
 				anim.Play("die" + direction + hasAttack);
 			}
-		}else if (anima == (int) ANIMATIONS.FALL) {
+		} else if (anima == (int) ANIMATIONS.FALL) {
 			if (!anim.IsPlaying("fall" + direction + hasAttack)) {
 				anim.Play("fall" + direction + hasAttack);
 			}
@@ -194,18 +210,20 @@ public abstract class CharacterScript : TileScript {
 			return;
 		}
 		
-		anima = (int) ANIMATIONS.ATTACK;
-		
 		//added in for combos
-		ComboTime(); //Doing logic for timing before animation
+		if (combos) { //makes it so you have enable combo aka for player
+			ComboTime(); //Doing logic for timing before animation
+		}
 		
-		//dirty implementation to test animations
 		if (currentCombo == 0) {
+			Debug.Log ("jab");
 			anima = (int) ANIMATIONS.ATTACK;
 		} else if(currentCombo == 1) {
-			anima = (int) ANIMATIONS.ATTACK;
+			Debug.Log ("smash");
+			anima = (int) ANIMATIONS.SMASH;
 		} else {
-			anima = (int) ANIMATIONS.ATTACK;
+			Debug.Log ("spin");
+			anima = (int) ANIMATIONS.SPIN;
 		}
 		if (!isAttacking) {
 			spawnHitBox(team);
@@ -253,5 +271,15 @@ public abstract class CharacterScript : TileScript {
 		string comboName;
 		string comboAnimation;
 		AudioClip comboSound;
+	}
+	
+	private bool checkAttackAnimations() {
+		int hasAttack = powers % 2;
+		if (!anim.IsPlaying("attack0" + hasAttack) && !anim.IsPlaying("attack2" + hasAttack) && !anim.IsPlaying("attack4" + hasAttack) && !anim.IsPlaying("attack6" + hasAttack)
+			&& !anim.IsPlaying("smash0" + hasAttack) && !anim.IsPlaying("smash2" + hasAttack) && !anim.IsPlaying("smash4" + hasAttack) && !anim.IsPlaying("smash6" + hasAttack)
+			&& !anim.IsPlaying("spin0" + hasAttack) && !anim.IsPlaying("spin2" + hasAttack) && !anim.IsPlaying("spin4" + hasAttack) && !anim.IsPlaying("spin6" + hasAttack)) {
+			return true;
+		}
+		return false;
 	}
 }
