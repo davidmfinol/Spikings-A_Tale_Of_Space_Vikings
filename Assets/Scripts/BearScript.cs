@@ -18,21 +18,20 @@ public class BearScript : CharacterScript {
 	private int hitObstacleCount = 0;
 	private float lastHit = 0;
 	private float lastChange = 0;
-	private System.Random randomGen;
 	
 	// A* Pathfinding Variables
 	private PlayerScript player;
 	private Seeker seeker;
-	private Path currentPath = null;
-	private int currentWaypoint = 0;
-	private bool searchingForPath = false;
-	private float timeSinceLastPath = 0;
+	private Path currentPath;
+	private int currentWaypoint;
+	private bool searchingForPath;
+	private float timeSinceLastPath;
+	private Vector3 prevDir;
 	
 	override protected void Start () {
 		base.Start();
 		team = (int) TEAMS.ENEMY;
 		seeker = GetComponent<Seeker>();
-		randomGen = new System.Random();
 	}
 	
 	override protected void Update () {
@@ -184,27 +183,21 @@ public class BearScript : CharacterScript {
 	
 	private void moveRandom() {
 		lastChange += Time.deltaTime;
-		
-		Vector3 dir = Vector3.right;
-		if(direction == (int) (DIRECTIONS.SOUTH))
-			dir = Vector3.back;
-		else if(direction == (int) (DIRECTIONS.WEST))
-			dir = Vector3.left;
-		else if(direction == (int) (DIRECTIONS.NORTH))
-			dir = Vector3.forward;
-		
-		if( lastChange > 2) {
-			int randomNum = randomGen.Next(4);
-			dir = Vector3.right;
+
+		if( lastChange > .5) {
+			int randomNum = Random.Range(0, 5);
+			prevDir = Vector3.zero;
 			if(randomNum == 1)
-				dir = Vector3.back;
+				prevDir = Vector3.back;
 			else if(randomNum == 2)
-				dir = Vector3.left;
+				prevDir = Vector3.left;
 			else if(randomNum == 3)
-				dir = Vector3.forward;
+				prevDir = Vector3.forward;
+			else if(randomNum == 4)
+				prevDir = Vector3.right;
 			lastChange = 0;
 		}
-		move (dir.x * speed, dir.z * speed);
+		move (prevDir.x * speed, prevDir.z * speed);
 	}
 	
 	private bool isInAttackRange() {
