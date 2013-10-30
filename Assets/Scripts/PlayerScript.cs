@@ -41,10 +41,14 @@ public class PlayerScript : CharacterScript {
 		anima = (int) ANIMATIONS.THROW;
 		powers--;
 		
-		GameObject spawnedHammer = (GameObject) Instantiate(hammerThrowPrefab, transform.position, hammerThrowPrefab.transform.rotation);
+		GameObject handPosition = new GameObject();
+		handPosition.transform.parent = transform;
+		handPosition.transform.position = transform.position + new Vector3(0, 0, 75);
+		
+		GameObject spawnedHammer = (GameObject) Instantiate(hammerThrowPrefab, handPosition.transform.position, hammerThrowPrefab.transform.rotation);
 		HammerThrow hammer = spawnedHammer.GetComponent<HammerThrow>();
 		
-		hammer.parentOb = gameObject;
+		hammer.parentOb = handPosition;
 		hammer.throwDirection = getMoveVector().normalized;
 		hammer.smashing = powers > 1;
 		

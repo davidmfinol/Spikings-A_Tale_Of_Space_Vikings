@@ -192,7 +192,7 @@ public abstract class CharacterScript : TileScript {
 	}
 	
 	protected void move(float x, float z) {
-		if (isAttacking || isBeingHit || anima == (int) (ANIMATIONS.DIE) || noInterrupt)
+		if (/*anima == (int) (ANIMATIONS.THROW) || anima == (int) (ANIMATIONS.CATCH) || */isAttacking || isBeingHit || anima == (int) (ANIMATIONS.DIE) || noInterrupt)
 			return;
 		
 		processInput(x, z);
