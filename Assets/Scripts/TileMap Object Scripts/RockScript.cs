@@ -29,6 +29,7 @@ public class RockScript : TileScript {
 		if(!anim.IsPlaying("destroy")) {
 			anim.Play("destroy");
 			destroying = true;
+			audio.Play ();	
 		}
 	}
 }
