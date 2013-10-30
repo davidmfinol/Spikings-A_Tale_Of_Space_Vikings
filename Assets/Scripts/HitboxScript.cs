@@ -12,10 +12,10 @@ public class HitboxScript : MonoBehaviour {
 	public int team = 0;
 	public int damage = 10;
 	public bool smash = false;
-	public bool autoSelfDestruct = true;
+	public bool isThrownHammer = false;
 	
 	void Start () {
-		if(!autoSelfDestruct)
+		if(isThrownHammer)
 			return;
 		
 		Destroy(gameObject, delay);

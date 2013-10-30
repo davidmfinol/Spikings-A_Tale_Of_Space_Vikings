@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class HammerThrow : MonoBehaviour {
@@ -27,7 +27,7 @@ public class HammerThrow : MonoBehaviour {
 		hitbox = (GameObject) Instantiate(hitboxPrefab, transform.position, transform.rotation);
 		hitbox.transform.parent = hitBoxHolder.transform;
 		hitbox.GetComponent<HitboxScript>().team = (int) TEAMS.PLAYER;
-		hitbox.GetComponent<HitboxScript>().autoSelfDestruct = false;
+		hitbox.GetComponent<HitboxScript>().isThrownHammer = true;
 		
 		sprite = GetComponentInChildren<tk2dSprite>();
 	}
