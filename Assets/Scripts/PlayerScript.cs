@@ -200,6 +200,9 @@ public class PlayerScript : CharacterScript {
 				anima = (int)(ANIMATIONS.FALL);
 				playAnimation();
 				// Move up the cliff
+				Vector3 position = transform.position;
+				position.y = GameManager.Instance.MapData.height-((int)position.z) / 128;
+				GameObject shadow = (GameObject) Instantiate(shadowPrefab, position, shadowPrefab.transform.rotation);
 				float distTraveled = 0;
 				Vector3 normalizedMove = moveVector.normalized;
 				while (distTraveled < moveVector.magnitude) {
@@ -208,6 +211,7 @@ public class PlayerScript : CharacterScript {
 					distTraveled += movement.magnitude;
 					yield return null;
 				}
+				Destroy (shadow);
 				noInterrupt = false;
 			}
 			
@@ -231,11 +235,12 @@ public class PlayerScript : CharacterScript {
 			}
 			if (collision != Vector3.one && spaceEmpty) {
 				noInterrupt = true;
-				Vector3 position = transform.position;
 				anima = (int)(ANIMATIONS.FALL);
 				playAnimation();
 				moveVector+= (collision - transform.position);
 				moveVector.y = 0;
+				Vector3 position = transform.position;
+				position.y = GameManager.Instance.MapData.height-((int)position.z) / 128;
 				if (!isSouthOrNorth) {
 					position += Vector3.back * 128 + moveVector;
 				} else {
