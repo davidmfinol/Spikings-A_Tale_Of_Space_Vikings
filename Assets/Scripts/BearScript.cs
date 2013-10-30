@@ -23,17 +23,16 @@ public class BearScript : CharacterScript {
 	// A* Pathfinding Variables
 	private PlayerScript player;
 	private Seeker seeker;
-	private Path currentPath;
-	private int currentWaypoint;
-	private bool searchingForPath;
-	private float timeSinceLastPath;
+	private Path currentPath = null;
+	private int currentWaypoint = 0;
+	private bool searchingForPath = false;
+	private float timeSinceLastPath = 0;
 	
 	override protected void Start () {
 		base.Start();
 		team = (int) TEAMS.ENEMY;
 		seeker = GetComponent<Seeker>();
 		randomGen = new System.Random();
-		currentPath = null;
 	}
 	
 	override protected void Update () {

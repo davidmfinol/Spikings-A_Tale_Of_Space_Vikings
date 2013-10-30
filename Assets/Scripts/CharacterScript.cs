@@ -76,7 +76,7 @@ public abstract class CharacterScript : TileScript {
 		
 		// Make our sprite layer correctly
 		Vector3 pos = sprite.transform.position;
-		pos.y = GameManager.Instance.MapData.height-((int)pos.z) / 128 + 0.5f;
+		pos.y = GameManager.Instance.MapData.height-((int)pos.z) / 128 + 0.6f;
 		sprite.transform.position = pos;
 		
 		// Some combat control overhead
