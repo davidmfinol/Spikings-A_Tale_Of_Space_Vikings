@@ -73,6 +73,10 @@ public class PlayerScript : CharacterScript {
 			powers += gameObject.GetComponent<ItemScript>().power;
 			Destroy(gameObject);
 		}
+		 else if (gameObject.CompareTag("HammerThrown")) {
+			Destroy(gameObject);
+			powers++;
+	}
 	}
 	
 	private void InteractWithPlatform(GameObject gameObject) {
