@@ -46,6 +46,7 @@ public class PlayerScript : CharacterScript {
 		
 		hammer.parentOb = gameObject;
 		hammer.throwDirection = getMoveVector().normalized;
+		hammer.smashing = powers > 1;
 		
 		playAnimation();
 		//GetComponentInChildren<AudioSource>().Play();

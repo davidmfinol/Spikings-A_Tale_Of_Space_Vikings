@@ -18,7 +18,7 @@ public class RockScript : TileScript {
 			if (Random.Range(0, 4) == 0) {
 				Vector3 pos = transform.position;
 				pos.y = 0;
-				GameObject mead = (GameObject) Instantiate(meadPrefab, pos, meadPrefab.transform.rotation);
+				Instantiate(meadPrefab, pos, meadPrefab.transform.rotation);
 			}
 			Destroy(gameObject);
 			destroying = false;

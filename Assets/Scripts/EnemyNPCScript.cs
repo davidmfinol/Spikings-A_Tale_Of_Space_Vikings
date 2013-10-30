@@ -54,7 +54,7 @@ public class EnemyNPCScript : CharacterScript {
 		anima = (int) (ANIMATIONS.DIE);
 		playAnimation();
 		if (Random.Range(0, 4) == 0) {
-			GameObject mead = (GameObject) Instantiate(meadPrefab, transform.position, meadPrefab.transform.rotation);
+		Instantiate(meadPrefab, transform.position, meadPrefab.transform.rotation);
 		}
 		Destroy(gameObject, 0.95f);
 	}

@@ -8,6 +8,7 @@ public class HammerThrow : MonoBehaviour {
 	public GameObject hitboxPrefab;
 	public GameObject parentOb;
 	public Vector3 throwDirection;
+	public bool smashing;
 	
 	private float distanceTraveled;
 	private GameObject hitBoxHolder;
@@ -28,7 +29,7 @@ public class HammerThrow : MonoBehaviour {
 		hitbox.transform.parent = hitBoxHolder.transform;
 		hitbox.GetComponent<HitboxScript>().team = (int) TEAMS.PLAYER;
 		hitbox.GetComponent<HitboxScript>().autoSelfDestruct = false;
-		
+		hitbox.GetComponent<HitboxScript>().smash = smashing;
 		sprite = GetComponentInChildren<tk2dSprite>();
 	}
 	
