@@ -211,7 +211,7 @@ public abstract class CharacterScript : TileScript {
 		}
 		
 		//added in for combos
-		if (combos) { //makes it so you have enable combo aka for player
+		if (combo) { //makes it so you have enable combo aka for player
 			ComboTime(); //Doing logic for timing before animation
 		}
 		
