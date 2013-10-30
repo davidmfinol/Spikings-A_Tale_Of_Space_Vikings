@@ -232,11 +232,7 @@ public abstract class CharacterScript : TileScript {
 		GetComponentInChildren<AudioSource>().Play();
 	}
 	
-	//HammerThrow Method
-	
-	
-	
-	public void takeHit(HitboxScript hit){
+	public virtual void takeHit(HitboxScript hit){
 		if(anima == (int) (ANIMATIONS.DIE) || noInterrupt)
 			return;
 		
