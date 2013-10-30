@@ -158,9 +158,8 @@ public class PlayerScript : CharacterScript {
 	
 	IEnumerator JumpPlatform() {
 		noInterrupt = true; // this animation/action cannot be interrupted
-		// TODO: HAVE ANIMATION
-		// anima = (int)(ANIMATIONS.JUMP);
-		// PlayAnimation();
+		anima = (int)(ANIMATIONS.JUMP);
+		playAnimation();
 		
 		// TODO: Fix movement so you can avoid getting on platform
 		
@@ -199,7 +198,7 @@ public class PlayerScript : CharacterScript {
 			}
 			if (checkAcrossCollision(gameObject.transform.position-displacement, getMoveVector(), 1 << 12) == Vector3.one) {
 				noInterrupt = true;
-				anima = (int)(ANIMATIONS.FALL);
+				anima = (int)(ANIMATIONS.JUMP);
 				playAnimation();
 				// Move up the cliff
 				Vector3 position = transform.position;
