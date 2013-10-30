@@ -7,7 +7,7 @@ public class PlayerScript : CharacterScript {
 	public bool pastCheck = false;
 	
 	public GameObject hammerThrowPrefab;
-	
+	public GameObject shadowPrefab;
 	
 	override protected void Start () {
 		base.Start();
@@ -202,9 +202,17 @@ public class PlayerScript : CharacterScript {
 			}
 			if (collision != Vector3.one && spaceEmpty) {
 				noInterrupt = true;
+				Vector3 position = transform.position;
 				anima = (int)(ANIMATIONS.FALL);
 				playAnimation();
-				moveVector+= (collision - transform.position) ;
+				moveVector+= (collision - transform.position);
+				moveVector.y = 0;
+				if (!isSouthOrNorth) {
+					position += Vector3.back * 128 + moveVector;
+				} else {
+					position += moveVector;
+				}
+				GameObject shadow = (GameObject) Instantiate(shadowPrefab, position, shadowPrefab.transform.rotation);
 				Vector3 normalizedMove = moveVector.normalized;
 				float distTraveled = 0;
 				while (distTraveled < moveVector.magnitude) {
@@ -223,6 +231,7 @@ public class PlayerScript : CharacterScript {
 						yield return null;
 					}
 				}
+				Destroy (shadow);
 				noInterrupt = false;
 			}
 			

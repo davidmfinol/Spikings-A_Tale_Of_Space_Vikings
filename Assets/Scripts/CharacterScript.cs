@@ -51,7 +51,7 @@ public abstract class CharacterScript : TileScript {
 	float comboMaxTime = 1.0f; //How long a timer for combo lasts in seconds. Fill this out in Inspector.
 	float comboSpanTime = .25f; //The span of when a combo can start. Fill this out in Inspector.
 	float comboMidPoint = .5f; //The position within the maxtime of a combo the span is active. Fill this out in Inspector.
-	private int currentCombo = -1;
+	private int currentCombo = 0;
 	private float comboTimeout = .0f;
 	
 //hitBoxHolder
