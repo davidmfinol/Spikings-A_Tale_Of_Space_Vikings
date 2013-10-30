@@ -44,6 +44,7 @@ public abstract class CharacterScript : TileScript {
 	
 	private bool isAttacking;
 	private bool isBeingHit;
+	protected bool isDead;
 	protected bool noInterrupt;
 	
 // for combos
@@ -70,7 +71,7 @@ public abstract class CharacterScript : TileScript {
 	}
 	
 	virtual protected void Update () {
-		if(currentHealth <= 0) {
+		if(!isDead && currentHealth <= 0) {
 			OnDeath();
 		}
 		
@@ -95,6 +96,7 @@ public abstract class CharacterScript : TileScript {
 	}
 	
 	virtual protected void OnDeath() {
+		isDead = true;
 		Destroy(gameObject);
 	}
 	

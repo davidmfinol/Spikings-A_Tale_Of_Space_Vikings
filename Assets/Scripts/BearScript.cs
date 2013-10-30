@@ -15,6 +15,8 @@ public class BearScript : CharacterScript {
 	public float speed = 500;
 	public float noticeRadius = 500;
 	public PatrolTypes patrolType;
+	public GameObject meadPrefab;
+	
 	private int hitObstacleCount = 0;
 	private float lastHit = 0;
 	private float lastChange = 0;
@@ -48,8 +50,12 @@ public class BearScript : CharacterScript {
 	}
 	
 	override protected void OnDeath () {
+		isDead = true;
 		anima = (int) (ANIMATIONS.DIE);
 		playAnimation();
+		if (Random.Range(0, 4) == 0) {
+			GameObject mead = (GameObject) Instantiate(meadPrefab, transform.position, meadPrefab.transform.rotation);
+		}
 		Destroy(gameObject, 0.95f);
 	}
 	

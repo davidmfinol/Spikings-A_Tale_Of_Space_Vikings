@@ -71,7 +71,9 @@ public class PlayerScript : CharacterScript {
 		} else if (gameObject.CompareTag("Cliff Top") || gameObject.CompareTag("Cliff Side")) {
 			StartCoroutine("JumpCliff", hit);
 		} else if (gameObject.CompareTag("Item")) {
-			powers += gameObject.GetComponent<ItemScript>().power;
+			ItemScript item = gameObject.GetComponent<ItemScript>();
+			powers += item.power;
+			currentHealth += item.health;
 			Destroy(gameObject);
 		}
 	}
