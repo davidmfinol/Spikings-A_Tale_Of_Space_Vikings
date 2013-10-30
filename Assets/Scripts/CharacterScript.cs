@@ -102,7 +102,7 @@ public abstract class CharacterScript : TileScript {
 	
 	protected void spawnHitBox(int team) {
 		Vector3 pos = Vector3.zero;
-		pos.x += 167;
+		pos.x += controller.radius * 2;
 		GameObject box = (GameObject) Instantiate(hitBox, pos, Quaternion.identity);
 		box.GetComponent<HitboxScript>().team = team;
 		if (powers >> 1 % 2 == 1) {
