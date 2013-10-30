@@ -12,6 +12,7 @@ public class HammerThrow : MonoBehaviour {
 	private float distanceTraveled;
 	private GameObject hitBoxHolder;
 	private GameObject hitbox;
+	private tk2dSprite sprite;
 	
 	// Use this for initialization
 	void Start () {
@@ -27,6 +28,8 @@ public class HammerThrow : MonoBehaviour {
 		hitbox.transform.parent = hitBoxHolder.transform;
 		hitbox.GetComponent<HitboxScript>().team = (int) TEAMS.PLAYER;
 		hitbox.GetComponent<HitboxScript>().autoSelfDestruct = false;
+		
+		sprite = GetComponentInChildren<tk2dSprite>();
 	}
 	
 	// Update is called once per frame
@@ -35,13 +38,28 @@ public class HammerThrow : MonoBehaviour {
 			throwDirection = (parentOb.transform.position-transform.position).normalized;
 		}
 		
+		// Move the hammer
 		Vector3 throwMovement = throwDirection * speed * Time.deltaTime;
 		Vector3 pos = transform.position + throwMovement; // movement based off throw
-		pos.y = GameManager.Instance.MapData.height-((int)pos.z) / 128 + 0.6f;
+		pos.y = 0;
 		transform.position =  pos;
-		Vector3 hitPos = hitbox.transform.position;
-		hitPos.y = 0;
-		hitbox.transform.position = hitPos;
+		
+		// Order the sprite
+		pos = sprite.transform.position;
+		pos.y = GameManager.Instance.MapData.height-((int)pos.z) / 128 + 0.6f;
+		sprite.transform.position = pos;
+		
 		distanceTraveled += Mathf.Abs(throwMovement.magnitude);
+	}
+	
+	void OnTriggerEnter(Collider collider){
+		
+		PlayerScript player = collider.GetComponent<PlayerScript>();
+		
+		if(player != null && distanceTraveled > throwDistance){
+			Destroy(gameObject);
+			player.powers++;
+		}
+		
 	}
 }

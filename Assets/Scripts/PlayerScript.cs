@@ -76,10 +76,7 @@ public class PlayerScript : CharacterScript {
 			currentHealth += item.health;
 			Destroy(gameObject);
 		}
-		 else if (gameObject.CompareTag("HammerThrown")) {
-			Destroy(gameObject);
-			powers++;
-	}
+		
 	}
 	
 	private void InteractWithPlatform(GameObject gameObject) {

@@ -36,7 +36,7 @@ public abstract class CharacterScript : TileScript {
 	 *  2 = smash
 	 *  4 = pull
 	 */
-	protected int powers;
+	public int powers;
 	
 	protected CharacterController controller;
 	protected tk2dSprite sprite;
