@@ -25,11 +25,11 @@ public class HitboxScript : MonoBehaviour {
 	private void OnTriggerEnter(Collider collider) {
 		//print ("collision.collider.gameobject is " + collider.gameObject);
 		GameObject gameObject = collider.gameObject;
-		BearScript bear = gameObject.GetComponent<BearScript>();
+		EnemyNPCScript enemy = gameObject.GetComponent<EnemyNPCScript>();
 		PlayerScript player = gameObject.GetComponent<PlayerScript>();
 		RockScript rock = gameObject.GetComponent<RockScript>();
-		if(team == (int) TEAMS.PLAYER && bear != null) {
-			bear.takeHit(this);
+		if(team == (int) TEAMS.PLAYER && enemy != null) {
+			enemy.takeHit(this);
 		} else if (team == (int) TEAMS.ENEMY && player != null) {
 			player.takeHit(this);
 		} else if (smash && team == (int) TEAMS.PLAYER && rock != null) {

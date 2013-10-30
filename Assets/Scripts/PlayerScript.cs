@@ -7,12 +7,13 @@ public class PlayerScript : CharacterScript {
 	public bool pastCheck = false;
 	
 	public GameObject hammerThrowPrefab;
-	
+	public GameObject shadowPrefab;
 	
 	override protected void Start () {
 		base.Start();
 		team = (int) TEAMS.PLAYER;
 		powers = 0;
+		combo = true;
 	}
 	
 	// Update is called once per frame
@@ -70,7 +71,9 @@ public class PlayerScript : CharacterScript {
 		} else if (gameObject.CompareTag("Cliff Top") || gameObject.CompareTag("Cliff Side")) {
 			StartCoroutine("JumpCliff", hit);
 		} else if (gameObject.CompareTag("Item")) {
-			powers += gameObject.GetComponent<ItemScript>().power;
+			ItemScript item = gameObject.GetComponent<ItemScript>();
+			powers += item.power;
+			currentHealth += item.health;
 			Destroy(gameObject);
 		}
 		 else if (gameObject.CompareTag("HammerThrown")) {
@@ -85,12 +88,40 @@ public class PlayerScript : CharacterScript {
 		} else if (Input.GetButtonDown("Fire2")) {
 			// TODO: DON'T FORCE THIS TO BE GRID-BASED
 			// SHOULD PROBABLY BE ABLE TO JUST SET ANIMA = PUSHING AND CALL PLAYANIMATION() OVER AND OVER WHILE ALLOWING REGULAR MOVEMENT?
-			Vector3 position = gameObject.transform.position + getMoveVector();
-			if (checkDownCollision(position, 1 << 11)) {
+			Vector3 position = gameObject.transform.position;
+			position.y = 0;
+			Vector3 displacement = getMoveVector();
+			Vector3 hitVector = checkAcrossCollision(position, displacement, 1 << 14);//check to see if pushing by a cliff
+			if (hitVector == Vector3.one) { // no cliff
+				position = gameObject.transform.position + displacement;
+			} else {
+				if (checkVector(hitVector, position)) { // over cliff
+					displacement += Vector3.back * 128;
+					position = gameObject.transform.position + displacement;
+				} else { //into cliff
+					position = Vector3.one;
+				}
+			}
+			if (position != Vector3.one && checkDownCollision(position, 1 << 11)) {
 				gameObject.transform.position = position;
-				transform.position += getMoveVector();
+				transform.position += getMoveVector() / 2;
 			}
 		}
+	}
+	
+	private bool checkVector(Vector3 one, Vector3 two) {
+		float x = one.x - two.x;
+		float z = one.z - two.z;
+		if (x < 0) {
+			x *= -1;
+		}
+		if (z < 0) {
+			z *= -1;
+		}
+		if (x > .001 || z > .001) {
+			return false;
+		}
+		return true;
 	}
 	
 	private Vector3 getMoveVector() {
@@ -131,9 +162,8 @@ public class PlayerScript : CharacterScript {
 	
 	IEnumerator JumpPlatform() {
 		noInterrupt = true; // this animation/action cannot be interrupted
-		// TODO: HAVE ANIMATION
-		// anima = (int)(ANIMATIONS.JUMP);
-		// PlayAnimation();
+		anima = (int)(ANIMATIONS.JUMP);
+		playAnimation();
 		
 		// TODO: Fix movement so you can avoid getting on platform
 		
@@ -156,38 +186,43 @@ public class PlayerScript : CharacterScript {
 	IEnumerator JumpCliff(ControllerColliderHit hit) {
 		GameObject gameObject = hit.collider.gameObject;
 		bool isCliffTop = gameObject.CompareTag("Cliff Top");
-		
 		Vector3 moveVector = getMoveVector(); // Returns us how far and in what direction we need to move to get across one tile
 		Vector3 hitVector = checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 14);// Check to see if we're approaching the cliff from the correct side
 		bool onPlatform = checkDownCollision(transform.position + new Vector3(0, 1000, 0), 1 << 15);// Check to see if the player is on a platform
-		
 		// Climb up cliff if on platform
 		if (onPlatform) {
-			
-			if (checkAcrossCollision(gameObject.transform.position-moveVector, moveVector, 1 << 12) == Vector3.one) {
+			Vector3 displacement = moveVector;
+			if (direction == (int) DIRECTIONS.NORTH) {
+				//TODO: Check to make sure that is legal movement, i.e. if cliff is 1 high
+				moveVector *= 2;
+				displacement *= 2;
+			} else if (direction != (int) DIRECTIONS.SOUTH) {
+				moveVector += Vector3.forward * 128;
+				displacement += Vector3.back * 128;
+			}
+			if (checkAcrossCollision(gameObject.transform.position-displacement, getMoveVector(), 1 << 12) == Vector3.one) {
 				noInterrupt = true;
-				anima = (int)(ANIMATIONS.FALL);
+				anima = (int)(ANIMATIONS.JUMP);
 				playAnimation();
-				Vector3 normalizedMove = moveVector.normalized;
 				// Move up the cliff
+				Vector3 position = transform.position;
+				position.y = GameManager.Instance.MapData.height-((int)position.z) / 128;
+				GameObject shadow = (GameObject) Instantiate(shadowPrefab, position, shadowPrefab.transform.rotation);
 				float distTraveled = 0;
-				if (direction == (int) DIRECTIONS.NORTH) {
-					//TODO: Check to make sure that is legal movement, i.e. cliff is 1 high
-					moveVector *= 2;
-				}
+				Vector3 normalizedMove = moveVector.normalized;
 				while (distTraveled < moveVector.magnitude) {
 					Vector3 movement = Time.deltaTime * normalizedMove * speed;
 					transform.position = transform.position + movement;
 					distTraveled += movement.magnitude;
 					yield return null;
 				}
+				Destroy (shadow);
 				noInterrupt = false;
 			}
 			
 		}
 		// climb up cliff if on the correct side of the cliff
 		else if (isCliffTop && hitVector.Equals(hit.transform.position)) { 
-			
 			Vector3 collision = gameObject.transform.position;
 			bool isSouthOrNorth = false;
 			if (direction == (int) DIRECTIONS.SOUTH) {
@@ -207,7 +242,16 @@ public class PlayerScript : CharacterScript {
 				noInterrupt = true;
 				anima = (int)(ANIMATIONS.FALL);
 				playAnimation();
-				moveVector+= (collision - transform.position) ;
+				moveVector+= (collision - transform.position);
+				moveVector.y = 0;
+				Vector3 position = transform.position;
+				position.y = GameManager.Instance.MapData.height-((int)position.z) / 128;
+				if (!isSouthOrNorth) {
+					position += Vector3.back * 128 + moveVector;
+				} else {
+					position += moveVector;
+				}
+				GameObject shadow = (GameObject) Instantiate(shadowPrefab, position, shadowPrefab.transform.rotation);
 				Vector3 normalizedMove = moveVector.normalized;
 				float distTraveled = 0;
 				while (distTraveled < moveVector.magnitude) {
@@ -226,6 +270,7 @@ public class PlayerScript : CharacterScript {
 						yield return null;
 					}
 				}
+				Destroy (shadow);
 				noInterrupt = false;
 			}
 			
