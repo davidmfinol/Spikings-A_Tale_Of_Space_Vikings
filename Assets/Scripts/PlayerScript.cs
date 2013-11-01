@@ -77,6 +77,8 @@ public class PlayerScript : CharacterScript {
 			ItemScript item = gameObject.GetComponent<ItemScript>();
 			powers += item.power;
 			currentHealth += item.health;
+			if(currentHealth > maxHealth)
+				currentHealth = maxHealth;
 			Destroy(gameObject);
 		}
 		
