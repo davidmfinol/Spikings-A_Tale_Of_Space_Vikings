@@ -38,9 +38,6 @@ public class PlayerScript : CharacterScript {
 			return;
 		}
 		
-		anima = (int) ANIMATIONS.THROW;
-		powers--;
-		
 		GameObject handPosition = new GameObject();
 		handPosition.transform.parent = transform;
 		handPosition.transform.position = transform.position + new Vector3(0, 0, 75);
@@ -52,8 +49,9 @@ public class PlayerScript : CharacterScript {
 		hammer.throwDirection = getMoveVector().normalized;
 		hammer.smashing = powers > 1;
 		
-		playAnimation();
-		//GetComponentInChildren<AudioSource>().Play();
+		powers--;
+		
+		StartCoroutine("PlayNoInterruptAnimation", (int) ANIMATIONS.THROW);
 	}
 	
 	
@@ -280,5 +278,21 @@ public class PlayerScript : CharacterScript {
 		StopCoroutine("JumpCliff");
 	}
 	
+	public IEnumerator PlayNoInterruptAnimation (int animationNum) {
+		noInterrupt = true;
+		
+		anima = animationNum;
+		playAnimation();
+		
+		anim.AnimationCompleted = FinishAnimation;
+		while(noInterrupt)
+			yield return null;
+		
+		StopCoroutine("PlayNoInterruptAnimation");
+	}
 	
+	void FinishAnimation(tk2dSpriteAnimator sprite, tk2dSpriteAnimationClip clip) {
+		noInterrupt = false;
+		anim.AnimationCompleted = null;
+	}
 }
