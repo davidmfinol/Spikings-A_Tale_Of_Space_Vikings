@@ -17,9 +17,10 @@ public enum ANIMATIONS : int {
 	HIT = 5,
 	DIE = 6,
 	FALL = 7,
-	THROW = 8,
-	CATCH = 9,
-	JUMP = 10
+	JUMP = 8, 
+	THROW = 9,
+	CATCH = 10,
+	PUSH = 11
 }
 
 public abstract class CharacterScript : TileScript {
@@ -187,6 +188,22 @@ public abstract class CharacterScript : TileScript {
 		} else if (anima == (int) ANIMATIONS.FALL) {
 			if (!anim.IsPlaying("fall" + direction + hasAttack)) {
 				anim.Play("fall" + direction + hasAttack);
+			}
+		} else if (anima == (int) ANIMATIONS.JUMP) {
+			if (!anim.IsPlaying("jump" + direction + hasAttack)) {
+				anim.Play("jump" + direction + hasAttack);
+			}
+		} else if (anima == (int) ANIMATIONS.THROW) {
+			if (!anim.IsPlaying("throw" + direction + hasAttack)) {
+				anim.Play("throw" + direction + hasAttack);
+			}
+		} else if (anima == (int) ANIMATIONS.CATCH) {
+			if (!anim.IsPlaying("catch" + direction + hasAttack)) {
+				anim.Play("catch" + direction + hasAttack);
+			}
+		} else if (anima == (int) ANIMATIONS.PUSH) {
+			if (!anim.IsPlaying("push" + direction + hasAttack)) {
+				anim.Play("push" + direction + hasAttack);
 			}
 		}
 	}
