@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour {
 	public Transform spawnPoint;
 	public Transform playerPrefab;
 	public Transform hudPrefab;
+	public Transform centerPoint;
 	
 	private tk2dTileMap mapData;
 	private PlayerScript player;

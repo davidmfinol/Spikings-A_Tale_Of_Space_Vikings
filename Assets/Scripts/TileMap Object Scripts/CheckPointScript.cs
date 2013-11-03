@@ -3,6 +3,8 @@ using System.Collections;
 
 public class CheckPointScript : TileScript {
 	
+	public bool isTeleport = false;
+	
 	protected tk2dSprite sprite;
 	protected tk2dSpriteAnimator anim;
 	
@@ -20,6 +22,8 @@ public class CheckPointScript : TileScript {
 				prevCheck.anim.Play("SpawnPointStatic");
 			GameManager.Instance.spawnPoint = transform;
 			anim.Play("SpawnPointAnimation");
+			if(isTeleport)
+				player.transform.position = GameManager.Instance.centerPoint.position;
 		}
 	}
 }
