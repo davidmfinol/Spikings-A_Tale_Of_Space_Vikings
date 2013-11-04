@@ -27,7 +27,7 @@ public abstract class CharacterScript : TileScript {
 	public int maxHealth = 50;
 	public int currentHealth = 0;
 	public GameObject hitBox;
-	public bool combo = false;
+	public GameObject HitPic;
 
 	protected int direction = (int) DIRECTIONS.EAST;
 	protected int anima = (int) ANIMATIONS.IDLE;
@@ -49,15 +49,13 @@ public abstract class CharacterScript : TileScript {
 	protected bool noInterrupt;
 	
 // for combos
-	public static ComboSequence[] combos = new ComboSequence[3]; //Combo class. Fill this out in Inspector.
-	float comboMaxTime = 1.0f; //How long a timer for combo lasts in seconds. Fill this out in Inspector.
-	float comboSpanTime = .25f; //The span of when a combo can start. Fill this out in Inspector.
-	float comboMidPoint = .5f; //The position within the maxtime of a combo the span is active. Fill this out in Inspector.
+	public bool combo = false; // Whether the combo system is active. Set in code.
+	public float comboMaxTime = 1.0f; // How long a timer for combo lasts in seconds. Fill this out in Inspector.
+	public float comboSpanTime = .25f; // The span of when a combo can start. Fill this out in Inspector.
+	public float comboMidPoint = .5f; // The position within the maxtime of a combo the span is active. Fill this out in Inspector.
+	
 	private int currentCombo = 0;
 	private float comboTimeout = .0f;
-	
-//hitBoxHolder
-	public GameObject HitPic;
 	
 	override protected void Start () {
 		//base.Start();
@@ -91,9 +89,7 @@ public abstract class CharacterScript : TileScript {
 		}
 		
 		//added this in for combos
-		if(comboTimeout > 0) {
-			DecreaseTime();
-		}
+		DecreaseComboTime();
 	}
 	
 	virtual protected void OnDeath() {
@@ -101,14 +97,26 @@ public abstract class CharacterScript : TileScript {
 		Destroy(gameObject);
 	}
 	
-	protected void spawnHitBox(int team) {
+	/*
+	 * attacktype = 0, basic normal attack
+	 * attacktype = 1, double damage
+	 * attacktype = 2, double damage, aoe
+	 */
+	protected void spawnHitBox(int team, int attackType = 0) {
 		Vector3 pos = Vector3.zero;
-		pos.x += controller.radius * 2;
+		if(attackType < 2)
+			pos.x += controller.radius * 2;
 		GameObject box = (GameObject) Instantiate(hitBox, pos, Quaternion.identity);
-		box.GetComponent<HitboxScript>().team = team;
+		HitboxScript hitBoxScript = box.GetComponent<HitboxScript>();
+		hitBoxScript.team = team;
 		if (powers >> 1 % 2 == 1) {
-			box.GetComponent<HitboxScript>().smash = true;
+			hitBoxScript.smash = true;
 		}
+		if(attackType > 0)
+			hitBoxScript.damage *= 2;
+		if(attackType == 2)
+			box.transform.localScale = box.transform.localScale * 4;
+		
 		GameObject buffer = new GameObject();
 		box.transform.parent = buffer.transform;
 		buffer.transform.parent = transform;
@@ -162,18 +170,28 @@ public abstract class CharacterScript : TileScript {
 				Debug.Log ("play jab");
 				isAttacking = true;
 				anim.Play("attack" + direction + hasAttack);
+				// TODO: PLAY SOUNDS AS APPROPRIATE
+				GetComponentInChildren<AudioSource>().Play();
+				spawnHitBox(team);
 			}
 		} else if (anima == (int) ANIMATIONS.SMASH) {
-			if (!isAttacking && !anim.IsPlaying("smash" + direction + hasAttack)) {
+			if (!anim.IsPlaying("smash" + direction + hasAttack)) {
 				Debug.Log ("play smash");
 				isAttacking = true;
 				anim.Play("smash" + direction + hasAttack);
+				// TODO: PLAY SOUNDS AS APPROPRIATE
+				GetComponentInChildren<AudioSource>().Play();
+				spawnHitBox(team, 1);
 			}
 		} else if (anima == (int) ANIMATIONS.SPIN) {
-			if (!isAttacking && !anim.IsPlaying("spin" + direction + hasAttack)) {
+			if (!anim.IsPlaying("spin" + direction + hasAttack)) {
 				Debug.Log ("play spin");
 				isAttacking = true;
 				anim.Play("spin" + direction + hasAttack);
+				currentCombo = 0;	
+				// TODO: PLAY SOUNDS AS APPROPRIATE
+				GetComponentInChildren<AudioSource>().Play();
+				spawnHitBox(team, 2);
 			}
 		} else if (anima == (int) ANIMATIONS.HIT) {
 			if (!anim.IsPlaying("hit" + direction + hasAttack)) {
@@ -231,10 +249,10 @@ public abstract class CharacterScript : TileScript {
 		
 		//added in for combos
 		if (combo) { //makes it so you have enable combo aka for player
-			ComboTime(); //Doing logic for timing before animation
+			IncreaseComboTime(); //Doing logic for timing before animation
 		}
 		
-		if (currentCombo == 0) {
+		if ( !combo || currentCombo == 0) {
 			Debug.Log ("jab");
 			anima = (int) ANIMATIONS.ATTACK;
 		} else if(currentCombo == 1) {
@@ -244,11 +262,29 @@ public abstract class CharacterScript : TileScript {
 			Debug.Log ("spin");
 			anima = (int) ANIMATIONS.SPIN;
 		}
-		if (!isAttacking) {
-			spawnHitBox(team);
-		}
+		
 		playAnimation();
-		GetComponentInChildren<AudioSource>().Play();
+		
+	}
+	
+	//Combo method
+	private void IncreaseComboTime() {
+		if (comboTimeout < 0) {
+			Debug.Log("Combo reset!");
+			currentCombo = 0;	
+			comboTimeout = comboMaxTime;
+		}
+		else if(currentCombo < 2 &&
+			comboTimeout > 0 &&
+			comboTimeout > comboMidPoint - comboSpanTime &&
+			comboTimeout < comboMidPoint + comboSpanTime) {
+			Debug.Log("Combo increase!");
+			currentCombo++;
+			comboTimeout = comboMaxTime;
+		} 
+	}
+	private void DecreaseComboTime () {
+		comboTimeout -= 1.0f * Time.deltaTime;	
 	}
 	
 	public virtual void takeHit(HitboxScript hit){
@@ -262,30 +298,6 @@ public abstract class CharacterScript : TileScript {
 		//hitPic display
 		GameObject instance = Instantiate(HitPic, sprite.transform.position + Vector3.up, sprite.transform.rotation) as GameObject;
 		Destroy(instance, 0.25f);	
-	}
-	
-	//Combo method
-	private void ComboTime() {
-		if(currentCombo<combos.Length-1 &&
-			comboTimeout>0 &&
-			comboTimeout>comboMidPoint - comboSpanTime &&
-			comboTimeout<comboMidPoint+comboSpanTime ||
-			currentCombo==-1) {
-			currentCombo++;
-		} else {
-			currentCombo = -1;	
-		}
-		comboTimeout = comboMaxTime;
-	}
-	
-	private void DecreaseTime () {
-		comboTimeout -= 1 * Time.deltaTime;	
-	}
-	
-	public class ComboSequence {
-		string comboName;
-		string comboAnimation;
-		AudioClip comboSound;
 	}
 	
 	private bool checkAttackAnimations() {
