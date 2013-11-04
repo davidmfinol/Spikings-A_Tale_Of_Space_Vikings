@@ -44,6 +44,7 @@ public class PlayerScript : CharacterScript {
 		HammerThrow hammer = spawnedHammer.GetComponent<HammerThrow>();
 		
 		hammer.parentOb = handPosition;
+		hammer.direction = direction;
 		hammer.throwDirection = getMoveVector().normalized;
 		hammer.smashing = powers > 1;
 		

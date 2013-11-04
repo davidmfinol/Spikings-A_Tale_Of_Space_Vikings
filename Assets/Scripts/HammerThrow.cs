@@ -4,6 +4,7 @@ using System.Collections;
 public class HammerThrow : MonoBehaviour {
 
 	public float speed;
+	public int direction;
 	public float throwDistance;
 	public GameObject hitboxPrefab;
 	public GameObject parentOb;
@@ -35,6 +36,15 @@ public class HammerThrow : MonoBehaviour {
 		
 
 		sprite = GetComponentInChildren<tk2dSprite>();
+		
+		if(direction == (int)(DIRECTIONS.NORTH))
+			GetComponentInChildren<tk2dSpriteAnimator>().Play("UpHammer");
+		if(direction == (int)(DIRECTIONS.WEST))
+			GetComponentInChildren<tk2dSpriteAnimator>().Play("LeftHammer");
+		if(direction == (int)(DIRECTIONS.SOUTH))
+			GetComponentInChildren<tk2dSpriteAnimator>().Play("DownHammer");
+		if(direction == (int)(DIRECTIONS.EAST))
+			GetComponentInChildren<tk2dSpriteAnimator>().Play("RightHammer");
 	}
 	
 	// Update is called once per frame
