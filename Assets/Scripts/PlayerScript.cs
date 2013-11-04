@@ -71,8 +71,7 @@ public class PlayerScript : CharacterScript {
 			currentHealth += item.health;
 			if(currentHealth > maxHealth)
 				currentHealth = maxHealth;
-			else
-				Destroy(gameObject);
+			Destroy(gameObject);
 		}
 		
 	}
