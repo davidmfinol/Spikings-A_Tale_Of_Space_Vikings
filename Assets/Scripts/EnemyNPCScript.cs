@@ -20,6 +20,7 @@ public class EnemyNPCScript : CharacterScript {
 	protected int hitObstacleCount = 0;
 	protected float lastHit = 0;
 	protected float lastChange = 0;
+	protected bool hasNoticed = false;
 	
 	// A* Pathfinding Variables
 	protected PlayerScript player;
@@ -54,7 +55,7 @@ public class EnemyNPCScript : CharacterScript {
 		anima = (int) (ANIMATIONS.DIE);
 		playAnimation();
 		if (Random.Range(0, 4) == 0) {
-		Instantiate(meadPrefab, transform.position, meadPrefab.transform.rotation);
+			Instantiate(meadPrefab, transform.position, meadPrefab.transform.rotation);
 		}
 		Destroy(gameObject, 0.95f);
 	}
@@ -235,11 +236,15 @@ public class EnemyNPCScript : CharacterScript {
 	}
 	
 	protected virtual bool isInNoticeRange() {
+		if(hasNoticed)
+			return true;
+		
 		Vector3 startPoint = transform.position;
 		startPoint.y = 0;
 		Vector3 endPoint = GameManager.Instance.Player.transform.position;
 		endPoint.y = 0;
-		return (endPoint - startPoint).magnitude <= noticeRadius;
+		hasNoticed = (endPoint - startPoint).magnitude <= noticeRadius;
+		return hasNoticed;
 	}
 	
 	void OnControllerColliderHit(ControllerColliderHit hit) {

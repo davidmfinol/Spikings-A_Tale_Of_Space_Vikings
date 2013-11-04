@@ -64,6 +64,7 @@ public class HammerThrow : MonoBehaviour {
 		if(player != null && distanceTraveled > throwDistance){
 			Destroy(gameObject);
 			player.powers++;
+			player.StartCoroutine("PlayNoInterruptAnimation", (int) ANIMATIONS.CATCH);
 		}
 		
 	}

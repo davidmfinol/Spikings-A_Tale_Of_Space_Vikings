@@ -2,12 +2,12 @@
 using System.Collections;
 
 public class PlayerScript : CharacterScript {
+	
 	public int speed = 500;
-	//for checkpoint stuff
-	public bool pastCheck = false;
 	
 	public GameObject hammerThrowPrefab;
 	public GameObject shadowPrefab;
+	
 	
 	override protected void Start () {
 		base.Start();
@@ -23,7 +23,7 @@ public class PlayerScript : CharacterScript {
 			attack();
 		}
 		else if (Input.GetButtonDown("Fire3") && powers %2 ==1){
-			hammerThrow();
+			StartCoroutine("hammerThrow");
 		}
 		float x = Input.GetAxis("Horizontal") * speed;
 		float z = Input.GetAxis("Vertical") * speed;
@@ -31,15 +31,10 @@ public class PlayerScript : CharacterScript {
 	}
 	
 	
-	
-	//HammerThrow Method
-	protected void hammerThrow() {
-		if(anima == (int) ANIMATIONS.HIT || anima == (int) ANIMATIONS.DIE || noInterrupt) {
-			return;
-		}
-		
-		anima = (int) ANIMATIONS.THROW;
-		powers--;
+	IEnumerator hammerThrow() {
+		StartCoroutine("PlayNoInterruptAnimation", (int) ANIMATIONS.THROW);
+		while(noInterrupt)
+			yield return null;
 		
 		GameObject handPosition = new GameObject();
 		handPosition.transform.parent = transform;
@@ -52,22 +47,17 @@ public class PlayerScript : CharacterScript {
 		hammer.throwDirection = getMoveVector().normalized;
 		hammer.smashing = powers > 1;
 		
-		playAnimation();
-		//GetComponentInChildren<AudioSource>().Play();
+		powers--;
+		
+		StopCoroutine("hammerThrow");
 	}
-	
 	
 	
 	override protected void OnDeath () {
 		currentHealth = maxHealth;
-		//editing for checkpoint
-		//if(pastCheck){
-		 // transform.position = GameManager.Instance.spawnPoint.position;
-		//}
-		//else{
 		transform.position = GameManager.Instance.spawnPoint.position;
-		//}
 	}
+	
 	
 	private void OnControllerColliderHit(ControllerColliderHit hit) {
 		GameObject gameObject = hit.collider.gameObject;
@@ -79,37 +69,104 @@ public class PlayerScript : CharacterScript {
 			ItemScript item = gameObject.GetComponent<ItemScript>();
 			powers += item.power;
 			currentHealth += item.health;
+			if(currentHealth > maxHealth)
+				currentHealth = maxHealth;
 			Destroy(gameObject);
 		}
 		
 	}
 	
-	private void InteractWithPlatform(GameObject gameObject) {
-		if (Input.GetButton("Jump")) {
-			StartCoroutine("JumpPlatform");
-		} else if (Input.GetButtonDown("Fire2")) {
-			// TODO: DON'T FORCE THIS TO BE GRID-BASED
-			// SHOULD PROBABLY BE ABLE TO JUST SET ANIMA = PUSHING AND CALL PLAYANIMATION() OVER AND OVER WHILE ALLOWING REGULAR MOVEMENT?
-			Vector3 position = gameObject.transform.position;
-			position.y = 0;
-			Vector3 displacement = getMoveVector();
-			Vector3 hitVector = checkAcrossCollision(position, displacement, 1 << 14);//check to see if pushing by a cliff
-			if (hitVector == Vector3.one) { // no cliff
-				position = gameObject.transform.position + displacement;
-			} else {
-				if (checkVector(hitVector, position)) { // over cliff
-					displacement += Vector3.back * 128;
-					position = gameObject.transform.position + displacement;
-				} else { //into cliff
-					position = Vector3.one;
-				}
-			}
-			if (position != Vector3.one && checkDownCollision(position, 1 << 11)) {
-				gameObject.transform.position = position;
-				transform.position += getMoveVector() / 2;
-			}
+	
+	private void InteractWithPlatform(GameObject platform) {
+		if (Input.GetButton("Jump") && !noInterrupt) {
+			StartCoroutine("JumpPlatform", platform);
+		} else if (Input.GetButtonDown("Fire2") && !noInterrupt) {
+			StartCoroutine("PushPlatform", platform);
 		}
 	}
+	
+	IEnumerator JumpPlatform(GameObject platform) {
+		noInterrupt = true; // this animation/action cannot be interrupted
+		anima = (int)(ANIMATIONS.JUMP);
+		playAnimation();
+		
+		// TODO: Fix movement so you can avoid getting on platform
+		
+		Vector3 moveVector = getMoveVector();
+		moveVector = moveVector.normalized;
+		
+		float distTraveled = 0;
+		while (distTraveled < 75) {
+			Vector3 movement = Time.deltaTime * moveVector * speed;
+			transform.position = transform.position + movement;
+			distTraveled += movement.magnitude;
+			yield return null;
+		}
+		
+		noInterrupt = false;
+		StopCoroutine("JumpPlatform");
+	}
+	
+	IEnumerator PushPlatform(GameObject platform) {
+		noInterrupt = true;
+		
+		Vector3 endPosition = platform.transform.position;
+		Vector3 displacement = getMoveVector();
+		Vector3 endPositionY = endPosition;
+		endPositionY.y = 0;
+		Vector3 hitVector = checkAcrossCollision(endPositionY, displacement, 1 << 14);//check to see if pushing by a cliff
+		
+		bool overCliff = hitVector != Vector3.one && checkVector(hitVector, endPosition);
+		bool intoCliff = hitVector != Vector3.one && !checkVector(hitVector, endPosition);
+		
+		if(overCliff)
+			endPosition += Vector3.back * 128;
+		endPosition += displacement;
+		
+		bool endOnMud = checkDownCollision(endPosition, 1 << 11);
+		
+		if (!intoCliff && endOnMud) { 
+		
+			anima = (int) ANIMATIONS.PUSH;
+			playAnimation();
+			
+			Vector3 origPos = transform.position;
+			Vector3 origPlat = platform.transform.position;
+			
+			float distTraveled = 0;
+			while (distTraveled < displacement.magnitude) {
+				Vector3 movement = Time.deltaTime * displacement.normalized * speed;
+				transform.position = transform.position + movement;
+				platform.transform.position = platform.transform.position + movement;
+				distTraveled += movement.magnitude;
+				yield return null;
+			}
+			
+			transform.position = origPos + displacement*0.9f;
+			platform.transform.position = origPlat + displacement;
+			
+			anima = (int) ANIMATIONS.IDLE;
+			playAnimation();
+			
+			
+			if(overCliff) {
+				displacement = Vector3.back * 128;
+				distTraveled = 0;
+				while (distTraveled < displacement.magnitude) {
+					Vector3 movement = Time.deltaTime * displacement.normalized * speed;
+					platform.transform.position = platform.transform.position + movement;
+					distTraveled += movement.magnitude;
+					yield return null;
+				}
+			}
+			
+			
+		}
+		
+		noInterrupt = false;
+		StopCoroutine("PushPlatform");
+	}
+	
 	
 	private bool checkVector(Vector3 one, Vector3 two) {
 		float x = one.x - two.x;
@@ -160,28 +217,6 @@ public class PlayerScript : CharacterScript {
 			return hit.transform.position;
 		}
 		return Vector3.one;
-	}
-	
-	IEnumerator JumpPlatform() {
-		noInterrupt = true; // this animation/action cannot be interrupted
-		anima = (int)(ANIMATIONS.JUMP);
-		playAnimation();
-		
-		// TODO: Fix movement so you can avoid getting on platform
-		
-		Vector3 moveVector = getMoveVector();
-		moveVector = moveVector.normalized;
-		
-		float distTraveled = 0;
-		while (distTraveled < 75) {
-			Vector3 movement = Time.deltaTime * moveVector * speed;
-			transform.position = transform.position + movement;
-			distTraveled += movement.magnitude;
-			yield return null;
-		}
-		
-		noInterrupt = false;
-		StopCoroutine("JumpPlatform");
 	}
 	
 	// Make the player automatically jump all the way down a cliff, if possible
@@ -280,5 +315,20 @@ public class PlayerScript : CharacterScript {
 		StopCoroutine("JumpCliff");
 	}
 	
-	
+	public IEnumerator PlayNoInterruptAnimation (int animationNum) {
+		noInterrupt = true;
+		
+		anima = animationNum;
+		playAnimation();
+		
+		anim.AnimationCompleted = FinishAnimation;
+		while(noInterrupt)
+			yield return null;
+		
+		StopCoroutine("PlayNoInterruptAnimation");
+	}
+	void FinishAnimation(tk2dSpriteAnimator sprite, tk2dSpriteAnimationClip clip) {
+		noInterrupt = false;
+		anim.AnimationCompleted = null;
+	}
 }

@@ -9,14 +9,24 @@ public class BabyGiantScript : EnemyNPCScript {
 		if(hit.isThrownHammer)
 			deadFromThrow = true;
 		
-		OnDeath();
+		if(!isDead)
+			OnDeath();
 	}
 	
 	override protected void OnDeath () {
-		base.OnDeath();
-		if(!isDead && deadFromThrow) {
+		isDead = true;
+		
+		if(deadFromThrow) 
 			anima = (int) (ANIMATIONS.HIT);
-			playAnimation();
+		else
+			anima = (int) (ANIMATIONS.DIE);
+		
+		playAnimation();
+		
+		if (Random.Range(0, 4) == 0) {
+			Instantiate(meadPrefab, transform.position, meadPrefab.transform.rotation);
 		}
+		
+		Destroy(gameObject, 0.95f);
 	}
 }
