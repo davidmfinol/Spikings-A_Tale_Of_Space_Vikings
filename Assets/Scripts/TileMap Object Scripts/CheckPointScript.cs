@@ -4,6 +4,7 @@ using System.Collections;
 public class CheckPointScript : TileScript {
 	
 	public bool isTeleport = false;
+	public Transform hyperBeamPrefab;
 	
 	protected tk2dSprite sprite;
 	protected tk2dSpriteAnimator anim;
@@ -19,8 +20,8 @@ public class CheckPointScript : TileScript {
 		player = collider.gameObject.GetComponent<PlayerScript>();
 		if (player != null) {
 			if(isTeleport) {
-				anim.AnimationCompleted = FinishTeleportAnimation;
-				anim.Play("Teleport");
+				Transform hyperbeam = (Transform) Instantiate(hyperBeamPrefab, transform.position + new Vector3(0, 0, 256), hyperBeamPrefab.rotation);
+				hyperbeam.GetComponent<tk2dSpriteAnimator>().AnimationCompleted = FinishTeleportAnimation;
 			}
 			else {
 				CheckPointScript prevCheck = GameManager.Instance.spawnPoint.GetComponent<CheckPointScript>();
@@ -34,6 +35,6 @@ public class CheckPointScript : TileScript {
 	
 	void FinishTeleportAnimation(tk2dSpriteAnimator sprite, tk2dSpriteAnimationClip clip) {
 		player.transform.position = GameManager.Instance.centerPoint.position;
-		anim.AnimationCompleted = null;
+		Destroy(sprite.gameObject);
 	}
 }
