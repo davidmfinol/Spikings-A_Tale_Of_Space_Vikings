@@ -21,7 +21,7 @@ public class ImageCycler : MonoBehaviour {
 			change_image_delay();
 		}
 		if(Input.GetKeyDown("space")) {
-			Application.LoadLevel("EarthWorld");
+			Application.LoadLevel("CorbenSpace");
 		}
 	
 	}
@@ -33,7 +33,7 @@ public class ImageCycler : MonoBehaviour {
 	void change_image() {
 		index++;
 		if (index >= intro_sec.Length)
-			Application.LoadLevel("EarthWorld");
+			Application.LoadLevel("CorbenSpace");
 		else
 			renderer.material = intro_sec[index];
 		
