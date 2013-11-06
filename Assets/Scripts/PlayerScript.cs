@@ -22,7 +22,7 @@ public class PlayerScript : CharacterScript {
 		if (Input.GetButtonDown("Fire1") && powers % 2 == 1) {
 			attack();
 		}
-		else if (Input.GetButtonDown("Fire3") && powers %2 ==1){
+		else if (Input.GetButtonDown("Fire3") && powers % 2 == 1){
 			StartCoroutine("hammerThrow");
 		}
 		float x = Input.GetAxis("Horizontal") * speed;
@@ -49,7 +49,7 @@ public class PlayerScript : CharacterScript {
 		hammer.smashing = powers > 1;
 		
 		powers--;
-		
+		isDoneThrowing();
 		StopCoroutine("hammerThrow");
 	}
 	
