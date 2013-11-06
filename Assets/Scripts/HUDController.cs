@@ -24,7 +24,16 @@ public class HUDController : MonoBehaviour {
     	currentHealth.Value = ((float)player.currentHealth)/player.maxHealth;
 	}
 	
-	public void showThought(string message) {
+	public void showThought(string message, bool continueText = false) {
+		if(continueText) {
+			int pad = thoughtText.maxChars - message.Length - 13;
+			for(int i = 0; i < pad ; ++i)
+				message += " ";
+			message += "[PRESS SPACE]";
+			thoughtText.color = Color.red;
+		}
+		else
+			thoughtText.color = Color.black;
 		thoughtText.text = message;
 		thoughtText.Commit();
 		thoughtBubble.gameObject.SetActive(true);

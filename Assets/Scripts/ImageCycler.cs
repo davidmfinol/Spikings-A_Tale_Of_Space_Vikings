@@ -2,26 +2,23 @@
 using System.Collections;
 
 public class ImageCycler : MonoBehaviour {
+	
 	public Material[] intro_sec = new Material[4];
-	int index = 0;
+	public string NextLevelName;
+	public Transform loading;
 	
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	float timer = 0;
+	private int index = 0;
+	private float timer = 0;
 	
 	// Update is called once per frame
 	void Update () {
-//		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-//        if (Physics.Raycast(ray, 100))
-//            print("Hit this box thing");
-		if(Input.GetKeyDown("f") || Input.GetKeyDown ("q")) {
+		
+		if(Input.GetButtonDown("Fire1") || Input.GetButtonDown("Fire3")) {
 			change_image_delay();
 		}
-		if(Input.GetKeyDown("space")) {
-			Application.LoadLevel("CorbenSpace");
+		if(Input.GetButtonDown("Jump")) {
+			loading.Translate(0, 0, -2);
+			Application.LoadLevel(NextLevelName);
 		}
 	
 	}
@@ -33,7 +30,10 @@ public class ImageCycler : MonoBehaviour {
 	void change_image() {
 		index++;
 		if (index >= intro_sec.Length)
-			Application.LoadLevel("CorbenSpace");
+		{
+			loading.Translate(0, 0, -2);
+			Application.LoadLevel(NextLevelName);
+		}
 		else
 			renderer.material = intro_sec[index];
 		
