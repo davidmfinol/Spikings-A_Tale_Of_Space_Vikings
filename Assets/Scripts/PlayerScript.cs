@@ -80,6 +80,8 @@ public class PlayerScript : CharacterScript {
 			}
 			if(currentHealth > maxHealth)
 				currentHealth = maxHealth;
+			if(item.health == 0 && item.power == 0)
+				GameManager.Instance.partsCollected++;
 			Destroy(gameObject);
 		}
 		

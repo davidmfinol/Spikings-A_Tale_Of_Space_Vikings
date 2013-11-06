@@ -27,6 +27,9 @@ public class HUDController : MonoBehaviour {
         losingHealth.Value = Mathf.SmoothDamp( losingHealth.Value, ((float)player.currentHealth)/player.maxHealth, ref healthBarVelocity, healthBarSmoothTime, Mathf.Infinity, tk2dUITime.deltaTime );
     	currentHealth.Value = ((float)player.currentHealth)/player.maxHealth;
 		Hammer.gameObject.SetActive(player.powers % 2 == 1);
+		
+		currentPoints.text = GameManager.Instance.partsCollected.ToString() + "/3 Parts Found";
+        currentPoints.Commit();
 	}
 	
 	public void showThought(string message, bool continueText = false) {
