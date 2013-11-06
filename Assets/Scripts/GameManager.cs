@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour {
 	public Transform hudPrefab;
 	public Transform centerPoint;
 	
+	public int partsCollected = 0;
+	
 	private tk2dTileMap mapData;
 	private PlayerScript player;
 	private HUDController hud;

@@ -25,11 +25,11 @@ public class CheckPointScript : TileScript {
 				audio.Play();
 			}
 			else {
-				CheckPointScript prevCheck = GameManager.Instance.spawnPoint.GetComponent<CheckPointScript>();
-				if(prevCheck != null)
-					prevCheck.anim.Play("SpawnPointStatic");
+				//CheckPointScript prevCheck = GameManager.Instance.spawnPoint.GetComponent<CheckPointScript>();
+				//if(prevCheck != null)
+				//	prevCheck.anim.Play("SpawnPointStatic");
 				GameManager.Instance.spawnPoint = transform;
-				anim.Play("SpawnPointAnimation");
+				//anim.Play("SpawnPointAnimation");
 			}
 		}
 	}
