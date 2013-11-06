@@ -19,6 +19,8 @@ public class HitboxScript : MonoBehaviour {
 	public AudioClip impact_sound2;
 	public AudioClip impact_sound3;
 	
+	public AudioClip roxhurt_sound;
+	
 	public AudioSource hitbox_audio;
 	
 	void Start () {
@@ -41,9 +43,10 @@ public class HitboxScript : MonoBehaviour {
 		if(team == (int) TEAMS.PLAYER && enemy != null) {
 			//this sound doesn't play
 			audio.PlayOneShot(impact_sound);
-			Debug.Log("taking hits");
 			enemy.takeHit(this);
 		} else if (team == (int) TEAMS.ENEMY && player != null) {
+			audio.PlayOneShot (roxhurt_sound);
+			Debug.Log("um");
 			player.takeHit(this);
 		} else if (smash && team == (int) TEAMS.PLAYER && rock != null) {
 			rock.Smash();
