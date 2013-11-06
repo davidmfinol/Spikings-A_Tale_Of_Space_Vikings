@@ -5,6 +5,12 @@ MonoImporter:
   defaultReferences:
   - hitBox: {fileID: 100000, guid: ae541bbfd948fc745b2c55de33b4c2bc, type: 2}
   - HitPic: {fileID: 100000, guid: ee9b79364597e4ec1b8f4ea1d21a8cb9, type: 2}
+  - attack1: {instanceID: 0}
+  - attack2: {instanceID: 0}
+  - attack3: {instanceID: 0}
+  - hammerThrowPrefab: {instanceID: 0}
+  - shadowPrefab: {instanceID: 0}
+  - mead_sound: {fileID: 8300000, guid: 3fc3ce860d5df954b89764aac3711ba8, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

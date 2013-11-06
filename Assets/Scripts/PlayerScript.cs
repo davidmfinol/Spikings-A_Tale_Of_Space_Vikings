@@ -7,7 +7,7 @@ public class PlayerScript : CharacterScript {
 	
 	public GameObject hammerThrowPrefab;
 	public GameObject shadowPrefab;
-	
+	public AudioClip mead_sound;
 	
 	override protected void Start () {
 		base.Start();
@@ -70,6 +70,10 @@ public class PlayerScript : CharacterScript {
 			ItemScript item = gameObject.GetComponent<ItemScript>();
 			powers += item.power;
 			currentHealth += item.health;
+			//if it's Mead
+			if(item.health > 0) {
+				audio.PlayOneShot(mead_sound);
+			}
 			if(currentHealth > maxHealth)
 				currentHealth = maxHealth;
 			Destroy(gameObject);
