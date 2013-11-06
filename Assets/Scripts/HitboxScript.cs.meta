@@ -2,7 +2,10 @@ fileFormatVersion: 2
 guid: 39ffef190fabb0e4d94d725f48eee084
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - impact_sound: {fileID: 8300000, guid: ebda6461cd4cadd46bb9f4f376688d03, type: 3}
+  - impact_sound2: {fileID: 8300000, guid: bc15dae036ae84f4c8b7a408ff796564, type: 3}
+  - impact_sound3: {fileID: 8300000, guid: 4608e7e5e97bdaf4c9fbaee9030d0974, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

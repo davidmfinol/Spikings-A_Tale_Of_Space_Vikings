@@ -15,6 +15,12 @@ public class HitboxScript : MonoBehaviour {
 	public bool isThrownHammer = false;
 	public bool isSpin = false;
 	
+	public AudioClip impact_sound;
+	public AudioClip impact_sound2;
+	public AudioClip impact_sound3;
+	
+	public AudioSource hitbox_audio;
+	
 	void Start () {
 		if(isThrownHammer)
 			return;
@@ -33,6 +39,9 @@ public class HitboxScript : MonoBehaviour {
 		PlayerScript player = gameObject.GetComponent<PlayerScript>();
 		RockScript rock = gameObject.GetComponent<RockScript>();
 		if(team == (int) TEAMS.PLAYER && enemy != null) {
+			//this sound doesn't play
+			audio.PlayOneShot(impact_sound);
+			Debug.Log("taking hits");
 			enemy.takeHit(this);
 		} else if (team == (int) TEAMS.ENEMY && player != null) {
 			player.takeHit(this);

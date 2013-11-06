@@ -68,6 +68,7 @@ public class BearScript : EnemyNPCScript {
 	void OnDestroy() {
 		//play Bear Death Sound
 		audio.enabled = true;
+		//this sound doesn't play either
 		audio.PlayOneShot(bear_death);
 	}
 	
