@@ -8,6 +8,7 @@ public class HelpScript : MonoBehaviour
 		Always = 0,
 		NoHammer = 1,
 		HasHammer = 2,
+		FoundParts = 3,
 	}
 	
 	public string message;
@@ -30,6 +31,7 @@ public class HelpScript : MonoBehaviour
 		case Condition.Always : break;
 		case Condition.NoHammer : if(player.powers > 0) return; break;
 		case Condition.HasHammer : if(player.powers < 1) return; break;
+		case Condition.FoundParts : if(GameManager.Instance.partsCollected < 3) return; break;
 		default: break;
 		}
 		
