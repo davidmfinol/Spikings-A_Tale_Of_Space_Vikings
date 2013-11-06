@@ -167,7 +167,6 @@ public abstract class CharacterScript : TileScript {
 			}
 		} else if (anima == (int) ANIMATIONS.ATTACK) {
 			if (!isAttacking && !anim.IsPlaying("attack" + direction + hasAttack)) {
-				Debug.Log ("play jab");
 				isAttacking = true;
 				anim.Play("attack" + direction + hasAttack);
 				// TODO: PLAY SOUNDS AS APPROPRIATE
@@ -176,7 +175,6 @@ public abstract class CharacterScript : TileScript {
 			}
 		} else if (anima == (int) ANIMATIONS.SMASH) {
 			if (!anim.IsPlaying("smash" + direction + hasAttack)) {
-				Debug.Log ("play smash");
 				isAttacking = true;
 				anim.Play("smash" + direction + hasAttack);
 				// TODO: PLAY SOUNDS AS APPROPRIATE
@@ -185,7 +183,6 @@ public abstract class CharacterScript : TileScript {
 			}
 		} else if (anima == (int) ANIMATIONS.SPIN) {
 			if (!anim.IsPlaying("spin" + direction + hasAttack)) {
-				Debug.Log ("play spin");
 				isAttacking = true;
 				anim.Play("spin" + direction + hasAttack);
 				currentCombo = 0;	
@@ -227,7 +224,7 @@ public abstract class CharacterScript : TileScript {
 	}
 	
 	protected void move(float x, float z) {
-		if (isAttacking || isBeingHit || anima == (int) (ANIMATIONS.DIE) || noInterrupt)
+		if (isAttacking || isBeingHit || anima == (int) (ANIMATIONS.DIE) || noInterrupt || anim.IsPlaying("Spawn"))
 			return;
 		
 		processInput(x, z);
@@ -253,13 +250,10 @@ public abstract class CharacterScript : TileScript {
 		}
 		
 		if ( !combo || currentCombo == 0) {
-			Debug.Log ("jab");
 			anima = (int) ANIMATIONS.ATTACK;
 		} else if(currentCombo == 1) {
-			Debug.Log ("smash");
 			anima = (int) ANIMATIONS.SMASH;
 		} else {
-			Debug.Log ("spin");
 			anima = (int) ANIMATIONS.SPIN;
 		}
 		
@@ -270,7 +264,6 @@ public abstract class CharacterScript : TileScript {
 	//Combo method
 	private void IncreaseComboTime() {
 		if (comboTimeout < 0) {
-			Debug.Log("Combo reset!");
 			currentCombo = 0;	
 			comboTimeout = comboMaxTime;
 		}
@@ -278,9 +271,8 @@ public abstract class CharacterScript : TileScript {
 			comboTimeout > 0 &&
 			comboTimeout > comboMidPoint - comboSpanTime &&
 			comboTimeout < comboMidPoint + comboSpanTime) {
-			Debug.Log("Combo increase!");
-			currentCombo++;
-			comboTimeout = comboMaxTime;
+				currentCombo++;
+				comboTimeout = comboMaxTime;
 		} 
 	}
 	private void DecreaseComboTime () {
