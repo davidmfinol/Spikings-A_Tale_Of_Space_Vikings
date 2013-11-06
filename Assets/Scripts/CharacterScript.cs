@@ -45,6 +45,7 @@ public abstract class CharacterScript : TileScript {
 	
 	private bool isAttacking;
 	private bool isBeingHit;
+	private bool isThrowing;
 	protected bool isDead;
 	protected bool noInterrupt;
 	
@@ -70,6 +71,7 @@ public abstract class CharacterScript : TileScript {
 		isAttacking = false;
 		isBeingHit = false;
 		noInterrupt = false;
+		isThrowing = false;
 		powers = 1;
 	}
 	
@@ -214,6 +216,7 @@ public abstract class CharacterScript : TileScript {
 			}
 		} else if (anima == (int) ANIMATIONS.THROW) {
 			if (!anim.IsPlaying("throw" + direction + hasAttack)) {
+				isThrowing = true;
 				anim.Play("throw" + direction + hasAttack);
 			}
 		} else if (anima == (int) ANIMATIONS.CATCH) {
@@ -228,7 +231,7 @@ public abstract class CharacterScript : TileScript {
 	}
 	
 	protected void move(float x, float z) {
-		if (isAttacking || isBeingHit || anima == (int) (ANIMATIONS.DIE) || noInterrupt || anim.IsPlaying("Spawn"))
+		if (isAttacking || isBeingHit || anima == (int) (ANIMATIONS.DIE) || noInterrupt || anim.IsPlaying("Spawn") || isThrowing)
 			return;
 		
 		processInput(x, z);
@@ -304,5 +307,9 @@ public abstract class CharacterScript : TileScript {
 			return true;
 		}
 		return false;
+	}
+	
+	protected void isDoneThrowing() {
+		isThrowing = false;
 	}
 }
