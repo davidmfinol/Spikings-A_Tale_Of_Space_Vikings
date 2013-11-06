@@ -11,10 +11,12 @@ public class HammerThrow : MonoBehaviour {
 	public Vector3 throwDirection;
 	public bool smashing;
 	
+	public tk2dSprite sprite;
+	public tk2dSpriteAnimator anim;
+	
 	private float distanceTraveled;
 	private GameObject hitBoxHolder;
 	private GameObject hitbox;
-	private tk2dSprite sprite;
 	
 	// Use this for initialization
 	void Start () {
@@ -34,17 +36,14 @@ public class HammerThrow : MonoBehaviour {
 
 		hitbox.GetComponent<HitboxScript>().isThrownHammer = true;
 		
-
-		sprite = GetComponentInChildren<tk2dSprite>();
-		
 		if(direction == (int)(DIRECTIONS.NORTH))
-			GetComponentInChildren<tk2dSpriteAnimator>().Play("UpHammer");
+			anim.Play("UpHammer");
 		if(direction == (int)(DIRECTIONS.WEST))
-			GetComponentInChildren<tk2dSpriteAnimator>().Play("LeftHammer");
+			anim.Play("LeftHammer");
 		if(direction == (int)(DIRECTIONS.SOUTH))
-			GetComponentInChildren<tk2dSpriteAnimator>().Play("DownHammer");
+			anim.Play("DownHammer");
 		if(direction == (int)(DIRECTIONS.EAST))
-			GetComponentInChildren<tk2dSpriteAnimator>().Play("RightHammer");
+			anim.Play("RightHammer");
 	}
 	
 	// Update is called once per frame

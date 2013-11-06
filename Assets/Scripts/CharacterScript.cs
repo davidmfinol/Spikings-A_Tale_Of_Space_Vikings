@@ -110,7 +110,7 @@ public abstract class CharacterScript : TileScript {
 		Vector3 pos = Vector3.zero;
 		if(attackType < 2)
 			pos.x += controller.radius * 2;
-		GameObject box = (GameObject) Instantiate(hitBox, pos, Quaternion.identity);
+		GameObject box = (GameObject) Instantiate(hitBox, pos, hitBox.transform.rotation);
 		HitboxScript hitBoxScript = box.GetComponent<HitboxScript>();
 		hitBoxScript.team = team;
 		if (powers >> 1 % 2 == 1) {
@@ -119,7 +119,10 @@ public abstract class CharacterScript : TileScript {
 		if(attackType > 0)
 			hitBoxScript.damage *= 2;
 		if(attackType == 2)
+		{
+			hitBoxScript.isSpin = true;
 			box.transform.localScale = box.transform.localScale * 4;
+		}
 		
 		GameObject buffer = new GameObject();
 		box.transform.parent = buffer.transform;

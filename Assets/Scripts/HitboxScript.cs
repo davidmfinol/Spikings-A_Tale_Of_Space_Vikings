@@ -13,6 +13,7 @@ public class HitboxScript : MonoBehaviour {
 	public int damage = 10;
 	public bool smash = false;
 	public bool isThrownHammer = false;
+	public bool isSpin = false;
 	
 	void Start () {
 		if(isThrownHammer)
@@ -20,6 +21,9 @@ public class HitboxScript : MonoBehaviour {
 		
 		Destroy(gameObject, delay);
 		Destroy(transform.parent.gameObject, delay);
+		
+		if(isSpin)
+			GetComponent<tk2dSpriteAnimator>().Play("Spin");
 	}
 	
 	private void OnTriggerEnter(Collider collider) {

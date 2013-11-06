@@ -10,6 +10,10 @@ public class HUDController : MonoBehaviour {
 	public Transform thoughtBubble;
 	public tk2dTextMesh thoughtText;
 	
+	public Transform Hammer;
+	
+	public tk2dTextMesh currentPoints;
+	
     private float healthBarVelocity = 0.0f;
 	
 	void Start () {
@@ -22,6 +26,7 @@ public class HUDController : MonoBehaviour {
 		PlayerScript player = GameManager.Instance.Player;
         losingHealth.Value = Mathf.SmoothDamp( losingHealth.Value, ((float)player.currentHealth)/player.maxHealth, ref healthBarVelocity, healthBarSmoothTime, Mathf.Infinity, tk2dUITime.deltaTime );
     	currentHealth.Value = ((float)player.currentHealth)/player.maxHealth;
+		Hammer.gameObject.SetActive(player.powers % 2 == 1);
 	}
 	
 	public void showThought(string message, bool continueText = false) {

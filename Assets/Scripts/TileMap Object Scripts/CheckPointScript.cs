@@ -20,7 +20,7 @@ public class CheckPointScript : TileScript {
 		player = collider.gameObject.GetComponent<PlayerScript>();
 		if (player != null) {
 			if(isTeleport) {
-				Transform hyperbeam = (Transform) Instantiate(hyperBeamPrefab, transform.position + new Vector3(0, 0, 256), hyperBeamPrefab.rotation);
+				Transform hyperbeam = (Transform) Instantiate(hyperBeamPrefab, transform.position + new Vector3(0, -1, 256), hyperBeamPrefab.rotation);
 				hyperbeam.GetComponent<tk2dSpriteAnimator>().AnimationCompleted = FinishTeleportAnimation;
 				audio.Play();
 			}
