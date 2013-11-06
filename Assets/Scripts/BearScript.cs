@@ -3,6 +3,7 @@ using Pathfinding;
 using System.Collections;
 
 public class BearScript : EnemyNPCScript {
+		public AudioClip bear_death;
 	
 	override protected void Update() {
 		base.Update();
@@ -63,4 +64,12 @@ public class BearScript : EnemyNPCScript {
 	{
 		return isInNoticeRange();
 	}
+	
+	void OnDestroy() {
+		//play Bear Death Sound
+		audio.enabled = true;
+		//this sound doesn't play either
+		audio.PlayOneShot(bear_death);
+	}
+	
 }

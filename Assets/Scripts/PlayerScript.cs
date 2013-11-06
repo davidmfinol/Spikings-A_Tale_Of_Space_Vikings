@@ -7,7 +7,10 @@ public class PlayerScript : CharacterScript {
 	
 	public GameObject hammerThrowPrefab;
 	public GameObject shadowPrefab;
+	
 	public AudioClip mead_sound;
+	public AudioClip death_sound;
+	public AudioClip hurt_sound;
 	
 	override protected void Start () {
 		base.Start();
@@ -56,6 +59,7 @@ public class PlayerScript : CharacterScript {
 	
 	override protected void OnDeath () {
 		currentHealth = maxHealth;
+		audio.PlayOneShot (death_sound);
 		transform.position = GameManager.Instance.spawnPoint.position;
 	}
 	
