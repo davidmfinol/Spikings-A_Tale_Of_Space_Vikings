@@ -54,6 +54,10 @@ public abstract class CharacterScript : TileScript {
 	public float comboSpanTime = .25f; // The span of when a combo can start. Fill this out in Inspector.
 	public float comboMidPoint = .5f; // The position within the maxtime of a combo the span is active. Fill this out in Inspector.
 	
+	public AudioClip attack1;
+	public AudioClip attack2;
+	public AudioClip attack3;
+	
 	private int currentCombo = 0;
 	private float comboTimeout = .0f;
 	
@@ -169,16 +173,14 @@ public abstract class CharacterScript : TileScript {
 			if (!isAttacking && !anim.IsPlaying("attack" + direction + hasAttack)) {
 				isAttacking = true;
 				anim.Play("attack" + direction + hasAttack);
-				// TODO: PLAY SOUNDS AS APPROPRIATE
-				GetComponentInChildren<AudioSource>().Play();
+				audio.PlayOneShot(attack1);
 				spawnHitBox(team);
 			}
 		} else if (anima == (int) ANIMATIONS.SMASH) {
 			if (!anim.IsPlaying("smash" + direction + hasAttack)) {
 				isAttacking = true;
 				anim.Play("smash" + direction + hasAttack);
-				// TODO: PLAY SOUNDS AS APPROPRIATE
-				GetComponentInChildren<AudioSource>().Play();
+				audio.PlayOneShot(attack2);
 				spawnHitBox(team, 1);
 			}
 		} else if (anima == (int) ANIMATIONS.SPIN) {
@@ -186,8 +188,7 @@ public abstract class CharacterScript : TileScript {
 				isAttacking = true;
 				anim.Play("spin" + direction + hasAttack);
 				currentCombo = 0;	
-				// TODO: PLAY SOUNDS AS APPROPRIATE
-				GetComponentInChildren<AudioSource>().Play();
+				audio.PlayOneShot(attack3);
 				spawnHitBox(team, 2);
 			}
 		} else if (anima == (int) ANIMATIONS.HIT) {
