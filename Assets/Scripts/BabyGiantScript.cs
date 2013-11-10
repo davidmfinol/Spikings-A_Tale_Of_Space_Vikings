@@ -26,7 +26,8 @@ public class BabyGiantScript : EnemyNPCScript {
 		if (Random.Range(0, 4) == 0) {
 			Instantiate(meadPrefab, transform.position, meadPrefab.transform.rotation);
 		}
-		
-		Destroy(gameObject, 0.95f);
+		controller.enabled = false;
+		timeSinceLastPath = 0;
+		//Destroy(gameObject, 0.95f);
 	}
 }

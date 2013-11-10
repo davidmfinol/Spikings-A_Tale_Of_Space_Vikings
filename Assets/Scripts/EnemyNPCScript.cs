@@ -11,6 +11,7 @@ public class EnemyNPCScript : CharacterScript {
 		Randomly = 3
 	}
 	
+	public float respawnTime = 5;
 	public float timeToRepath = 1;
 	public float speed = 500;
 	public float noticeRadius = 500;
@@ -21,6 +22,7 @@ public class EnemyNPCScript : CharacterScript {
 	protected float lastHit = 0;
 	protected float lastChange = 0;
 	protected bool hasNoticed = false;
+	protected Vector3 spawnLocation;
 	
 	// A* Pathfinding Variables
 	protected PlayerScript player;
@@ -35,19 +37,30 @@ public class EnemyNPCScript : CharacterScript {
 		base.Start();
 		team = (int) TEAMS.ENEMY;
 		seeker = GetComponent<Seeker>();
+		spawnLocation = transform.position;
 	}
 	
 	override protected void Update () {
 		base.Update();
 		timeSinceLastPath += Time.deltaTime;
 		
-		if (isInAttackRange() && currentPath != null)
-			attack();
+		if (isDead && timeSinceLastPath >= respawnTime) {
+			transform.position = spawnLocation;
+			controller.enabled = true;
+			isDead = false;
+			anim.Play("Spawn");
+			anima = (int) ANIMATIONS.IDLE;
+			currentHealth = maxHealth;
+		}
+		if (!isDead) {
+			if (isInAttackRange() && currentPath != null)
+				attack();
 		
-		if(isInNoticeRange())
-			moveAStar();
-		else
-			movePatrol();
+			if(isInNoticeRange())
+				moveAStar();
+			else
+				movePatrol();
+		}
 	}
 	
 	override protected void OnDeath () {
@@ -57,7 +70,10 @@ public class EnemyNPCScript : CharacterScript {
 		if (Random.Range(0, 4) == 0) {
 			Instantiate(meadPrefab, transform.position, meadPrefab.transform.rotation);
 		}
-		Destroy(gameObject, 0.95f);
+		controller.enabled = false;
+		timeSinceLastPath = 0;
+		//Destroy(gameObject, 0.95f);
+		
 	}
 	
 	override protected void processInput(float x, float z) {
