@@ -98,34 +98,6 @@ public class PlayerScript : CharacterScript {
 	
 	private bool CanPushPlatform(GameObject platform)
 	{
-		return false;
-	}
-	
-	IEnumerator JumpPlatform(GameObject platform) {
-		noInterrupt = true; // this animation/action cannot be interrupted
-		anima = (int)(ANIMATIONS.JUMP);
-		playAnimation();
-		
-		// TODO: Fix movement so you can avoid getting on platform
-		
-		Vector3 moveVector = getMoveVector();
-		moveVector = moveVector.normalized;
-		
-		float distTraveled = 0;
-		while (distTraveled < 75) {
-			Vector3 movement = Time.deltaTime * moveVector * speed;
-			transform.position = transform.position + movement;
-			distTraveled += movement.magnitude;
-			yield return null;
-		}
-		
-		noInterrupt = false;
-		StopCoroutine("JumpPlatform");
-	}
-	
-	IEnumerator PushPlatform(GameObject platform) {
-		noInterrupt = true;
-		
 		Vector3 endPosition = platform.transform.position;
 		Vector3 displacement = getMoveVector();
 		Vector3 endPositionY = endPosition;
@@ -140,47 +112,112 @@ public class PlayerScript : CharacterScript {
 		endPosition += displacement;
 		
 		bool endOnMud = checkDownCollision(endPosition, 1 << 11);
+		bool obstacleInWay = checkAcrossCollision(endPositionY, displacement, 1 << 12) != Vector3.one;
 		
-		if (!intoCliff && endOnMud) { 
+		return !intoCliff && endOnMud && !obstacleInWay;
+	}
+	
+	IEnumerator PushPlatform(GameObject platform) {
+		noInterrupt = true;
 		
-			anima = (int) ANIMATIONS.PUSH;
+		// We need these variables (even though already calculated in CanPushPlatform)
+		Vector3 displacement = getMoveVector();
+		Vector3 endPositionY = platform.transform.position;
+		endPositionY.y = 0;
+		Vector3 hitVector = checkAcrossCollision(endPositionY, displacement, 1 << 14);//check to see if pushing by a cliff
+		bool overCliff = hitVector != Vector3.one && checkVector(hitVector, platform.transform.position);
+		
+		// Start the pushing
+		anima = (int) ANIMATIONS.PUSH;
+		playAnimation();
+		
+		Vector3 origPos = transform.position;
+		Vector3 origPlat = platform.transform.position;
+		
+		float distTraveled = 0;
+		while (distTraveled < displacement.magnitude) {
+			Vector3 movement = Time.deltaTime * displacement.normalized * speed;
+			transform.position = transform.position + movement;
+			platform.transform.position = platform.transform.position + movement;
+			distTraveled += movement.magnitude;
+			yield return null;
+		}
+		
+		transform.position = origPos + displacement*0.9f;
+		platform.transform.position = origPlat + displacement;
+		
+		
+		if(overCliff) {
+			anima = (int) ANIMATIONS.IDLE;
 			playAnimation();
-			
-			Vector3 origPos = transform.position;
-			Vector3 origPlat = platform.transform.position;
-			
-			float distTraveled = 0;
+			displacement = Vector3.back * 128;
+			distTraveled = 0;
 			while (distTraveled < displacement.magnitude) {
 				Vector3 movement = Time.deltaTime * displacement.normalized * speed;
-				transform.position = transform.position + movement;
 				platform.transform.position = platform.transform.position + movement;
 				distTraveled += movement.magnitude;
 				yield return null;
 			}
-			
-			transform.position = origPos + displacement*0.9f;
-			platform.transform.position = origPlat + displacement;
-			
-			anima = (int) ANIMATIONS.IDLE;
-			playAnimation();
-			
-			
-			if(overCliff) {
-				displacement = Vector3.back * 128;
-				distTraveled = 0;
-				while (distTraveled < displacement.magnitude) {
-					Vector3 movement = Time.deltaTime * displacement.normalized * speed;
-					platform.transform.position = platform.transform.position + movement;
-					distTraveled += movement.magnitude;
-					yield return null;
-				}
-			}
-			
-			
 		}
+			
 		
 		noInterrupt = false;
 		StopCoroutine("PushPlatform");
+	}
+	
+	IEnumerator JumpPlatform(GameObject platform) {
+		noInterrupt = true; // this entire action cannot be interrupted
+		
+		// Start with the jump up
+		anima = (int)(ANIMATIONS.JUMP);
+		playAnimation();
+		
+		Vector3 moveVector = platform.transform.position - transform.position;
+		float distTraveled = 0;
+		while (distTraveled < moveVector.magnitude) {
+			Vector3 movement = Time.deltaTime * moveVector.normalized * speed;
+			transform.position = transform.position + movement;
+			distTraveled += movement.magnitude;
+			yield return null;
+		}
+		transform.position = platform.transform.position;
+		moveVector = Vector3.zero;
+		
+		// Then wait for player input
+		while(moveVector == Vector3.zero) {
+			float x = Input.GetAxis("Horizontal");
+			float z = Input.GetAxis("Vertical");
+			processInput(x, z);
+			anima = (int)(ANIMATIONS.IDLE);
+			playAnimation();
+			moveVector = getMoveVector();
+			if((x == 0 && z == 0) || checkAcrossCollision(transform.position, moveVector, 1 << 12) != Vector3.one) // fixme: we can still run into obstacles
+				moveVector = Vector3.zero;
+			yield return null;
+		}
+		
+		// Then move off the platform
+		// gameObject.CompareTag("Cliff Top") || gameObject.CompareTag("Cliff Side")
+		//if() {
+		//	noInterrupt = false;
+		//	StopCoroutine("JumpPlatform");
+		// StartCoroutine("JumpCliff", cliff or hit);
+		//}
+		//else {
+			anima = (int)(ANIMATIONS.FALL);
+			playAnimation();
+			distTraveled = 0;
+			Vector3 startPoint = transform.position;
+			while (distTraveled < moveVector.magnitude) {
+				Vector3 movement = Time.deltaTime * moveVector.normalized * speed;
+				transform.position = transform.position + movement;
+				distTraveled += movement.magnitude;
+				yield return null;
+			}
+			transform.position = startPoint + moveVector;
+			noInterrupt = false;
+			StopCoroutine("JumpPlatform");
+		//}
 	}
 	
 	

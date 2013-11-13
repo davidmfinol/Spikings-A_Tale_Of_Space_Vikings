@@ -65,7 +65,8 @@ public class BearScript : EnemyNPCScript {
 		return isInNoticeRange();
 	}
 	
-	void OnDestroy() {
+	protected override void OnDeath() {
+		base.OnDeath();
 		//play Bear Death Sound
 		audio.enabled = true;
 		//this sound doesn't play either
