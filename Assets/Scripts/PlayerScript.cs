@@ -69,7 +69,10 @@ public class PlayerScript : CharacterScript {
 		if(gameObject.CompareTag("Platform")) {
 			InteractWithPlatform(gameObject);
 		} else if (gameObject.CompareTag("Cliff Top") || gameObject.CompareTag("Cliff Side")) {
-			StartCoroutine("JumpCliff", hit);
+			ArrayList list = new ArrayList(2);
+			list.Add(hit.collider.gameObject);
+			list.Add(hit.transform.position);
+			StartCoroutine("JumpCliff", list);
 		} else if (gameObject.CompareTag("Item")) {
 			ItemScript item = gameObject.GetComponent<ItemScript>();
 			powers += item.power;
@@ -89,38 +92,15 @@ public class PlayerScript : CharacterScript {
 	
 	
 	private void InteractWithPlatform(GameObject platform) {
-		if (Input.GetButton("Jump") && !noInterrupt) {
-			StartCoroutine("JumpPlatform", platform);
-		} else if (Input.GetButtonDown("Fire2") && !noInterrupt) {
+		if ( CanPushPlatform(platform) && !noInterrupt) {
 			StartCoroutine("PushPlatform", platform);
+		} else if (!noInterrupt) {
+			StartCoroutine("JumpPlatform", platform);
 		}
 	}
 	
-	IEnumerator JumpPlatform(GameObject platform) {
-		noInterrupt = true; // this animation/action cannot be interrupted
-		anima = (int)(ANIMATIONS.JUMP);
-		playAnimation();
-		
-		// TODO: Fix movement so you can avoid getting on platform
-		
-		Vector3 moveVector = getMoveVector();
-		moveVector = moveVector.normalized;
-		
-		float distTraveled = 0;
-		while (distTraveled < 75) {
-			Vector3 movement = Time.deltaTime * moveVector * speed;
-			transform.position = transform.position + movement;
-			distTraveled += movement.magnitude;
-			yield return null;
-		}
-		
-		noInterrupt = false;
-		StopCoroutine("JumpPlatform");
-	}
-	
-	IEnumerator PushPlatform(GameObject platform) {
-		noInterrupt = true;
-		
+	private bool CanPushPlatform(GameObject platform)
+	{
 		Vector3 endPosition = platform.transform.position;
 		Vector3 displacement = getMoveVector();
 		Vector3 endPositionY = endPosition;
@@ -135,104 +115,127 @@ public class PlayerScript : CharacterScript {
 		endPosition += displacement;
 		
 		bool endOnMud = checkDownCollision(endPosition, 1 << 11);
+		bool obstacleInWay = checkAcrossCollision(endPositionY, displacement, 1 << 12) != Vector3.one;
 		
-		if (!intoCliff && endOnMud) { 
+		return !intoCliff && endOnMud && !obstacleInWay;
+	}
+	
+	IEnumerator PushPlatform(GameObject platform) {
+		noInterrupt = true;
 		
-			anima = (int) ANIMATIONS.PUSH;
+		// We need these variables (even though already calculated in CanPushPlatform)
+		Vector3 displacement = getMoveVector();
+		Vector3 endPositionY = platform.transform.position;
+		endPositionY.y = 0;
+		Vector3 hitVector = checkAcrossCollision(endPositionY, displacement, 1 << 14);//check to see if pushing by a cliff
+		bool overCliff = hitVector != Vector3.one && checkVector(hitVector, platform.transform.position);
+		
+		// Start the pushing
+		anima = (int) ANIMATIONS.PUSH;
+		playAnimation();
+		
+		Vector3 origPos = transform.position;
+		Vector3 origPlat = platform.transform.position;
+		
+		float distTraveled = 0;
+		while (distTraveled < displacement.magnitude) {
+			Vector3 movement = Time.deltaTime * displacement.normalized * speed;
+			transform.position = transform.position + movement;
+			platform.transform.position = platform.transform.position + movement;
+			distTraveled += movement.magnitude;
+			yield return null;
+		}
+		
+		transform.position = origPos + displacement*0.9f;
+		platform.transform.position = origPlat + displacement;
+		
+		
+		if(overCliff) {
+			anima = (int) ANIMATIONS.IDLE;
 			playAnimation();
-			
-			Vector3 origPos = transform.position;
-			Vector3 origPlat = platform.transform.position;
-			
-			float distTraveled = 0;
+			displacement = Vector3.back * 128;
+			distTraveled = 0;
 			while (distTraveled < displacement.magnitude) {
 				Vector3 movement = Time.deltaTime * displacement.normalized * speed;
-				transform.position = transform.position + movement;
 				platform.transform.position = platform.transform.position + movement;
 				distTraveled += movement.magnitude;
 				yield return null;
 			}
-			
-			transform.position = origPos + displacement*0.9f;
-			platform.transform.position = origPlat + displacement;
-			
-			anima = (int) ANIMATIONS.IDLE;
-			playAnimation();
-			
-			
-			if(overCliff) {
-				displacement = Vector3.back * 128;
-				distTraveled = 0;
-				while (distTraveled < displacement.magnitude) {
-					Vector3 movement = Time.deltaTime * displacement.normalized * speed;
-					platform.transform.position = platform.transform.position + movement;
-					distTraveled += movement.magnitude;
-					yield return null;
-				}
-			}
-			
-			
 		}
-		
+
 		noInterrupt = false;
 		StopCoroutine("PushPlatform");
 	}
 	
-	
-	private bool checkVector(Vector3 one, Vector3 two) {
-		float x = one.x - two.x;
-		float z = one.z - two.z;
-		if (x < 0) {
-			x *= -1;
+	IEnumerator JumpPlatform(GameObject platform) {
+		noInterrupt = true; // this entire action cannot be interrupted
+		
+		// Start with the jump up
+		anima = (int)(ANIMATIONS.JUMP);
+		playAnimation();
+		
+		Vector3 moveVector = platform.transform.position - transform.position;
+		float distTraveled = 0;
+		while (distTraveled < moveVector.magnitude) {
+			Vector3 movement = Time.deltaTime * moveVector.normalized * speed;
+			transform.position = transform.position + movement;
+			distTraveled += movement.magnitude;
+			yield return null;
 		}
-		if (z < 0) {
-			z *= -1;
+		transform.position = platform.transform.position;
+		moveVector = Vector3.zero;
+		
+		// Then wait for player input
+		Vector3 startCheckpoint = transform.position;
+		startCheckpoint.y = 0;
+		while(moveVector == Vector3.zero) {
+			float x = Input.GetAxis("Horizontal");
+			float z = Input.GetAxis("Vertical");
+			processInput(x, z);
+			anima = (int)(ANIMATIONS.IDLE);
+			playAnimation();
+			moveVector = getMoveVector();
+			if((x == 0 && z == 0) || Physics.Raycast(startCheckpoint, moveVector, moveVector.magnitude, 1 << 12) )
+				moveVector = Vector3.zero;
+			yield return null;
 		}
-		if (x > .001 || z > .001) {
-			return false;
+		
+		// Then move off the platform
+		RaycastHit cliffHit;
+		if(Physics.Raycast(startCheckpoint, moveVector, out cliffHit, moveVector.magnitude, (1 << 13) | (1 << 14) ) ) {
+			noInterrupt = false;
+			StopCoroutine("JumpPlatform");
+			JumpCliffFromPlatform(platform, cliffHit);
 		}
-		return true;
+		else {
+			anima = (int)(ANIMATIONS.FALL);
+			playAnimation();
+			distTraveled = 0;
+			Vector3 startPoint = transform.position;
+			while (distTraveled < moveVector.magnitude) {
+				Vector3 movement = Time.deltaTime * moveVector.normalized * speed;
+				transform.position = transform.position + movement;
+				distTraveled += movement.magnitude;
+				yield return null;
+			}
+			transform.position = startPoint + moveVector;
+			noInterrupt = false;
+			StopCoroutine("JumpPlatform");
+		}
+
 	}
-	
-	private Vector3 getMoveVector() {
-		if (direction == (int) DIRECTIONS.EAST) {
-			return new Vector3(128, 0, 0);
-		} else if (direction == (int) DIRECTIONS.NORTH) {
-			return new Vector3(0, 0, 128);
-		} else if (direction == (int) DIRECTIONS.WEST) {
-			return new Vector3(-128, 0, 0);
-		} else if (direction == (int) DIRECTIONS.SOUTH) {
-			return new Vector3(0, 0, -128);
-		}
-		return new Vector3(0, 0, 0);
+
+	private void JumpCliffFromPlatform(GameObject platform, RaycastHit cliffHit) {
+		ArrayList list = new ArrayList(2);
+		list.Add(cliffHit.collider.gameObject);
+		list.Add(cliffHit.transform.position);
+		StartCoroutine("JumpCliff", list);
 	}
-	
-	private bool checkDownCollision(Vector3 position, int layerMask) {
-		if (Physics.Raycast(position, Vector3.down, Mathf.Infinity, layerMask)) {
-			return true;
-		}
-		return false;
-	}
-	
-	private Vector3 checkAcrossCollision(Vector3 position, Vector3 direction, int layerMask) {
-		RaycastHit hit;
-		if (Physics.Raycast(position, direction, out hit, 90, layerMask)) {
-			return hit.transform.position;
-		}
-		return Vector3.one;
-	}
-	
-	private Vector3 checkCliffCollision(Vector3 position) {
-		RaycastHit hit;
-		if (Physics.Raycast(position, Vector3.back, out hit, Mathf.Infinity, 1 << 13)) {
-			return hit.transform.position;
-		}
-		return Vector3.one;
-	}
-	
+
 	// Make the player automatically jump all the way down a cliff, if possible
-	IEnumerator JumpCliff(ControllerColliderHit hit) {
-		GameObject gameObject = hit.collider.gameObject;
+	IEnumerator JumpCliff(ArrayList objectAndHitPosition) {
+		GameObject gameObject = objectAndHitPosition[0] as GameObject;
+		Vector3 cliffHitPosition = (Vector3) objectAndHitPosition[1];
 		bool isCliffTop = gameObject.CompareTag("Cliff Top");
 		Vector3 moveVector = getMoveVector(); // Returns us how far and in what direction we need to move to get across one tile
 		Vector3 hitVector = checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 14);// Check to see if we're approaching the cliff from the correct side
@@ -270,7 +273,7 @@ public class PlayerScript : CharacterScript {
 			
 		}
 		// climb up cliff if on the correct side of the cliff
-		else if (isCliffTop && hitVector.Equals(hit.transform.position)) { 
+		else if (isCliffTop && hitVector.Equals(cliffHitPosition)) { 
 			Vector3 collision = gameObject.transform.position;
 			bool isSouthOrNorth = false;
 			if (direction == (int) DIRECTIONS.SOUTH) {
@@ -324,6 +327,57 @@ public class PlayerScript : CharacterScript {
 			
 		}
 		StopCoroutine("JumpCliff");
+	}
+	
+	private bool checkVector(Vector3 one, Vector3 two) {
+		float x = one.x - two.x;
+		float z = one.z - two.z;
+		if (x < 0) {
+			x *= -1;
+		}
+		if (z < 0) {
+			z *= -1;
+		}
+		if (x > .001 || z > .001) {
+			return false;
+		}
+		return true;
+	}
+	
+	private Vector3 getMoveVector() {
+		if (direction == (int) DIRECTIONS.EAST) {
+			return new Vector3(128, 0, 0);
+		} else if (direction == (int) DIRECTIONS.NORTH) {
+			return new Vector3(0, 0, 128);
+		} else if (direction == (int) DIRECTIONS.WEST) {
+			return new Vector3(-128, 0, 0);
+		} else if (direction == (int) DIRECTIONS.SOUTH) {
+			return new Vector3(0, 0, -128);
+		}
+		return new Vector3(0, 0, 0);
+	}
+	
+	private bool checkDownCollision(Vector3 position, int layerMask) {
+		if (Physics.Raycast(position, Vector3.down, Mathf.Infinity, layerMask)) {
+			return true;
+		}
+		return false;
+	}
+	
+	private Vector3 checkAcrossCollision(Vector3 position, Vector3 direction, int layerMask) {
+		RaycastHit hit;
+		if (Physics.Raycast(position, direction, out hit, 90, layerMask)) {
+			return hit.transform.position;
+		}
+		return Vector3.one;
+	}
+	
+	private Vector3 checkCliffCollision(Vector3 position) {
+		RaycastHit hit;
+		if (Physics.Raycast(position, Vector3.back, out hit, Mathf.Infinity, 1 << 13)) {
+			return hit.transform.position;
+		}
+		return Vector3.one;
 	}
 	
 	public IEnumerator PlayNoInterruptAnimation (int animationNum) {
