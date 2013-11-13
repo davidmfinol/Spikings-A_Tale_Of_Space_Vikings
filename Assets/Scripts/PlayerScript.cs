@@ -89,11 +89,16 @@ public class PlayerScript : CharacterScript {
 	
 	
 	private void InteractWithPlatform(GameObject platform) {
-		if (Input.GetButton("Jump") && !noInterrupt) {
-			StartCoroutine("JumpPlatform", platform);
-		} else if (Input.GetButtonDown("Fire2") && !noInterrupt) {
+		if ( CanPushPlatform(platform) && !noInterrupt) {
 			StartCoroutine("PushPlatform", platform);
+		} else if (!noInterrupt) {
+			StartCoroutine("JumpPlatform", platform);
 		}
+	}
+	
+	private bool CanPushPlatform(GameObject platform)
+	{
+		return false;
 	}
 	
 	IEnumerator JumpPlatform(GameObject platform) {
