@@ -43,10 +43,11 @@ public abstract class CharacterScript : TileScript {
 	protected tk2dSprite sprite;
 	protected tk2dSpriteAnimator anim;
 	
-	private bool isAttacking;
-	private bool isBeingHit;
-	private bool isThrowing;
+	protected bool isAttacking;
+	protected bool isBeingHit;
+	protected bool isThrowing;
 	protected bool isDead;
+	protected bool isStationary;
 	protected bool noInterrupt;
 	
 // for combos
@@ -72,6 +73,7 @@ public abstract class CharacterScript : TileScript {
 		isBeingHit = false;
 		noInterrupt = false;
 		isThrowing = false;
+		isStationary = false;
 		powers = 1;
 	}
 	
@@ -231,7 +233,7 @@ public abstract class CharacterScript : TileScript {
 	}
 	
 	protected void move(float x, float z) {
-		if (isAttacking || isBeingHit || anima == (int) (ANIMATIONS.DIE) || noInterrupt || anim.IsPlaying("Spawn") || isThrowing)
+		if (isStationary || isAttacking || isBeingHit || anima == (int) (ANIMATIONS.DIE) || noInterrupt || anim.IsPlaying("Spawn") || isThrowing)
 			return;
 		
 		processInput(x, z);

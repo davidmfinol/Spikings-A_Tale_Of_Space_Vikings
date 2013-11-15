@@ -11,6 +11,8 @@ public class PlayerScript : CharacterScript {
 	public AudioClip mead_sound;
 	public AudioClip death_sound;
 	public AudioClip hurt_sound;
+
+	private Vector3 platformOffset = new Vector3(0, 0, 90);
 	
 	override protected void Start () {
 		base.Start();
@@ -174,7 +176,7 @@ public class PlayerScript : CharacterScript {
 		anima = (int)(ANIMATIONS.JUMP);
 		playAnimation();
 		
-		Vector3 moveVector = platform.transform.position - transform.position;
+		Vector3 moveVector = platform.transform.position - transform.position + platformOffset;
 		float distTraveled = 0;
 		while (distTraveled < moveVector.magnitude) {
 			Vector3 movement = Time.deltaTime * moveVector.normalized * speed;
@@ -182,23 +184,32 @@ public class PlayerScript : CharacterScript {
 			distTraveled += movement.magnitude;
 			yield return null;
 		}
-		transform.position = platform.transform.position;
+		transform.position = platform.transform.position  + platformOffset;
 		moveVector = Vector3.zero;
 		
 		// Then wait for player input
-		Vector3 startCheckpoint = transform.position;
+		isStationary = true;
+		noInterrupt = false;
+		Vector3 startCheckpoint = transform.position - platformOffset;
 		startCheckpoint.y = 0;
 		while(moveVector == Vector3.zero) {
 			float x = Input.GetAxis("Horizontal");
 			float z = Input.GetAxis("Vertical");
 			processInput(x, z);
-			anima = (int)(ANIMATIONS.IDLE);
-			playAnimation();
-			moveVector = getMoveVector();
+
+			if(!isAttacking && !isBeingHit && !isBeingHit && !noInterrupt && !isDead)
+			{
+				anima = (int)(ANIMATIONS.IDLE);
+				playAnimation();
+			}
+
+			moveVector = getMoveVector() - platformOffset;
 			if((x == 0 && z == 0) || Physics.Raycast(startCheckpoint, moveVector, moveVector.magnitude, 1 << 12) )
 				moveVector = Vector3.zero;
 			yield return null;
 		}
+		isStationary = false;
+		noInterrupt = true;
 		
 		// Then move off the platform
 		RaycastHit cliffHit;
