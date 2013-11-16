@@ -249,7 +249,7 @@ public class PlayerScript : CharacterScript {
 		Vector3 cliffHitPosition = (Vector3) objectAndHitPosition[1];
 		bool isCliffTop = gameObject.CompareTag("Cliff Top");
 		Vector3 moveVector = getMoveVector(); // Returns us how far and in what direction we need to move to get across one tile
-		Vector3 hitVector = checkAcrossCollision(gameObject.transform.position, moveVector, 1 << 14);// Check to see if we're approaching the cliff from the correct side
+		Vector3 hitVector = checkAcrossCollision(gameObject.transform.position, -moveVector, 1 << 14);// Check to see if we're approaching the cliff from the correct side
 		bool onPlatform = checkDownCollision(transform.position + new Vector3(0, 1000, 0), 1 << 15);// Check to see if the player is on a platform
 		// Climb up cliff if on platform
 		if (onPlatform) {
@@ -283,37 +283,34 @@ public class PlayerScript : CharacterScript {
 			}
 			
 		}
-		// climb up cliff if on the correct side of the cliff
-		else if (isCliffTop && hitVector.Equals(cliffHitPosition)) { 
+		// climb down cliff if on the correct side of the cliff
+		else if (isCliffTop && hitVector.Equals(cliffHitPosition)) {
 			Vector3 collision = gameObject.transform.position;
-			bool isSouthOrNorth = false;
+			Vector3 displacement = Vector3.zero;
 			if (direction == (int) DIRECTIONS.SOUTH) {
-				isSouthOrNorth = true;
-				collision = checkCliffCollision(collision + moveVector);
+				displacement = checkCliffCollision(collision + moveVector) - collision + Vector3.back * 128;
 			} else if (direction == (int) DIRECTIONS.NORTH) {
-				isSouthOrNorth = true;
-			}
-			bool spaceEmpty = false;
-			if (isSouthOrNorth) {
-				spaceEmpty = checkAcrossCollision(collision, moveVector, 1 << 12) == Vector3.one;
+				//no displacement needed
 			} else {
-				//TODO: does not check for collisions with cliff side
-				spaceEmpty = checkAcrossCollision(collision + Vector3.back * 128, moveVector, 1 << 12) == Vector3.one;
+				displacement = Vector3.back * 128 * 2;
 			}
-			if (collision != Vector3.one && spaceEmpty) {
+			bool isEmpty = checkAcrossCollision(collision + displacement, moveVector, 1 << 12) == Vector3.one;
+			bool isGround = checkDownCollision(collision + displacement + new Vector3(0, 10, 0), 1 << 8);
+			if (collision != Vector3.one && isGround && isEmpty) {
 				noInterrupt = true;
 				anima = (int)(ANIMATIONS.FALL);
 				playAnimation();
-				moveVector+= (collision - transform.position);
+
+				// Setting up move Vector to be used to move Roxanne
+				moveVector += displacement;
 				moveVector.y = 0;
-				Vector3 position = transform.position;
+
+				// Making shadow appear where you land
+				Vector3 position = moveVector + transform.position;
 				position.y = GameManager.Instance.MapData.height-((int)position.z) / 128;
-				if (!isSouthOrNorth) {
-					position += Vector3.back * 128 + moveVector;
-				} else {
-					position += moveVector;
-				}
 				GameObject shadow = (GameObject) Instantiate(shadowPrefab, position, shadowPrefab.transform.rotation);
+
+				// Moves Roxanne step by step down the cliff
 				Vector3 normalizedMove = moveVector.normalized;
 				float distTraveled = 0;
 				while (distTraveled < moveVector.magnitude) {
@@ -321,16 +318,6 @@ public class PlayerScript : CharacterScript {
 					transform.position = transform.position + movement;
 					distTraveled += movement.magnitude;
 					yield return null;
-				}
-				if(!isSouthOrNorth) {
-					//TODO: (also, perhaps merge motion)
-					distTraveled = 0;
-					while (distTraveled < 128) {
-						Vector3 movement = Time.deltaTime * Vector3.back * speed;
-						transform.position = transform.position + movement;
-						distTraveled += movement.magnitude;
-						yield return null;
-					}
 				}
 				Destroy (shadow);
 				noInterrupt = false;
@@ -377,7 +364,7 @@ public class PlayerScript : CharacterScript {
 	
 	private Vector3 checkAcrossCollision(Vector3 position, Vector3 direction, int layerMask) {
 		RaycastHit hit;
-		if (Physics.Raycast(position, direction, out hit, 90, layerMask)) {
+		if (Physics.Raycast(position, direction, out hit, 64, layerMask)) {
 			return hit.transform.position;
 		}
 		return Vector3.one;
