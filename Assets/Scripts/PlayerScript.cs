@@ -294,8 +294,8 @@ public class PlayerScript : CharacterScript {
 			} else {
 				displacement = Vector3.back * 128 * 2;
 			}
-			bool isEmpty = checkAcrossCollision(collision + displacement, moveVector, 1 << 12) == Vector3.one;
-			bool isGround = checkDownCollision(collision + displacement + new Vector3(0, 10, 0), 1 << 8);
+			bool isEmpty = !checkDownCollision(collision + displacement, 1 << 12);
+			bool isGround = checkDownCollision(collision + displacement, 1 << 8);
 			if (collision != Vector3.one && isGround && isEmpty) {
 				noInterrupt = true;
 				anima = (int)(ANIMATIONS.FALL);
@@ -356,7 +356,7 @@ public class PlayerScript : CharacterScript {
 	}
 	
 	private bool checkDownCollision(Vector3 position, int layerMask) {
-		if (Physics.Raycast(position, Vector3.down, Mathf.Infinity, layerMask)) {
+		if (Physics.Raycast(position + new Vector3(0, 10000, 0), Vector3.down, Mathf.Infinity, layerMask)) {
 			return true;
 		}
 		return false;
@@ -364,7 +364,7 @@ public class PlayerScript : CharacterScript {
 	
 	private Vector3 checkAcrossCollision(Vector3 position, Vector3 direction, int layerMask) {
 		RaycastHit hit;
-		if (Physics.Raycast(position, direction, out hit, 64, layerMask)) {
+		if (Physics.Raycast(position, direction, out hit, 90, layerMask)) {
 			return hit.transform.position;
 		}
 		return Vector3.one;
