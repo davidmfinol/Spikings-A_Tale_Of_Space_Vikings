@@ -30,8 +30,8 @@ public class HitboxScript : MonoBehaviour {
 		Destroy(gameObject, delay);
 		Destroy(transform.parent.gameObject, delay);
 		
-		if(isSpin)
-			GetComponent<tk2dSpriteAnimator>().Play("Spin");
+		//if(isSpin)
+		//	GetComponent<tk2dSpriteAnimator>().Play("Spin");
 	}
 	
 	private void OnTriggerEnter(Collider collider) {
