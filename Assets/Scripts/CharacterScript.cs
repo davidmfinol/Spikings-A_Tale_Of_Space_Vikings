@@ -75,6 +75,7 @@ public abstract class CharacterScript : TileScript {
 		isThrowing = false;
 		isStationary = false;
 		powers = 1;
+		sprite.SortingOrder = 0;
 	}
 	
 	virtual protected void Update () {
