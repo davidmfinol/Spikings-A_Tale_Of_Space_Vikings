@@ -12,7 +12,7 @@ public class PlayerScript : CharacterScript {
 	public AudioClip death_sound;
 	public AudioClip hurt_sound;
 
-	private Vector3 platformOffset = new Vector3(0, 0, 90);
+	private Vector3 platformOffset = new Vector3(0, 0, 150);
 	
 	override protected void Start () {
 		base.Start();
@@ -175,8 +175,10 @@ public class PlayerScript : CharacterScript {
 		// Start with the jump up
 		anima = (int)(ANIMATIONS.JUMP);
 		playAnimation();
-		
-		Vector3 moveVector = platform.transform.position - transform.position + platformOffset;
+
+		Vector3 targetPosition = platform.transform.position + platformOffset;
+		targetPosition.y = 0;
+		Vector3 moveVector = targetPosition - transform.position;
 		float distTraveled = 0;
 		while (distTraveled < moveVector.magnitude) {
 			Vector3 movement = Time.deltaTime * moveVector.normalized * speed;
@@ -184,14 +186,14 @@ public class PlayerScript : CharacterScript {
 			distTraveled += movement.magnitude;
 			yield return null;
 		}
-		transform.position = platform.transform.position  + platformOffset;
+		transform.position = targetPosition;
 		moveVector = Vector3.zero;
 		
 		// Then wait for player input
+		sprite.SortingOrder = 1;
 		isStationary = true;
 		noInterrupt = false;
 		Vector3 startCheckpoint = transform.position - platformOffset;
-		startCheckpoint.y = 0;
 		while(moveVector == Vector3.zero) {
 			float x = Input.GetAxis("Horizontal");
 			float z = Input.GetAxis("Vertical");
@@ -212,6 +214,7 @@ public class PlayerScript : CharacterScript {
 		noInterrupt = true;
 		
 		// Then move off the platform
+		sprite.SortingOrder = 0;
 		RaycastHit cliffHit;
 		if(Physics.Raycast(startCheckpoint, moveVector, out cliffHit, moveVector.magnitude, (1 << 13) | (1 << 14) ) ) {
 			noInterrupt = false;
@@ -237,9 +240,10 @@ public class PlayerScript : CharacterScript {
 	}
 
 	private void JumpCliffFromPlatform(GameObject platform, RaycastHit cliffHit) {
-		ArrayList list = new ArrayList(2);
+		ArrayList list = new ArrayList(3);
 		list.Add(cliffHit.collider.gameObject);
 		list.Add(cliffHit.transform.position);
+		list.Add(true);
 		StartCoroutine("JumpCliff", list);
 	}
 
@@ -250,7 +254,8 @@ public class PlayerScript : CharacterScript {
 		bool isCliffTop = gameObject.CompareTag("Cliff Top");
 		Vector3 moveVector = getMoveVector(); // Returns us how far and in what direction we need to move to get across one tile
 		Vector3 hitVector = checkAcrossCollision(gameObject.transform.position, -moveVector, 1 << 14);// Check to see if we're approaching the cliff from the correct side
-		bool onPlatform = checkDownCollision(transform.position + new Vector3(0, 1000, 0), 1 << 15);// Check to see if the player is on a platform
+		//bool onPlatform = checkDownCollision(transform.position + new Vector3(0, 1000, 0), 1 << 15);// Check to see if the player is on a platform
+		bool onPlatform = objectAndHitPosition.Count > 2;
 		// Climb up cliff if on platform
 		if (onPlatform) {
 			Vector3 displacement = moveVector;
