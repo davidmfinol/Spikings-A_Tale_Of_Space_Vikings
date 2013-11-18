@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class RockScript : TileScript {
+public class DestroyableScript : TileScript {
 	private tk2dSpriteAnimator anim;
 	private bool destroying;
 	

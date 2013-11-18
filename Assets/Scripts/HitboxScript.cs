@@ -39,7 +39,7 @@ public class HitboxScript : MonoBehaviour {
 		GameObject gameObject = collider.gameObject;
 		EnemyNPCScript enemy = gameObject.GetComponent<EnemyNPCScript>();
 		PlayerScript player = gameObject.GetComponent<PlayerScript>();
-		RockScript rock = gameObject.GetComponent<RockScript>();
+		DestroyableScript rock = gameObject.GetComponent<DestroyableScript>();
 		if(team == (int) TEAMS.PLAYER && enemy != null) {
 			//this sound doesn't play
 			audio.PlayOneShot(impact_sound);
