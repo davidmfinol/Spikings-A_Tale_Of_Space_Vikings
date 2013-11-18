@@ -167,6 +167,15 @@ public class PlayerScript : CharacterScript {
 
 		noInterrupt = false;
 		StopCoroutine("PushPlatform");
+
+		if(!overCliff && CanPushPlatform(platform) && (Input.GetAxis("Horizontal") > 0 && direction == (int)(DIRECTIONS.EAST) ||
+		   Input.GetAxis("Horizontal") < 0 && direction == (int)(DIRECTIONS.WEST) ||
+		   Input.GetAxis("Vertical") > 0 && direction == (int)(DIRECTIONS.NORTH) ||
+		   Input.GetAxis("Vertical") < 0 && direction == (int)(DIRECTIONS.SOUTH)))
+		{
+			transform.position = origPos + displacement;
+			StartCoroutine("PushPlatform", platform);
+		}
 	}
 	
 	IEnumerator JumpPlatform(GameObject platform) {
