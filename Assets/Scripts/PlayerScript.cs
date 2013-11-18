@@ -308,8 +308,12 @@ public class PlayerScript : CharacterScript {
 			} else {
 				displacement = Vector3.back * 128 * 2;
 			}
+			bool isPlatform = checkDownCollision(collision + displacement, 1 << 15);
 			bool isEmpty = !checkDownCollision(collision + displacement, 1 << 12);
 			bool isGround = checkDownCollision(collision + displacement, 1 << 8);
+			if (isPlatform) {
+				displacement += Vector3.forward * 128;
+			}
 			if (collision != Vector3.one && isGround && isEmpty) {
 				noInterrupt = true;
 				anima = (int)(ANIMATIONS.FALL);
