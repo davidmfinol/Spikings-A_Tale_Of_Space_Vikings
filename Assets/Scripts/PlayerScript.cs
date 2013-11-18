@@ -180,6 +180,7 @@ public class PlayerScript : CharacterScript {
 	
 	IEnumerator JumpPlatform(GameObject platform) {
 		noInterrupt = true; // this entire action cannot be interrupted
+		sprite.SortingOrder = 1;
 		
 		// Start with the jump up
 		anima = (int)(ANIMATIONS.JUMP);
@@ -199,7 +200,6 @@ public class PlayerScript : CharacterScript {
 		moveVector = Vector3.zero;
 		
 		// Then wait for player input
-		sprite.SortingOrder = 1;
 		isStationary = true;
 		noInterrupt = false;
 		Vector3 startCheckpoint = transform.position - platformOffset;
@@ -223,10 +223,10 @@ public class PlayerScript : CharacterScript {
 		noInterrupt = true;
 		
 		// Then move off the platform
-		sprite.SortingOrder = 0;
 		RaycastHit cliffHit;
 		if(Physics.Raycast(startCheckpoint, moveVector, out cliffHit, moveVector.magnitude, (1 << 13) | (1 << 14) ) ) {
 			noInterrupt = false;
+			sprite.SortingOrder = 0;
 			StopCoroutine("JumpPlatform");
 			JumpCliffFromPlatform(platform, cliffHit);
 		}
@@ -242,6 +242,7 @@ public class PlayerScript : CharacterScript {
 				yield return null;
 			}
 			transform.position = startPoint + moveVector;
+			sprite.SortingOrder = 0;
 			noInterrupt = false;
 			StopCoroutine("JumpPlatform");
 		}

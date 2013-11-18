@@ -64,6 +64,10 @@ public class HammerThrow : MonoBehaviour {
 		sprite.transform.position = pos;
 		
 		distanceTraveled += Mathf.Abs(throwMovement.magnitude);
+
+		Bounds bounds = ((BoxCollider)collider).bounds;
+		if(bounds.Intersects(GameManager.Instance.Player.collider.bounds))
+			OnTriggerEnter(GameManager.Instance.Player.collider);
 	}
 	
 	void OnTriggerEnter(Collider collider){

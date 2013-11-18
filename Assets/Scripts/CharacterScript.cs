@@ -126,7 +126,7 @@ public abstract class CharacterScript : TileScript {
 		if(attackType == 2)
 		{
 			hitBoxScript.isSpin = true;
-			box.transform.localScale = box.transform.localScale * 3;
+			//box.transform.localScale = box.transform.localScale * 3;
 		}
 		
 		GameObject buffer = new GameObject();
