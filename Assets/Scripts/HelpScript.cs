@@ -23,6 +23,7 @@ public class HelpScript : MonoBehaviour
 	
 	private bool alreadyTriggered = false;
 	
+	public Transform bossPrefab;
 	
 	void OnTriggerEnter(Collider collider)
 	{
@@ -37,10 +38,13 @@ public class HelpScript : MonoBehaviour
 		case Condition.HasHammer : if(player.powers < 1) return; break;
 		case Condition.FoundOnePart : if(GameManager.Instance.partsCollected < 1) return; break;
 		case Condition.FoundTwoParts : if(GameManager.Instance.partsCollected < 2) return; break;
-		case Condition.FoundAllParts : if(GameManager.Instance.partsCollected < 3) return; break;
+		case Condition.FoundAllParts : if(GameManager.Instance.partsCollected < 3) return; 
+			Instantiate(bossPrefab, transform.position, bossPrefab.rotation);
+			break;
 		default: break;
 		}
-		
+
+
 		if( message != null && message != "" )
 		{
 			if(!alreadyTriggered) 
