@@ -85,8 +85,11 @@ public class PlayerScript : CharacterScript {
 			}
 			if(currentHealth > maxHealth)
 				currentHealth = maxHealth;
-			if(item.health == 0 && item.power == 0)
+			if(!item.activated && item.health == 0 && item.power == 0)
+			{
 				GameManager.Instance.partsCollected++;
+				item.activated = true;
+			}
 			Destroy(gameObject);
 		}
 		
@@ -246,7 +249,7 @@ public class PlayerScript : CharacterScript {
 			}
 			
 			moveVector = getMoveVector() - platformOffset;
-			if((x == 0 && z == 0) || Physics.Raycast(startCheckpoint, moveVector, moveVector.magnitude, 1 << 12) )
+			if((x == 0 && z == 0) || Physics.Raycast(startCheckpoint, moveVector + platformOffset, (moveVector + platformOffset).magnitude, 1 << 12) )
 				moveVector = Vector3.zero;
 			yield return null;
 		}
