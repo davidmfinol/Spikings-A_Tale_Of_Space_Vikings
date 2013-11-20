@@ -197,23 +197,54 @@ public class PlayerScript : CharacterScript {
 			yield return null;
 		}
 		transform.position = targetPosition;
-		moveVector = Vector3.zero;
+
+		StopCoroutine("JumpPlatform");
+		StartCoroutine("StayPlatform", platform);
+	}
+	
+	IEnumerator LandPlatform(GameObject platform) {
+		noInterrupt = true; // this entire action cannot be interrupted
+		sprite.SortingOrder = 1;
 		
-		// Then wait for player input
+		// Start with the jump up
+		anima = (int)(ANIMATIONS.FALL);
+		playAnimation();
+		
+		Vector3 targetPosition = platform.transform.position + platformOffset;
+		targetPosition.y = 0;
+		Vector3 moveVector = targetPosition - transform.position;
+		float distTraveled = 0;
+		while (distTraveled < moveVector.magnitude) {
+			Vector3 movement = Time.deltaTime * moveVector.normalized * speed;
+			transform.position = transform.position + movement;
+			distTraveled += movement.magnitude;
+			yield return null;
+		}
+		transform.position = targetPosition;
+		
+		StopCoroutine("LandPlatform");
+		StartCoroutine("StayPlatform", platform);
+	}
+
+	IEnumerator StayPlatform(GameObject platform) {
+		sprite.SortingOrder = 1;
 		isStationary = true;
 		noInterrupt = false;
+
+		Vector3 moveVector = Vector3.zero;
 		Vector3 startCheckpoint = transform.position - platformOffset;
+		float distTraveled = 0;
 		while(moveVector == Vector3.zero) {
 			float x = Input.GetAxis("Horizontal");
 			float z = Input.GetAxis("Vertical");
 			processInput(x, z);
-
+			
 			if(!isAttacking && !isBeingHit && !isBeingHit && !noInterrupt && !isDead)
 			{
 				anima = (int)(ANIMATIONS.IDLE);
 				playAnimation();
 			}
-
+			
 			moveVector = getMoveVector() - platformOffset;
 			if((x == 0 && z == 0) || Physics.Raycast(startCheckpoint, moveVector, moveVector.magnitude, 1 << 12) )
 				moveVector = Vector3.zero;
@@ -227,7 +258,7 @@ public class PlayerScript : CharacterScript {
 		if(Physics.Raycast(startCheckpoint, moveVector, out cliffHit, moveVector.magnitude, (1 << 13) | (1 << 14) ) ) {
 			noInterrupt = false;
 			sprite.SortingOrder = 0;
-			StopCoroutine("JumpPlatform");
+			StopCoroutine("StayPlatform");
 			JumpCliffFromPlatform(platform, cliffHit);
 		}
 		else {
@@ -244,9 +275,8 @@ public class PlayerScript : CharacterScript {
 			transform.position = startPoint + moveVector;
 			sprite.SortingOrder = 0;
 			noInterrupt = false;
-			StopCoroutine("JumpPlatform");
+			StopCoroutine("StayPlatform");
 		}
-
 	}
 
 	private void JumpCliffFromPlatform(GameObject platform, RaycastHit cliffHit) {
@@ -313,9 +343,12 @@ public class PlayerScript : CharacterScript {
 			bool isEmpty = !checkDownCollision(collision + displacement, 1 << 12);
 			bool isGround = checkDownCollision(collision + displacement, 1 << 8);
 			if (isPlatform) {
-				displacement += Vector3.forward * 128;
+				RaycastHit platformHit;
+				Physics.Raycast(collision + displacement + new Vector3(0, 500, 0), Vector3.down, out platformHit, Mathf.Infinity, (1 << 15));
+				StopCoroutine("JumpCliff");
+				StartCoroutine("LandPlatform", platformHit.collider.gameObject);
 			}
-			if (collision != Vector3.one && isGround && isEmpty) {
+			else if (collision != Vector3.one && isGround && isEmpty) {
 				noInterrupt = true;
 				anima = (int)(ANIMATIONS.FALL);
 				playAnimation();
@@ -340,10 +373,9 @@ public class PlayerScript : CharacterScript {
 				}
 				Destroy (shadow);
 				noInterrupt = false;
+				StopCoroutine("JumpCliff");
 			}
-			
 		}
-		StopCoroutine("JumpCliff");
 	}
 	
 	private bool checkVector(Vector3 one, Vector3 two) {
