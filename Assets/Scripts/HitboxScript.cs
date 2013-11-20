@@ -46,7 +46,6 @@ public class HitboxScript : MonoBehaviour {
 			enemy.takeHit(this);
 		} else if (team == (int) TEAMS.ENEMY && player != null) {
 			audio.PlayOneShot (roxhurt_sound);
-			Debug.Log("um");
 			player.takeHit(this);
 		} else if (smash && team == (int) TEAMS.PLAYER && rock != null) {
 			rock.Smash();

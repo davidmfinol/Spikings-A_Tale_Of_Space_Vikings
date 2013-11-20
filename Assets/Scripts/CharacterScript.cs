@@ -131,7 +131,7 @@ public abstract class CharacterScript : TileScript {
 			hitBoxScript.isSpin = true;
 			box.transform.localScale = box.transform.localScale * 2.75f;
 			//trying to move spinning hitbox
-			pos.z += controller.radius * 4;
+			pos.z += controller.radius + 50;
 			pos.x -= controller.radius * 2;
 		}
 		
