@@ -255,7 +255,7 @@ public class PlayerScript : CharacterScript {
 		
 		// Then move off the platform
 		RaycastHit cliffHit;
-		if(Physics.Raycast(startCheckpoint, moveVector, out cliffHit, moveVector.magnitude, (1 << 13) | (1 << 14) ) ) {
+		if(Physics.Raycast(startCheckpoint, moveVector + platformOffset, out cliffHit, (moveVector + platformOffset).magnitude, (1 << 13) | (1 << 14) ) ) {
 			noInterrupt = false;
 			sprite.SortingOrder = 0;
 			StopCoroutine("StayPlatform");
