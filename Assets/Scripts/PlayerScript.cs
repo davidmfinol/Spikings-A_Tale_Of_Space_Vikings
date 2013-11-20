@@ -85,8 +85,11 @@ public class PlayerScript : CharacterScript {
 			}
 			if(currentHealth > maxHealth)
 				currentHealth = maxHealth;
-			if(item.health == 0 && item.power == 0)
+			if(!item.activated && item.health == 0 && item.power == 0)
+			{
 				GameManager.Instance.partsCollected++;
+				item.activated = true;
+			}
 			Destroy(gameObject);
 		}
 		
@@ -246,7 +249,7 @@ public class PlayerScript : CharacterScript {
 			}
 			
 			moveVector = getMoveVector() - platformOffset;
-			if((x == 0 && z == 0) || Physics.Raycast(startCheckpoint, moveVector, moveVector.magnitude, 1 << 12) )
+			if((x == 0 && z == 0) || Physics.Raycast(startCheckpoint, moveVector + platformOffset, (moveVector + platformOffset).magnitude, 1 << 12) )
 				moveVector = Vector3.zero;
 			yield return null;
 		}
@@ -255,7 +258,7 @@ public class PlayerScript : CharacterScript {
 		
 		// Then move off the platform
 		RaycastHit cliffHit;
-		if(Physics.Raycast(startCheckpoint, moveVector, out cliffHit, moveVector.magnitude, (1 << 13) | (1 << 14) ) ) {
+		if(Physics.Raycast(startCheckpoint, moveVector + platformOffset, out cliffHit, (moveVector + platformOffset).magnitude, (1 << 13) | (1 << 14) ) ) {
 			noInterrupt = false;
 			sprite.SortingOrder = 0;
 			StopCoroutine("StayPlatform");
