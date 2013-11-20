@@ -3,8 +3,12 @@ guid: 994367a5b1502a0488ca9fb8419ca60a
 MonoImporter:
   serializedVersion: 2
   defaultReferences:
-  - hitBox: {fileID: 100000, guid: ee9b79364597e4ec1b8f4ea1d21a8cb9, type: 2}
-  - HitPic: {instanceID: 0}
+  - hitBox: {fileID: 100000, guid: ae541bbfd948fc745b2c55de33b4c2bc, type: 2}
+  - HitPic: {fileID: 100000, guid: ee9b79364597e4ec1b8f4ea1d21a8cb9, type: 2}
+  - attack1: {instanceID: 0}
+  - attack2: {instanceID: 0}
+  - attack3: {instanceID: 0}
+  - meadPrefab: {fileID: 100000, guid: 4c6d39bcab44d4643ae788c8e4af8379, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

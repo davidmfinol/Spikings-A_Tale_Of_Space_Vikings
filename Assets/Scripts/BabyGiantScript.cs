@@ -28,6 +28,8 @@ public class BabyGiantScript : EnemyNPCScript {
 		}
 		controller.enabled = false;
 		timeSinceLastPath = 0;
-		//Destroy(gameObject, 0.95f);
+		if (!respawnable) {
+			Destroy (gameObject, 0.95f);
+		}
 	}
 }
