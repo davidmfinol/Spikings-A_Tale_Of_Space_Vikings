@@ -12,6 +12,10 @@ public class PlayerScript : CharacterScript {
 	public AudioClip death_sound;
 	public AudioClip hurt_sound;
 
+	public AudioClip pickup_sound; //for parts
+	public AudioClip repair_sound;
+	public AudioClip repair_sound2;
+
 	private Vector3 platformOffset = new Vector3(0, 0, 150);
 	
 	override protected void Start () {
@@ -88,6 +92,7 @@ public class PlayerScript : CharacterScript {
 			if(!item.activated && item.health == 0 && item.power == 0)
 			{
 				// TODO: PLAY EFFECT HERE SOUND HERE
+				audio.PlayOneShot (pickup_sound);
 				GameManager.Instance.partsCollected++;
 				item.activated = true;
 			}
@@ -97,16 +102,19 @@ public class PlayerScript : CharacterScript {
 			if(GameManager.Instance.partsCollected == 1 && !shipAnim.IsPlaying("1Part"))
 			{
 				// TODO: PLAY EFFECT HERE SOUND HERE
+				audio.PlayOneShot (repair_sound);
 				shipAnim.Play("1Part");
 			}
 			else if(GameManager.Instance.partsCollected == 2 && !shipAnim.IsPlaying("2Part"))
 			{
 				// TODO: PLAY EFFECT HERE SOUND HERE
+				audio.PlayOneShot (repair_sound2);
 				shipAnim.Play("2Part");
 			}
 			else if(GameManager.Instance.partsCollected > 2 && !shipAnim.IsPlaying("AllParts"))
 			{
 				// TODO: PLAY EFFECT HERE SOUND HERE
+				audio.PlayOneShot (repair_sound);
 				shipAnim.Play("AllParts");
 			}
 		}
