@@ -113,8 +113,11 @@ public abstract class CharacterScript : TileScript {
 	 */
 	protected void spawnHitBox(int team, int attackType = 0) {
 		Vector3 pos = Vector3.zero;
-		if(attackType < 2)
-			pos.x += controller.radius * 2;
+		if(attackType < 2){
+			pos.x += controller.radius * 2;  //Edit this for hitbox
+			//pos.z += controller.radius * 2;
+		
+		}
 		GameObject box = (GameObject) Instantiate(hitBox, pos, hitBox.transform.rotation);
 		HitboxScript hitBoxScript = box.GetComponent<HitboxScript>();
 		hitBoxScript.team = team;
@@ -126,7 +129,10 @@ public abstract class CharacterScript : TileScript {
 		if(attackType == 2)
 		{
 			hitBoxScript.isSpin = true;
-			//box.transform.localScale = box.transform.localScale * 3;
+			box.transform.localScale = box.transform.localScale * 2.75f;
+			//trying to move spinning hitbox
+			pos.z += controller.radius * 4;
+			pos.x -= controller.radius * 2;
 		}
 		
 		GameObject buffer = new GameObject();
