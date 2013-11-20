@@ -125,10 +125,27 @@ public abstract class CharacterScript : TileScript {
 		if(attackType < 2){
 			//pos.x += controller.radius * 2.1f;  //Edit this for hitbox
 			//pos.z += controller.radius * 1.2f;
-			
+
 			Vector3 temp = box.gameObject.transform.position;
+			if(direction == (int)(DIRECTIONS.WEST)){
+				temp.x += 105;
+				temp.z -=30;
+			
+			}
+			else if(direction == (int) (DIRECTIONS.SOUTH)){
+				temp.x += 100;
+				//temp.z -=25;
+			
+			}
+			else if(direction == (int) (DIRECTIONS.EAST)){
+				temp.x += 105;
+				temp.z +=30;
+				
+			}
+			else{  //North
 			temp.x += 100;
-			temp.z +=25;
+			//temp.z +=25;
+			}
 			box.gameObject.transform.position = temp;
 			
 		}
