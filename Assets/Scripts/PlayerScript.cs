@@ -87,10 +87,28 @@ public class PlayerScript : CharacterScript {
 				currentHealth = maxHealth;
 			if(!item.activated && item.health == 0 && item.power == 0)
 			{
+				// TODO: PLAY EFFECT HERE SOUND HERE
 				GameManager.Instance.partsCollected++;
 				item.activated = true;
 			}
 			Destroy(gameObject);
+		} else if(gameObject.CompareTag("Spaceship")) {
+			tk2dSpriteAnimator shipAnim = gameObject.GetComponent<tk2dSpriteAnimator>();
+			if(GameManager.Instance.partsCollected == 1 && !shipAnim.IsPlaying("1Part"))
+			{
+				// TODO: PLAY EFFECT HERE SOUND HERE
+				shipAnim.Play("1Part");
+			}
+			else if(GameManager.Instance.partsCollected == 2 && !shipAnim.IsPlaying("2Part"))
+			{
+				// TODO: PLAY EFFECT HERE SOUND HERE
+				shipAnim.Play("2Part");
+			}
+			else if(GameManager.Instance.partsCollected > 2 && !shipAnim.IsPlaying("AllParts"))
+			{
+				// TODO: PLAY EFFECT HERE SOUND HERE
+				shipAnim.Play("AllParts");
+			}
 		}
 		
 	}
