@@ -39,7 +39,9 @@ public class HelpScript : MonoBehaviour
 		case Condition.FoundOnePart : if(GameManager.Instance.partsCollected < 1) return; break;
 		case Condition.FoundTwoParts : if(GameManager.Instance.partsCollected < 2) return; break;
 		case Condition.FoundAllParts : if(GameManager.Instance.partsCollected < 3) return; 
-			Instantiate(bossPrefab, transform.position, bossPrefab.rotation);
+			if (!alreadyTriggered) {
+				Instantiate(bossPrefab, transform.position, bossPrefab.rotation);
+			}
 			break;
 		default: break;
 		}

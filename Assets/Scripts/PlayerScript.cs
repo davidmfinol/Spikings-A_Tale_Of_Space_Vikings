@@ -16,7 +16,7 @@ public class PlayerScript : CharacterScript {
 	public AudioClip repair_sound;
 	public AudioClip repair_sound2;
 
-	private Vector3 platformOffset = new Vector3(0, 0, 150);
+	private Vector3 platformOffset = new Vector3(0, 0, 128);
 	
 	override protected void Start () {
 		base.Start();
