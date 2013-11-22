@@ -256,29 +256,30 @@ public class PlayerScript : CharacterScript {
 		isStationary = true;
 		noInterrupt = false;
 
-		Vector3 moveVector = Vector3.zero;
 		Vector3 startCheckpoint = transform.position - platformOffset;
-		float distTraveled = 0;
-		while(moveVector == Vector3.zero) {
+		bool shouldmove = false;
+		while(!shouldmove) {
 			float x = Input.GetAxis("Horizontal");
 			float z = Input.GetAxis("Vertical");
 			processInput(x, z);
 			
-			if(!isAttacking && !isBeingHit && !isBeingHit && !noInterrupt && !isDead)
+			if(!isAttacking && !isBeingHit && !noInterrupt && !isDead)
 			{
 				anima = (int)(ANIMATIONS.IDLE);
 				playAnimation();
 			}
 			
-			moveVector = getMoveVector() - platformOffset;
-			if((x == 0 && z == 0) || Physics.Raycast(startCheckpoint, moveVector + platformOffset, (moveVector + platformOffset).magnitude, 1 << 12) )
-				moveVector = Vector3.zero;
+			Vector3 direction = getMoveVector();
+			Debug.DrawLine(startCheckpoint, startCheckpoint + getMoveVector());
+
+			shouldmove = (x != 0 || z != 0) && !Physics.Raycast(startCheckpoint, direction.normalized, direction.magnitude, 1 << 12) && checkDownCollision(startCheckpoint + direction, 1 << 8);
 			yield return null;
 		}
 		isStationary = false;
 		noInterrupt = true;
 		
 		// Then move off the platform
+		Vector3 moveVector = getMoveVector() - platformOffset;
 		RaycastHit cliffHit;
 		if(Physics.Raycast(startCheckpoint, moveVector + platformOffset, out cliffHit, (moveVector + platformOffset).magnitude, (1 << 13) | (1 << 14) ) ) {
 			noInterrupt = false;
@@ -289,7 +290,7 @@ public class PlayerScript : CharacterScript {
 		else {
 			anima = (int)(ANIMATIONS.FALL);
 			playAnimation();
-			distTraveled = 0;
+			float distTraveled = 0;
 			Vector3 startPoint = transform.position;
 			while (distTraveled < moveVector.magnitude) {
 				Vector3 movement = Time.deltaTime * moveVector.normalized * speed;
