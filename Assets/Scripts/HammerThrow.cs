@@ -68,11 +68,10 @@ public class HammerThrow : MonoBehaviour {
 		sprite.transform.position = pos;
 		
 		distanceTraveled += Mathf.Abs(throwMovement.magnitude);
-		
-		//cliff detection
-		hittingCliff = Physics.Raycast(transform.position, throwMovement, out hit, throwMovement.magnitude, (1 << 13) | (1 << 14))
-| hittingCliff;
-		
+
+		Bounds bounds = ((BoxCollider)collider).bounds;
+		if(bounds.Intersects(GameManager.Instance.Player.collider.bounds))
+			OnTriggerEnter(GameManager.Instance.Player.collider);
 	}
 	
 	void OnTriggerEnter(Collider collider){

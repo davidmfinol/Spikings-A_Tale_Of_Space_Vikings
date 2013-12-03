@@ -43,10 +43,11 @@ public abstract class CharacterScript : TileScript {
 	protected tk2dSprite sprite;
 	protected tk2dSpriteAnimator anim;
 	
-	private bool isAttacking;
-	private bool isBeingHit;
-	private bool isThrowing;
+	protected bool isAttacking;
+	protected bool isBeingHit;
+	protected bool isThrowing;
 	protected bool isDead;
+	protected bool isStationary;
 	protected bool noInterrupt;
 	
 // for combos
@@ -72,7 +73,9 @@ public abstract class CharacterScript : TileScript {
 		isBeingHit = false;
 		noInterrupt = false;
 		isThrowing = false;
+		isStationary = false;
 		powers = 1;
+		sprite.SortingOrder = 0;
 	}
 	
 	virtual protected void Update () {
@@ -110,8 +113,7 @@ public abstract class CharacterScript : TileScript {
 	 */
 	protected void spawnHitBox(int team, int attackType = 0) {
 		Vector3 pos = Vector3.zero;
-		if(attackType < 2)
-			pos.x += controller.radius * 2;
+
 		GameObject box = (GameObject) Instantiate(hitBox, pos, hitBox.transform.rotation);
 		HitboxScript hitBoxScript = box.GetComponent<HitboxScript>();
 		hitBoxScript.team = team;
@@ -120,10 +122,32 @@ public abstract class CharacterScript : TileScript {
 		}
 		if(attackType > 0)
 			hitBoxScript.damage *= 2;
-		if(attackType == 2)
-		{
-			hitBoxScript.isSpin = true;
-			box.transform.localScale = box.transform.localScale * 3;
+		if(attackType < 2){
+			//pos.x += controller.radius * 2.1f;  //Edit this for hitbox
+			//pos.z += controller.radius * 1.2f;
+
+			Vector3 temp = box.gameObject.transform.position;
+			if(direction == (int)(DIRECTIONS.WEST)){
+				temp.x += 105;
+				temp.z -=30;
+			
+			}
+			else if(direction == (int) (DIRECTIONS.SOUTH)){
+				temp.x += 100;
+				//temp.z -=25;
+			
+			}
+			else if(direction == (int) (DIRECTIONS.EAST)){
+				temp.x += 105;
+				temp.z +=30;
+				
+			}
+			else{  //North
+			temp.x += 100;
+			//temp.z +=25;
+			}
+			box.gameObject.transform.position = temp;
+			
 		}
 		
 		GameObject buffer = new GameObject();
@@ -132,6 +156,21 @@ public abstract class CharacterScript : TileScript {
 		buffer.transform.position = transform.position;
 		Vector3 rot = new Vector3(0, -360 * (direction / 8.0f), 0);
 		buffer.transform.Rotate(rot);
+
+
+
+		if(attackType == 2)
+		{
+			hitBoxScript.isSpin = true;
+			box.transform.localScale = box.transform.localScale * 2.75f;
+			//trying to move spinning hitbox
+			//pos.z += controller.radius + 50;
+			pos.x -= controller.radius * 2;
+			
+			Vector3 temp = box.gameObject.transform.position;
+			temp.z += 75;
+			box.gameObject.transform.position = temp;
+		}
 	}
 	
 	protected virtual void processInput(float x, float z) {
@@ -231,7 +270,7 @@ public abstract class CharacterScript : TileScript {
 	}
 	
 	protected void move(float x, float z) {
-		if (isAttacking || isBeingHit || anima == (int) (ANIMATIONS.DIE) || noInterrupt || anim.IsPlaying("Spawn") || isThrowing)
+		if (isStationary || isAttacking || isBeingHit || anima == (int) (ANIMATIONS.DIE) || noInterrupt || anim.IsPlaying("Spawn") || isThrowing)
 			return;
 		
 		processInput(x, z);

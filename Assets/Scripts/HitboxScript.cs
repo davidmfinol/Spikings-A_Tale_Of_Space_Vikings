@@ -30,8 +30,8 @@ public class HitboxScript : MonoBehaviour {
 		Destroy(gameObject, delay);
 		Destroy(transform.parent.gameObject, delay);
 		
-		if(isSpin)
-			GetComponent<tk2dSpriteAnimator>().Play("Spin");
+		//if(isSpin)
+		//	GetComponent<tk2dSpriteAnimator>().Play("Spin");
 	}
 	
 	private void OnTriggerEnter(Collider collider) {
@@ -39,14 +39,13 @@ public class HitboxScript : MonoBehaviour {
 		GameObject gameObject = collider.gameObject;
 		EnemyNPCScript enemy = gameObject.GetComponent<EnemyNPCScript>();
 		PlayerScript player = gameObject.GetComponent<PlayerScript>();
-		RockScript rock = gameObject.GetComponent<RockScript>();
+		DestroyableScript rock = gameObject.GetComponent<DestroyableScript>();
 		if(team == (int) TEAMS.PLAYER && enemy != null) {
 			//this sound doesn't play
 			audio.PlayOneShot(impact_sound);
 			enemy.takeHit(this);
 		} else if (team == (int) TEAMS.ENEMY && player != null) {
 			audio.PlayOneShot (roxhurt_sound);
-			Debug.Log("um");
 			player.takeHit(this);
 		} else if (smash && team == (int) TEAMS.PLAYER && rock != null) {
 			rock.Smash();

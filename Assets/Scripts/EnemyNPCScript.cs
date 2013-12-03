@@ -17,6 +17,7 @@ public class EnemyNPCScript : CharacterScript {
 	public float noticeRadius = 500;
 	public PatrolTypes patrolType;
 	public GameObject meadPrefab;
+	public bool respawnable = true;
 	
 	protected int hitObstacleCount = 0;
 	protected float lastHit = 0;
@@ -72,7 +73,9 @@ public class EnemyNPCScript : CharacterScript {
 		}
 		controller.enabled = false;
 		timeSinceLastPath = 0;
-		//Destroy(gameObject, 0.95f);
+		if (!respawnable) {
+			Destroy (gameObject, 0.95f);
+		}
 		
 	}
 	

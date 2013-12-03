@@ -8,7 +8,9 @@ public class HelpScript : MonoBehaviour
 		Always = 0,
 		NoHammer = 1,
 		HasHammer = 2,
-		FoundParts = 3,
+		FoundOnePart = 3,
+		FoundTwoParts = 4,
+		FoundAllParts = 5,
 	}
 	
 	public string message;
@@ -16,9 +18,12 @@ public class HelpScript : MonoBehaviour
 	public Condition condition;
 	
 	public bool causesPause = false;
+
+	public float fadeTime = 10;
 	
 	private bool alreadyTriggered = false;
 	
+	public Transform bossPrefab;
 	
 	void OnTriggerEnter(Collider collider)
 	{
@@ -31,19 +36,30 @@ public class HelpScript : MonoBehaviour
 		case Condition.Always : break;
 		case Condition.NoHammer : if(player.powers > 0) return; break;
 		case Condition.HasHammer : if(player.powers < 1) return; break;
-		case Condition.FoundParts : if(GameManager.Instance.partsCollected < 3) return; break;
+		case Condition.FoundOnePart : if(GameManager.Instance.partsCollected < 1) return; break;
+		case Condition.FoundTwoParts : if(GameManager.Instance.partsCollected < 2) return; break;
+		case Condition.FoundAllParts : if(GameManager.Instance.partsCollected < 3) return; 
+			if (!alreadyTriggered) {
+				Instantiate(bossPrefab, transform.position, bossPrefab.rotation);
+			}
+			break;
 		default: break;
 		}
-		
+
+
 		if( message != null && message != "" )
 		{
 			if(!alreadyTriggered) 
 			{
-				GameManager.Instance.Hud.showThought(message, causesPause);
+				GameManager.Instance.Hud.showThought(message, GetInstanceID());
 				if(causesPause)
 				{
 					Time.timeScale = 0;
 					StartCoroutine("WaitForUnpause");
+				}
+				if(fadeTime > 0)
+				{
+					StartCoroutine("FadeAfterSeconds", fadeTime);
 				}
 			}
 			alreadyTriggered = true;
@@ -59,5 +75,16 @@ public class HelpScript : MonoBehaviour
 		Time.timeScale = 1;
 		GameManager.Instance.Hud.hideThought();
 		StopCoroutine("WaitForUnpause");
+	}
+
+	IEnumerator FadeAfterSeconds(float fadeTime)
+	{
+		float t = 0;
+		while (t < fadeTime)
+		{
+			t+= Time.deltaTime;
+			yield return null;
+		}
+		GameManager.Instance.Hud.hideThought(GetInstanceID());
 	}
 }
