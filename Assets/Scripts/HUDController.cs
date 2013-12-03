@@ -3,17 +3,12 @@ using System.Collections;
 
 public class HUDController : MonoBehaviour {
 	
-    public tk2dUIProgressBar currentHealth;
-    public tk2dUIProgressBar losingHealth;
-	public float healthBarSmoothTime = 0.5f;
+    public Transform healthCircle;
 	
     public Transform Hammer;
-    public Transform Part1Collected;
-    public Transform Part1Missing;
-    public Transform Part2Collected;
-    public Transform Part2Missing;
-    public Transform Part3Collected;
-    public Transform Part3Missing;
+	public Transform Part1;
+	public Transform Part2;
+    public Transform Part3;
 
 	public Transform thoughtBubble;
 	public tk2dTextMesh thoughtText;
@@ -24,24 +19,18 @@ public class HUDController : MonoBehaviour {
 	
 	void Start () {
 		PlayerScript player = GameManager.Instance.Player;
-		currentHealth.Value = ((float)player.currentHealth)/player.maxHealth;
-		losingHealth.Value = ((float)player.currentHealth)/player.maxHealth;
 	}
 	
     void Update() {
 		// Health
 		PlayerScript player = GameManager.Instance.Player;
-        losingHealth.Value = Mathf.SmoothDamp( losingHealth.Value, ((float)player.currentHealth)/player.maxHealth, ref healthBarVelocity, healthBarSmoothTime, Mathf.Infinity, tk2dUITime.deltaTime );
-    	currentHealth.Value = ((float)player.currentHealth)/player.maxHealth;
+		healthCircle.rotation = Quaternion.AngleAxis((1.0f-((float)player.currentHealth)/player.maxHealth) * 180, Vector3.forward);
 
 		// Inventory
         Hammer.gameObject.SetActive(player.powers % 2 == 1);
-        Part1Collected.gameObject.SetActive( GameManager.Instance.partsCollected > 0 );
-        Part1Missing.gameObject.SetActive( !(GameManager.Instance.partsCollected > 0) );
-        Part2Collected.gameObject.SetActive( GameManager.Instance.partsCollected > 1 );
-        Part2Missing.gameObject.SetActive( !(GameManager.Instance.partsCollected > 1) );
-        Part3Collected.gameObject.SetActive( GameManager.Instance.partsCollected > 2 );
-        Part3Missing.gameObject.SetActive( !(GameManager.Instance.partsCollected > 2) );
+        Part1.gameObject.SetActive( GameManager.Instance.partsCollected > 0 );
+        Part2.gameObject.SetActive( GameManager.Instance.partsCollected > 1 );
+        Part3.gameObject.SetActive( GameManager.Instance.partsCollected > 2 );
 		
 	}
 	
