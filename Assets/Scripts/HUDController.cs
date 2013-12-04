@@ -37,17 +37,17 @@ public class HUDController : MonoBehaviour {
 		isFlashingRed = true;
 
 		TurnRed();
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(0.2f);
 		TurnWhite();
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(0.2f);
 		TurnRed();
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(0.2f);
 		TurnWhite();
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(0.2f);
 		TurnRed();
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(0.2f);
 		TurnWhite();
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(0.2f);
 
 		isFlashingRed = false;
 		numberOfHitsWaiting--;
