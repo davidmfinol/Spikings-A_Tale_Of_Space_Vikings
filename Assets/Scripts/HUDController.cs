@@ -4,6 +4,7 @@ using System.Collections;
 public class HUDController : MonoBehaviour {
 	
     public Transform healthCircle;
+	public Transform playerFace;
 	
     public Transform Hammer;
 	public Transform Part1;
@@ -14,18 +15,61 @@ public class HUDController : MonoBehaviour {
 	public tk2dTextMesh thoughtText;
 
 	private int currentThoughtID = 0;
+
+	public int numberOfHitsWaiting = 0;
+	private bool isFlashingRed;
 	
     void Update() {
 		// Health
 		PlayerScript player = GameManager.Instance.Player;
-		healthCircle.rotation = Quaternion.AngleAxis(Mathf.Min((1.0f-((float)player.currentHealth)/player.maxHealth) * 180, 180), Vector3.forward);
+		healthCircle.rotation = Quaternion.AngleAxis(Mathf.Min(Mathf.Max((1.0f-((float)player.currentHealth)/player.maxHealth) * -180, -180), 0), Vector3.forward);
+		if(numberOfHitsWaiting > 0 && !isFlashingRed)
+			StartCoroutine("FlashRed");
 
 		// Inventory
         Hammer.gameObject.SetActive(player.powers % 2 == 1);
-        Part2.gameObject.SetActive( GameManager.Instance.partsCollected > 0 );
-        Part3.gameObject.SetActive( GameManager.Instance.partsCollected > 1 );
-        Part1.gameObject.SetActive( GameManager.Instance.partsCollected > 2 );
-		
+        Part1.gameObject.SetActive( GameManager.Instance.partsCollected > 0 );
+        Part2.gameObject.SetActive( GameManager.Instance.partsCollected > 1 );
+        Part3.gameObject.SetActive( GameManager.Instance.partsCollected > 2 );
+	}
+
+	IEnumerator FlashRed() {
+		isFlashingRed = true;
+
+		TurnRed();
+		yield return new WaitForSeconds(0.5f);
+		TurnWhite();
+		yield return new WaitForSeconds(0.5f);
+		TurnRed();
+		yield return new WaitForSeconds(0.5f);
+		TurnWhite();
+		yield return new WaitForSeconds(0.5f);
+		TurnRed();
+		yield return new WaitForSeconds(0.5f);
+		TurnWhite();
+		yield return new WaitForSeconds(0.5f);
+
+		isFlashingRed = false;
+		numberOfHitsWaiting--;
+		StopCoroutine("FlashRed");
+	}
+
+	void TurnRed() {
+		playerFace.GetComponent<tk2dSprite>().color = Color.red;
+		healthCircle.GetComponent<tk2dSprite>().color = Color.red;
+		Hammer.GetComponent<tk2dSprite>().color = Color.red;
+		Part1.GetComponent<tk2dSprite>().color = Color.red;
+		Part2.GetComponent<tk2dSprite>().color = Color.red;
+		Part3.GetComponent<tk2dSprite>().color = Color.red;
+	}
+	
+	void TurnWhite() {
+		playerFace.GetComponent<tk2dSprite>().color = Color.white;
+		healthCircle.GetComponent<tk2dSprite>().color = Color.white;
+		Hammer.GetComponent<tk2dSprite>().color = Color.white;
+		Part1.GetComponent<tk2dSprite>().color = Color.white;
+		Part2.GetComponent<tk2dSprite>().color = Color.white;
+		Part3.GetComponent<tk2dSprite>().color = Color.white;
 	}
 	
 	public void showThought(string message, int thoughtID) {

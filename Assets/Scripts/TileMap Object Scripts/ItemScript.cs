@@ -15,11 +15,11 @@ public class ItemScript : TileScript {
 	void Update() {
 		if(power == 0 && health == 0) {
 			if(GameManager.Instance.partsCollected == 0) 
-				itemAnim.Play("Part2");
-			else if(GameManager.Instance.partsCollected == 1) 
-				itemAnim.Play("Part3");
-			else 
 				itemAnim.Play("Part1");
+			else if(GameManager.Instance.partsCollected == 1) 
+				itemAnim.Play("Part2");
+			else 
+				itemAnim.Play("Part3");
 		}
 	}
 
