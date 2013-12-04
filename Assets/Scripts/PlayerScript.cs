@@ -494,4 +494,10 @@ public class PlayerScript : CharacterScript {
 		noInterrupt = false;
 		anim.AnimationCompleted = null;
 	}
+
+	public override void takeHit (HitboxScript hit)
+	{
+		base.takeHit (hit);
+		GameManager.Instance.Hud.numberOfHitsWaiting++;
+	}
 }
