@@ -75,12 +75,12 @@ public class GraphUpdateSceneEditor : Editor {
 		EditorGUILayout.Separator ();
 		
 		if (GUI.changed) {
-			Undo.RegisterUndo (script,"Modify Settings on GraphUpdateObject");
+			Undo.RecordObject (script,"Modify Settings on GraphUpdateObject");
 			EditorUtility.SetDirty (target);
 		}
 		
 		if (GUILayout.Button ("Clear all points")) {
-			Undo.RegisterUndo (script,"Removed All Points");
+			Undo.RecordObject (script,"Removed All Points");
 			script.points = new Vector3[0];
 			script.RecalcConvex ();
 		}
@@ -123,7 +123,7 @@ public class GraphUpdateSceneEditor : Editor {
 			
 			if (i == selectedPoint && Tools.current == Tool.Move) {
 				Handles.color = PointSelectedColor;
-				Undo.SetSnapshotTarget(script, "Moved Point");
+				Undo.RecordObject(script, "Moved Point");
 				Handles.SphereCap (-i-1,points[i],Quaternion.identity,HandleUtility.GetHandleSize (points[i])*pointGizmosRadius*2);
 				Vector3 pre = points[i];
 				Vector3 post = Handles.PositionHandle (points[i],Quaternion.identity);
@@ -154,7 +154,7 @@ public class GraphUpdateSceneEditor : Editor {
 				//int nearestControl = -(HandleUtility.nearestControl+1);
 				
 				if (selectedPoint >= 0 && selectedPoint < points.Count) {
-					Undo.RegisterUndo (script,"Removed Point");
+					Undo.RecordObject (script,"Removed Point");
 					List<Vector3> arr = new List<Vector3>(script.points);
 					arr.RemoveAt (selectedPoint);
 					points.RemoveAt (selectedPoint);
@@ -178,7 +178,7 @@ public class GraphUpdateSceneEditor : Editor {
 				if (hit != null) {
 					RaycastHit rayhit = (RaycastHit)hit;
 					
-					Undo.RegisterUndo (script,"Added Point");
+					Undo.RecordObject (script,"Added Point");
 					
 					List<Vector3> arr = Pathfinding.Util.ListPool<Vector3>.Claim ();
 					arr.AddRange (script.points);
@@ -197,7 +197,7 @@ public class GraphUpdateSceneEditor : Editor {
 				if (hit != null) {
 					RaycastHit rayhit = (RaycastHit)hit;
 					
-					Undo.RegisterUndo (script,"Added Point");
+					Undo.RecordObject (script,"Added Point");
 					
 					Vector3[] arr = new Vector3[script.points.Length+1];
 					for (int i=0;i<script.points.Length;i++) {

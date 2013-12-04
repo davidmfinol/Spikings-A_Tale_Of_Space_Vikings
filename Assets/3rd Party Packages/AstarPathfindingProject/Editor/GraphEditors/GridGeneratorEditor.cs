@@ -205,7 +205,6 @@ public class GridGraphEditor : GraphEditor, ISerializableGraphEditor {
 		//GUILayout.EndHorizontal ();
 		
 		EditorGUILayoutx.EndIndent ();
-		EditorGUIUtility.LookLikeInspector ();
 		
 		if (GUILayout.Button (new GUIContent ("Snap Size","Snap the size to exactly fit nodes"),GUILayout.MaxWidth (100),GUILayout.MaxHeight (16))) {
 			SnapSizeToNodes (newWidth,newDepth,graph);
