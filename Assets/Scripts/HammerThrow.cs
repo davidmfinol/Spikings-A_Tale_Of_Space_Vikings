@@ -18,8 +18,8 @@ public class HammerThrow : MonoBehaviour {
 	private float distanceTraveled;
 	private GameObject hitBoxHolder;
 	private GameObject hitbox;
-	private bool hitCliff = false;
-	private bool hittingCliff;
+	//private bool hitCliff = false;
+	//private bool hittingCliff;
 	
 	
 	// Use this for initialization
@@ -52,7 +52,7 @@ public class HammerThrow : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(!(distanceTraveled < throwDistance) || hittingCliff) {
+		if(!(distanceTraveled < throwDistance)/* || hittingCliff*/) {
 			throwDirection = (parentOb.transform.position-transform.position).normalized;
 		}
 		
@@ -79,17 +79,17 @@ public class HammerThrow : MonoBehaviour {
 		PlayerScript player = collider.GetComponent<PlayerScript>();
 		//PlayerScript cliffs = collider.GetComponent<Cliff>();
 		
-		if(player != null && (distanceTraveled > throwDistance || hittingCliff)){
+		if(player != null && (distanceTraveled > throwDistance /*|| hittingCliff*/)){
 			Destroy(gameObject);
 			player.powers++;
 			player.StartCoroutine("PlayNoInterruptAnimation", (int) ANIMATIONS.CATCH);
 		}
 		
 		//triggered cliff detection
-		if(player != null && (distanceTraveled > throwDistance || hittingCliff)){
+		//if(player != null && (distanceTraveled > throwDistance || hittingCliff)){
 
-			hitCliff = true;
-		}
+		//	hitCliff = true;
+		//}
 		
 	}
 }

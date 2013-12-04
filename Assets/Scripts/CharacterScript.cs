@@ -128,23 +128,20 @@ public abstract class CharacterScript : TileScript {
 
 			Vector3 temp = box.gameObject.transform.position;
 			if(direction == (int)(DIRECTIONS.WEST)){
-				temp.x += 105;
-				temp.z -=30;
-			
+				temp.x += WestOffset.x;
+				temp.z += WestOffset.z;
 			}
 			else if(direction == (int) (DIRECTIONS.SOUTH)){
-				temp.x += 100;
-				//temp.z -=25;
-			
+				temp.x += SouthOffset.x;
+				temp.z += SouthOffset.z;
 			}
 			else if(direction == (int) (DIRECTIONS.EAST)){
-				temp.x += 105;
-				temp.z +=30;
-				
+				temp.x += EastOffset.x;
+				temp.z += EastOffset.z;
 			}
 			else{  //North
-			temp.x += 100;
-			//temp.z +=25;
+				temp.x += NorthOffset.x;
+				temp.z += NorthOffset.z;
 			}
 			box.gameObject.transform.position = temp;
 			
@@ -350,5 +347,38 @@ public abstract class CharacterScript : TileScript {
 	
 	protected void isDoneThrowing() {
 		isThrowing = false;
+	}
+
+	public Vector3 WestOffset
+	{
+		get {
+			float radius = controller.radius;
+			float hitBoxX = ((BoxCollider)hitBox.collider).size.x/2.0f;
+			return new Vector3(radius + hitBoxX, 0 , -sprite.transform.localPosition.y); // 105, 0, -30
+        }
+	}
+	public Vector3 SouthOffset
+	{
+		get { 
+			float radius = controller.radius;
+			float hitBoxX = ((BoxCollider)hitBox.collider).size.x/2.0f;
+			return new Vector3(radius + hitBoxX, 0 , 0); // 100, 0, 0
+		} 
+	}
+	public Vector3 EastOffset
+	{
+		get { 
+			float radius = controller.radius;
+			float hitBoxX = ((BoxCollider)hitBox.collider).size.x/2.0f;
+			return new Vector3(radius + hitBoxX, 0 , sprite.transform.localPosition.y);// 105, 0 , 30
+		}
+	}
+	public Vector3 NorthOffset
+	{
+		get { 
+			float radius = controller.radius;
+			float hitBoxX = ((BoxCollider)hitBox.collider).size.x/2.0f;
+			return new Vector3(radius + hitBoxX, 0 , 0); // 100, 0, 0
+		}
 	}
 }

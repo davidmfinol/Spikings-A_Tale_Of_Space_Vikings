@@ -227,30 +227,36 @@ public class EnemyNPCScript : CharacterScript {
 	}
 	
 	protected virtual bool isInAttackRange() {
-		Bounds hitArea = new Bounds(transform.position, new Vector3(150, 100, 150));
+		Vector3 size = ((BoxCollider)hitBox.collider).size;
+		//Debug.Log("width: " + size.x + "height " + size.y + " depth  " + size.z);
+		Bounds hitArea = new Bounds(transform.position, size);
 		if(direction == (int) (DIRECTIONS.EAST)) {
-			hitArea = new Bounds(transform.position + new Vector3(167, 0, 0), new Vector3(150, 100, 150));
+			hitArea = new Bounds(transform.position + EastOffset, size);
 		} else if(direction == (int) (DIRECTIONS.NORTH)) {
-			hitArea = new Bounds(transform.position + new Vector3(0, 0, 167), new Vector3(150, 100, 150));
+			hitArea = new Bounds(transform.position + new Vector3(0, 0, NorthOffset.x), size);
 			float tempX = hitArea.size.x;
 			Vector3 tempSize = hitArea.size;
 			tempSize.x = hitArea.size.z;
 			tempSize.z = tempX;
 			hitArea.size = tempSize;
 		} else if(direction == (int) (DIRECTIONS.WEST)) {
-			hitArea = new Bounds(transform.position + new Vector3(-167, 0, 0), new Vector3(150, 100, 150));
+			hitArea = new Bounds(transform.position - WestOffset, size);
 		} else if(direction == (int) (DIRECTIONS.SOUTH)) {
-			hitArea = new Bounds(transform.position + new Vector3(0, 0, -167), new Vector3(150, 100, 150));
+			hitArea = new Bounds(transform.position - new Vector3(0, 0, SouthOffset.x), size);
 			float tempX = hitArea.size.x;
 			Vector3 tempSize = hitArea.size;
 			tempSize.x = hitArea.size.z;
 			tempSize.z = tempX;
 			hitArea.size = tempSize;
 		}
-		Debug.DrawLine(hitArea.center - new Vector3(hitArea.extents.x, -20, 0) + new Vector3(0, 20, hitArea.extents.z), hitArea.center + new Vector3(hitArea.extents.x, 20, 0) + new Vector3(0, 20, hitArea.extents.z));
-		Debug.DrawLine(hitArea.center - new Vector3(hitArea.extents.x, -20, 0) + new Vector3(0, 20, hitArea.extents.z), hitArea.center - new Vector3(hitArea.extents.x, -20, 0) - new Vector3(0, -20, hitArea.extents.z));
-		Debug.DrawLine(hitArea.center - new Vector3(hitArea.extents.x, -20, 0) - new Vector3(0, -20, hitArea.extents.z), hitArea.center + new Vector3(hitArea.extents.x, 20, 0) - new Vector3(0, -20, hitArea.extents.z));
-		Debug.DrawLine(hitArea.center + new Vector3(hitArea.extents.x, 20, 0) + new Vector3(0, 20, hitArea.extents.z), hitArea.center + new Vector3(hitArea.extents.x, 20, 0) - new Vector3(0, -20, hitArea.extents.z));
+	//	Debug.Log ("TL: " + (hitArea.center + new Vector3(-hitArea.extents.x, 40, hitArea.extents.z)));
+  	//	Debug.Log ("TR: " + (hitArea.center + new Vector3(hitArea.extents.x, 40, hitArea.extents.z)));
+  	//	Debug.Log ("BL: " + (hitArea.center + new Vector3(-hitArea.extents.x, 40, -hitArea.extents.z)));
+ 	//	Debug.Log ("BR: " + (hitArea.center + new Vector3(hitArea.extents.x, 40, -hitArea.extents.z)));
+		Debug.DrawLine(hitArea.center + new Vector3(-hitArea.extents.x, 40, hitArea.extents.z), hitArea.center + new Vector3(hitArea.extents.x, 40, hitArea.extents.z)); // TL to TR
+		Debug.DrawLine(hitArea.center + new Vector3(-hitArea.extents.x, 40, hitArea.extents.z), hitArea.center + new Vector3(-hitArea.extents.x, 40, -hitArea.extents.z)); // TL to BL
+		Debug.DrawLine(hitArea.center + new Vector3(hitArea.extents.x, 40, -hitArea.extents.z), hitArea.center + new Vector3(hitArea.extents.x, 40, hitArea.extents.z)); // BR to TR
+		Debug.DrawLine(hitArea.center + new Vector3(hitArea.extents.x, 40, -hitArea.extents.z), hitArea.center + new Vector3(-hitArea.extents.x, 40, -hitArea.extents.z)); // BR to BL
 		return hitArea.Contains(GameManager.Instance.Player.transform.position);
 	}
 	
