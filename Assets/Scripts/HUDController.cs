@@ -5,6 +5,8 @@ public class HUDController : MonoBehaviour {
 	
     public Transform healthCircle;
 	public Transform playerFace;
+	public int numberOfHitsWaiting = 0;
+	private bool isFlashingRed;
 	
     public Transform Hammer;
 	public Transform Part1;
@@ -13,11 +15,10 @@ public class HUDController : MonoBehaviour {
 
 	public Transform thoughtBubble;
 	public tk2dTextMesh thoughtText;
-
 	private int currentThoughtID = 0;
 
-	public int numberOfHitsWaiting = 0;
-	private bool isFlashingRed;
+	public Transform titleCard;
+	public Transform controls;
 	
     void Update() {
 		// Health
@@ -31,6 +32,8 @@ public class HUDController : MonoBehaviour {
         Part1.gameObject.SetActive( GameManager.Instance.partsCollected > 0 );
         Part2.gameObject.SetActive( GameManager.Instance.partsCollected > 1 );
         Part3.gameObject.SetActive( GameManager.Instance.partsCollected > 2 );
+
+		controls.gameObject.SetActive(Input.GetKey(KeyCode.Escape));
 	}
 
 	IEnumerator FlashRed() {

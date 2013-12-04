@@ -13,10 +13,10 @@ public class ImageCycler : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-		if(Input.GetButtonDown("Fire1") || Input.GetButtonDown("Fire3")) {
+		if(Input.GetButtonDown("Fire1")) {
 			change_image_delay();
 		}
-		if(Input.GetButtonDown("Jump")) {
+		if(Input.GetButtonDown("Fire3")) {
 			loading.Translate(0, 0, -2);
 			Application.LoadLevel(NextLevelName);
 		}
