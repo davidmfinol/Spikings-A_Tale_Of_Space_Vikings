@@ -22,9 +22,9 @@ public class HUDController : MonoBehaviour {
 
 		// Inventory
         Hammer.gameObject.SetActive(player.powers % 2 == 1);
-        Part1.gameObject.SetActive( GameManager.Instance.partsCollected > 0 );
-        Part2.gameObject.SetActive( GameManager.Instance.partsCollected > 1 );
-        Part3.gameObject.SetActive( GameManager.Instance.partsCollected > 2 );
+        Part2.gameObject.SetActive( GameManager.Instance.partsCollected > 0 );
+        Part3.gameObject.SetActive( GameManager.Instance.partsCollected > 1 );
+        Part1.gameObject.SetActive( GameManager.Instance.partsCollected > 2 );
 		
 	}
 	
