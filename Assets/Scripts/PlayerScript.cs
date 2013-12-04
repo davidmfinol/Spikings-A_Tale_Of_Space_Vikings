@@ -102,6 +102,7 @@ public class PlayerScript : CharacterScript {
 			list.Add(hit.transform.position);
 			StartCoroutine("JumpCliff", list);
 		} else if (gameObject.CompareTag("Item")) {
+			/*
 			ItemScript item = gameObject.GetComponent<ItemScript>();
 			powers += item.power;
 			currentHealth += item.health;
@@ -117,7 +118,7 @@ public class PlayerScript : CharacterScript {
 				GameManager.Instance.partsCollected++;
 				item.activated = true;
 			}
-			Destroy(gameObject);
+			Destroy(gameObject);*/
 		} else if(gameObject.CompareTag("Spaceship")) {
 			tk2dSpriteAnimator shipAnim = gameObject.GetComponent<tk2dSpriteAnimator>();
 			if(GameManager.Instance.partsCollected == 1 && !shipAnim.IsPlaying("1Part"))
