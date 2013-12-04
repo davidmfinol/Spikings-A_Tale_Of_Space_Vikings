@@ -15,16 +15,10 @@ public class HUDController : MonoBehaviour {
 
 	private int currentThoughtID = 0;
 	
-    private float healthBarVelocity = 0.0f;
-	
-	void Start () {
-		PlayerScript player = GameManager.Instance.Player;
-	}
-	
     void Update() {
 		// Health
 		PlayerScript player = GameManager.Instance.Player;
-		healthCircle.rotation = Quaternion.AngleAxis((1.0f-((float)player.currentHealth)/player.maxHealth) * 180, Vector3.forward);
+		healthCircle.rotation = Quaternion.AngleAxis(Mathf.Min((1.0f-((float)player.currentHealth)/player.maxHealth) * 180, 180), Vector3.forward);
 
 		// Inventory
         Hammer.gameObject.SetActive(player.powers % 2 == 1);

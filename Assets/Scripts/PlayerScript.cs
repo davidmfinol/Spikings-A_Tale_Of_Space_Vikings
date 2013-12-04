@@ -34,9 +34,11 @@ public class PlayerScript : CharacterScript {
 		else if (Input.GetButtonDown("Fire3") && powers % 2 == 1){
 			StartCoroutine("hammerThrow");
 		}
-		float x = Input.GetAxis("Horizontal") * speed;
-		float z = Input.GetAxis("Vertical") * speed;
-		move(x, z);
+		float x = Input.GetAxis("Horizontal");
+		float z = Input.GetAxis("Vertical");
+		Vector3 movement = new Vector3(x, 0, z);
+		movement = movement.normalized * speed;
+		move(movement.x, movement.z);
 	}
 	
 	
@@ -64,9 +66,29 @@ public class PlayerScript : CharacterScript {
 	
 	
 	override protected void OnDeath () {
-		currentHealth = maxHealth;
 		audio.PlayOneShot (death_sound);
+		StartCoroutine("RespawnWithCamera");
+	}
+
+	IEnumerator RespawnWithCamera()
+	{
+		SmoothFollow2D cameraScript = Camera.main.GetComponent<SmoothFollow2D>();
+		cameraScript.smoothTime = 1.0f;
+		cameraScript.target = GameManager.Instance.spawnPoint;
+
+		while ((cameraScript.transform.position - new Vector3(0, 0, cameraScript.zOffset) - GameManager.Instance.spawnPoint.position).magnitude > 128.0f)
+		{
+			//Debug.Log((cameraScript.transform.position - new Vector3(0, 0, cameraScript.zOffset) - GameManager.Instance.spawnPoint.position).magnitude);
+			yield return null;
+		}
+		
+		currentHealth = maxHealth;
 		transform.position = GameManager.Instance.spawnPoint.position;
+
+		yield return null;
+		cameraScript.smoothTime = 0f;
+		cameraScript.target = GameManager.Instance.Player.transform;
+		StopCoroutine("RespawnWithCamera");
 	}
 	
 	
