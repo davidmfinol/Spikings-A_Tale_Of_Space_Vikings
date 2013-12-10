@@ -44,8 +44,9 @@ public class EnemyNPCScript : CharacterScript {
 	override protected void Update () {
 		base.Update();
 		timeSinceLastPath += Time.deltaTime;
-		
-		if (isDead && timeSinceLastPath >= respawnTime) {
+		bool noticed = isInNoticeRange ();
+
+		if (isDead && timeSinceLastPath >= respawnTime && noticed) {
 			transform.position = spawnLocation;
 			controller.enabled = true;
 			isDead = false;
@@ -54,13 +55,17 @@ public class EnemyNPCScript : CharacterScript {
 			currentHealth = maxHealth;
 		}
 		if (!isDead) {
-			if (isInAttackRange() && currentPath != null)
+			if (isInAttackRange() && currentPath != null) {
 				attack();
+			}
 		
-			if(isInNoticeRange())
+			if(noticed) {
 				moveAStar();
-			else
-				movePatrol();
+			}
+			else {
+				despawn();
+			}
+				//movePatrol();
 		}
 	}
 	
@@ -76,7 +81,6 @@ public class EnemyNPCScript : CharacterScript {
 		if (!respawnable) {
 			Destroy (gameObject, 0.95f);
 		}
-		
 	}
 	
 	override protected void processInput(float x, float z) {
@@ -253,16 +257,16 @@ public class EnemyNPCScript : CharacterScript {
   	//	Debug.Log ("TR: " + (hitArea.center + new Vector3(hitArea.extents.x, 40, hitArea.extents.z)));
   	//	Debug.Log ("BL: " + (hitArea.center + new Vector3(-hitArea.extents.x, 40, -hitArea.extents.z)));
  	//	Debug.Log ("BR: " + (hitArea.center + new Vector3(hitArea.extents.x, 40, -hitArea.extents.z)));
-		Debug.DrawLine(hitArea.center + new Vector3(-hitArea.extents.x, 40, hitArea.extents.z), hitArea.center + new Vector3(hitArea.extents.x, 40, hitArea.extents.z)); // TL to TR
-		Debug.DrawLine(hitArea.center + new Vector3(-hitArea.extents.x, 40, hitArea.extents.z), hitArea.center + new Vector3(-hitArea.extents.x, 40, -hitArea.extents.z)); // TL to BL
-		Debug.DrawLine(hitArea.center + new Vector3(hitArea.extents.x, 40, -hitArea.extents.z), hitArea.center + new Vector3(hitArea.extents.x, 40, hitArea.extents.z)); // BR to TR
-		Debug.DrawLine(hitArea.center + new Vector3(hitArea.extents.x, 40, -hitArea.extents.z), hitArea.center + new Vector3(-hitArea.extents.x, 40, -hitArea.extents.z)); // BR to BL
+		//Debug.DrawLine(hitArea.center + new Vector3(-hitArea.extents.x, 40, hitArea.extents.z), hitArea.center + new Vector3(hitArea.extents.x, 40, hitArea.extents.z)); // TL to TR
+		//Debug.DrawLine(hitArea.center + new Vector3(-hitArea.extents.x, 40, hitArea.extents.z), hitArea.center + new Vector3(-hitArea.extents.x, 40, -hitArea.extents.z)); // TL to BL
+		//Debug.DrawLine(hitArea.center + new Vector3(hitArea.extents.x, 40, -hitArea.extents.z), hitArea.center + new Vector3(hitArea.extents.x, 40, hitArea.extents.z)); // BR to TR
+		//Debug.DrawLine(hitArea.center + new Vector3(hitArea.extents.x, 40, -hitArea.extents.z), hitArea.center + new Vector3(-hitArea.extents.x, 40, -hitArea.extents.z)); // BR to BL
 		return hitArea.Contains(GameManager.Instance.Player.transform.position);
 	}
 	
 	protected virtual bool isInNoticeRange() {
-		if(hasNoticed)
-			return true;
+		//if(hasNoticed)
+		//	return true;
 		
 		Vector3 startPoint = transform.position;
 		startPoint.y = 0;
@@ -276,6 +280,17 @@ public class EnemyNPCScript : CharacterScript {
 		if(Time.time - lastHit > 1) {
 			hitObstacleCount++;
 			lastHit = Time.time;
+		}
+	}
+
+	private void despawn() {
+		isDead = true;
+		anima = (int) (ANIMATIONS.DIE);
+		anim.Play("Despawn");
+		controller.enabled = false;
+		timeSinceLastPath = respawnTime - 1;
+		if (!respawnable) {
+			Destroy (gameObject, 0.95f);
 		}
 	}
 }
