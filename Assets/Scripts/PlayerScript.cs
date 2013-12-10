@@ -279,7 +279,7 @@ public class PlayerScript : CharacterScript {
 		isStationary = true;
 		noInterrupt = false;
 
-		Vector3 startCheckpoint = transform.position - platformOffset;
+		Vector3 startCheckpoint = transform.position;
 		bool shouldmove = false;
 		while(!shouldmove) {
 			float x = Input.GetAxis("Horizontal");
@@ -293,6 +293,9 @@ public class PlayerScript : CharacterScript {
 			}
 			
 			Vector3 direction = getMoveVector();
+			if (direction == new Vector3(0, 0, 128)) {
+				direction = new Vector3(0, 0, 0);
+			}
 			Debug.DrawLine(startCheckpoint, startCheckpoint + getMoveVector());
 
 			shouldmove = (x != 0 || z != 0) && !Physics.Raycast(startCheckpoint, direction.normalized, direction.magnitude, 1 << 12) && checkDownCollision(startCheckpoint + direction, 1 << 8);
@@ -300,11 +303,10 @@ public class PlayerScript : CharacterScript {
 		}
 		isStationary = false;
 		noInterrupt = true;
-		
 		// Then move off the platform
 		Vector3 moveVector = getMoveVector() - platformOffset;
 		RaycastHit cliffHit;
-		if(Physics.Raycast(startCheckpoint, moveVector + platformOffset, out cliffHit, (moveVector + platformOffset).magnitude, (1 << 13) | (1 << 14) ) ) {
+		if(Physics.Raycast(startCheckpoint - platformOffset, moveVector + platformOffset, out cliffHit, (moveVector + platformOffset).magnitude, (1 << 13) | (1 << 14) ) ) {
 			noInterrupt = false;
 			sprite.SortingOrder = 0;
 			StopCoroutine("StayPlatform");
