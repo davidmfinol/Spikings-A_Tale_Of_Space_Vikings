@@ -24,6 +24,8 @@ public class HelpScript : MonoBehaviour
 	private bool alreadyTriggered = false;
 	
 	public Transform bossPrefab;
+	public Transform music;
+	public AudioClip bossMusic;
 	
 	void OnTriggerEnter(Collider collider)
 	{
@@ -41,6 +43,9 @@ public class HelpScript : MonoBehaviour
 		case Condition.FoundAllParts : if(GameManager.Instance.partsCollected < 3) return; 
 			if (!alreadyTriggered) {
 				Instantiate(bossPrefab, transform.position, bossPrefab.rotation);
+				music.audio.Stop();
+				music.audio.clip = bossMusic;
+				music.audio.Play();
 			}
 			break;
 		default: break;

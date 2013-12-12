@@ -83,15 +83,10 @@ public class HUDController : MonoBehaviour {
 
 	IEnumerator showThoughtBubble(string message) {
 		StopCoroutine("FadeThought");
-		if(!thoughtText.gameObject.activeSelf) {
-			thoughtBubble.GetComponent<tk2dSpriteAnimator>().Play("BubbleFadeIn");
-			float t = 0;
-			while (t < 2)
-			{
-				t+= Time.deltaTime;
-	            yield return null;
-	        }
-		}
+		thoughtText.gameObject.SetActive(false);
+		thoughtBubble.GetComponent<tk2dSpriteAnimator>().Play("BubbleFadeIn");
+		yield return new WaitForSeconds(2);
+
 		thoughtText.gameObject.SetActive(true);
 		thoughtText.color = Color.black;
 		thoughtText.text = message;

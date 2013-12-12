@@ -76,7 +76,7 @@ public class PlayerScript : CharacterScript {
 		cameraScript.smoothTime = 1.0f;
 		cameraScript.target = GameManager.Instance.spawnPoint;
 
-		while ((cameraScript.transform.position - new Vector3(0, 0, cameraScript.zOffset) - GameManager.Instance.spawnPoint.position).magnitude > 128.0f)
+		while ((cameraScript.transform.position - new Vector3(0, 0, cameraScript.zOffset) - GameManager.Instance.spawnPoint.position).magnitude > 256.0f)
 		{
 			//Debug.Log((cameraScript.transform.position - new Vector3(0, 0, cameraScript.zOffset) - GameManager.Instance.spawnPoint.position).magnitude);
 			yield return null;
