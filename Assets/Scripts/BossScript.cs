@@ -6,4 +6,8 @@ public class BossScript : EnemyNPCScript {
 		GameManager.Instance.Hud.showThought("That's the end of that!", GetInstanceID());
 		GameManager.Instance.Hud.titleCard.gameObject.SetActive(true);
 	}
+
+	protected override void despawn() {
+
+	}
 }
