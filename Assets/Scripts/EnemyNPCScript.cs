@@ -283,7 +283,7 @@ public class EnemyNPCScript : CharacterScript {
 		}
 	}
 
-	private void despawn() {
+	protected virtual void despawn() {
 		isDead = true;
 		anima = (int) (ANIMATIONS.DIE);
 		anim.Play("Despawn");
