@@ -2,12 +2,12 @@
 using System.Collections;
 
 public class HUDController : MonoBehaviour {
-	
+
     public Transform healthCircle;
 	public Transform playerFace;
 	public int numberOfHitsWaiting = 0;
 	private bool isFlashingRed;
-	
+
     public Transform Hammer;
 	public Transform Part1;
 	public Transform Part2;
@@ -19,7 +19,7 @@ public class HUDController : MonoBehaviour {
 
 	public Transform titleCard;
 	public Transform controls;
-	
+
     void Update() {
 		// Health
 		PlayerScript player = GameManager.Instance.Player;
@@ -33,7 +33,15 @@ public class HUDController : MonoBehaviour {
         Part2.gameObject.SetActive( GameManager.Instance.partsCollected > 1 );
         Part3.gameObject.SetActive( GameManager.Instance.partsCollected > 2 );
 
-		controls.gameObject.SetActive(Input.GetKey(KeyCode.Escape));
+		controls.gameObject.SetActive(Input.GetKey(KeyCode.Space));
+
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif
+        }
 	}
 
 	IEnumerator FlashRed() {
@@ -65,7 +73,7 @@ public class HUDController : MonoBehaviour {
 		Part2.GetComponent<tk2dSprite>().color = Color.red;
 		Part3.GetComponent<tk2dSprite>().color = Color.red;
 	}
-	
+
 	void TurnWhite() {
 		playerFace.GetComponent<tk2dSprite>().color = Color.white;
 		healthCircle.GetComponent<tk2dSprite>().color = Color.white;
@@ -74,7 +82,7 @@ public class HUDController : MonoBehaviour {
 		Part2.GetComponent<tk2dSprite>().color = Color.white;
 		Part3.GetComponent<tk2dSprite>().color = Color.white;
 	}
-	
+
 	public void showThought(string message, int thoughtID) {
 		currentThoughtID = thoughtID;
 		thoughtBubble.gameObject.SetActive(true);
@@ -93,11 +101,11 @@ public class HUDController : MonoBehaviour {
 		thoughtText.Commit();
 		StopCoroutine("showThoughtBubble");
 	}
-	
+
 	public void hideThought(int thoughtID = 0) {
 		if(thoughtID > 0 && currentThoughtID != thoughtID)
 			return;
-		
+
 		thoughtText.gameObject.SetActive(false);
 		StartCoroutine("FadeThought");
 	}
