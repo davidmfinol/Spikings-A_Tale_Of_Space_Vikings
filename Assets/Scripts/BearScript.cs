@@ -49,7 +49,7 @@ public class BearScript : EnemyNPCScript {
         
         //Check if we are close enough to the next waypoint
         //If we are, proceed to follow the next waypoint
-		Bounds bounds = collider.bounds;
+		Bounds bounds = GetComponent<Collider>().bounds;
 		Vector3 boundsCenter = bounds.center;
 		boundsCenter.y = 0;
 		bounds.center = boundsCenter;
@@ -68,9 +68,9 @@ public class BearScript : EnemyNPCScript {
 	protected override void OnDeath() {
 		base.OnDeath();
 		//play Bear Death Sound
-		audio.enabled = true;
+		GetComponent<AudioSource>().enabled = true;
 		//this sound doesn't play either
-		audio.PlayOneShot(bear_death);
+		GetComponent<AudioSource>().PlayOneShot(bear_death);
 	}
 	
 }

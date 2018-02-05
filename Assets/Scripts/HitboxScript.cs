@@ -42,10 +42,10 @@ public class HitboxScript : MonoBehaviour {
 		DestroyableScript rock = gameObject.GetComponent<DestroyableScript>();
 		if(team == (int) TEAMS.PLAYER && enemy != null) {
 			//this sound doesn't play
-			audio.PlayOneShot(impact_sound);
+			GetComponent<AudioSource>().PlayOneShot(impact_sound);
 			enemy.takeHit(this);
 		} else if (team == (int) TEAMS.ENEMY && player != null) {
-			audio.PlayOneShot (roxhurt_sound);
+			GetComponent<AudioSource>().PlayOneShot (roxhurt_sound);
 			player.takeHit(this);
 		} else if (smash && team == (int) TEAMS.PLAYER && rock != null) {
 			rock.Smash();

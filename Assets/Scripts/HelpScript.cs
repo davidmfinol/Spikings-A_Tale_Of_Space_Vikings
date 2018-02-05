@@ -43,9 +43,9 @@ public class HelpScript : MonoBehaviour
 		case Condition.FoundAllParts : if(GameManager.Instance.partsCollected < 3) return; 
 			if (!alreadyTriggered) {
 				Instantiate(bossPrefab, transform.position, bossPrefab.rotation);
-				music.audio.Stop();
-				music.audio.clip = bossMusic;
-				music.audio.Play();
+				music.GetComponent<AudioSource>().Stop();
+				music.GetComponent<AudioSource>().clip = bossMusic;
+				music.GetComponent<AudioSource>().Play();
 			}
 			break;
 		default: break;

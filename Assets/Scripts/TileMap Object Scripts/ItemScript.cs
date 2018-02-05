@@ -33,13 +33,13 @@ public class ItemScript : TileScript {
 		player.currentHealth += health;
 		//if it's Mead
 		if(health > 0) {
-			player.audio.PlayOneShot(player.mead_sound);
+			player.GetComponent<AudioSource>().PlayOneShot(player.mead_sound);
 		}
 		if(player.currentHealth > player.maxHealth)
 			player.currentHealth = player.maxHealth;
 		if(!activated && health == 0 && power == 0)
 		{
-			player.audio.PlayOneShot (player.pickup_sound);
+			player.GetComponent<AudioSource>().PlayOneShot (player.pickup_sound);
 			GameManager.Instance.partsCollected++;
 			activated = true;
 		}

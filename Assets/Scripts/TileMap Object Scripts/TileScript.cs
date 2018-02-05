@@ -8,10 +8,10 @@ public class TileScript : MonoBehaviour {
 		float sortValue = GameManager.Instance.MapData.height-((int)pos.z) / 128 + pos.y;
 		pos.y = sortValue;
 		transform.position = pos;
-		if(collider != null && collider is BoxCollider) {
-			pos = ((BoxCollider)collider).center;
+		if(GetComponent<Collider>() != null && GetComponent<Collider>() is BoxCollider) {
+			pos = ((BoxCollider)GetComponent<Collider>()).center;
 			pos.z += sortValue;
-			((BoxCollider)collider).center = pos;
+			((BoxCollider)GetComponent<Collider>()).center = pos;
 		}
 	}
 }

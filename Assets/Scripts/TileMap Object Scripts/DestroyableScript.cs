@@ -29,7 +29,7 @@ public class DestroyableScript : TileScript {
 		if(!anim.IsPlaying("destroy")) {
 			anim.Play("destroy");
 			destroying = true;
-			audio.Play ();	
+			GetComponent<AudioSource>().Play ();	
 		}
 	}
 }

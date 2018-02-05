@@ -145,7 +145,7 @@ public class EnemyNPCScript : CharacterScript {
         
         //Check if we are close enough to the next waypoint
         //If we are, proceed to follow the next waypoint
-		Bounds bounds = collider.bounds;
+		Bounds bounds = GetComponent<Collider>().bounds;
 		Vector3 boundsCenter = bounds.center;
 		boundsCenter.y = 0;
 		bounds.center = boundsCenter;
@@ -231,7 +231,7 @@ public class EnemyNPCScript : CharacterScript {
 	}
 	
 	protected virtual bool isInAttackRange() {
-		Vector3 size = ((BoxCollider)hitBox.collider).size;
+		Vector3 size = ((BoxCollider)hitBox.GetComponent<Collider>()).size;
 		//Debug.Log("width: " + size.x + "height " + size.y + " depth  " + size.z);
 		Bounds hitArea = new Bounds(transform.position, size);
 		if(direction == (int) (DIRECTIONS.EAST)) {

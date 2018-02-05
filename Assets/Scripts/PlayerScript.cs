@@ -66,7 +66,7 @@ public class PlayerScript : CharacterScript {
 	
 	
 	override protected void OnDeath () {
-		audio.PlayOneShot (death_sound);
+		GetComponent<AudioSource>().PlayOneShot (death_sound);
 		StartCoroutine("RespawnWithCamera");
 	}
 
@@ -123,17 +123,17 @@ public class PlayerScript : CharacterScript {
 			tk2dSpriteAnimator shipAnim = gameObject.GetComponent<tk2dSpriteAnimator>();
 			if(GameManager.Instance.partsCollected == 1 && !shipAnim.IsPlaying("1Part"))
 			{
-				audio.PlayOneShot (repair_sound);
+				GetComponent<AudioSource>().PlayOneShot (repair_sound);
 				shipAnim.Play("1Part");
 			}
 			else if(GameManager.Instance.partsCollected == 2 && !shipAnim.IsPlaying("2Part"))
 			{
-				audio.PlayOneShot (repair_sound2);
+				GetComponent<AudioSource>().PlayOneShot (repair_sound2);
 				shipAnim.Play("2Part");
 			}
 			else if(GameManager.Instance.partsCollected > 2 && !shipAnim.IsPlaying("AllParts"))
 			{
-				audio.PlayOneShot (repair_sound);
+				GetComponent<AudioSource>().PlayOneShot (repair_sound);
 				shipAnim.Play("AllParts");
 			}
 		}

@@ -214,14 +214,14 @@ public abstract class CharacterScript : TileScript {
 			if (!isAttacking && !anim.IsPlaying("attack" + direction + hasAttack)) {
 				isAttacking = true;
 				anim.Play("attack" + direction + hasAttack);
-				audio.PlayOneShot(attack1);
+				GetComponent<AudioSource>().PlayOneShot(attack1);
 				spawnHitBox(team);
 			}
 		} else if (anima == (int) ANIMATIONS.SMASH) {
 			if (!anim.IsPlaying("smash" + direction + hasAttack)) {
 				isAttacking = true;
 				anim.Play("smash" + direction + hasAttack);
-				audio.PlayOneShot(attack2);
+				GetComponent<AudioSource>().PlayOneShot(attack2);
 				spawnHitBox(team, 1);
 			}
 		} else if (anima == (int) ANIMATIONS.SPIN) {
@@ -229,7 +229,7 @@ public abstract class CharacterScript : TileScript {
 				isAttacking = true;
 				anim.Play("spin" + direction + hasAttack);
 				currentCombo = 0;	
-				audio.PlayOneShot(attack3);
+				GetComponent<AudioSource>().PlayOneShot(attack3);
 				spawnHitBox(team, 2);
 			}
 		} else if (anima == (int) ANIMATIONS.HIT) {
@@ -353,7 +353,7 @@ public abstract class CharacterScript : TileScript {
 	{
 		get {
 			float radius = controller.radius;
-			float hitBoxX = ((BoxCollider)hitBox.collider).size.x/2.0f;
+			float hitBoxX = ((BoxCollider)hitBox.GetComponent<Collider>()).size.x/2.0f;
 			return new Vector3(radius + hitBoxX, 0 , -sprite.transform.localPosition.y); // 105, 0, -30
         }
 	}
@@ -361,7 +361,7 @@ public abstract class CharacterScript : TileScript {
 	{
 		get { 
 			float radius = controller.radius;
-			float hitBoxX = ((BoxCollider)hitBox.collider).size.x/2.0f;
+			float hitBoxX = ((BoxCollider)hitBox.GetComponent<Collider>()).size.x/2.0f;
 			return new Vector3(radius + hitBoxX, 0 , 0); // 100, 0, 0
 		} 
 	}
@@ -369,7 +369,7 @@ public abstract class CharacterScript : TileScript {
 	{
 		get { 
 			float radius = controller.radius;
-			float hitBoxX = ((BoxCollider)hitBox.collider).size.x/2.0f;
+			float hitBoxX = ((BoxCollider)hitBox.GetComponent<Collider>()).size.x/2.0f;
 			return new Vector3(radius + hitBoxX, 0 , sprite.transform.localPosition.y);// 105, 0 , 30
 		}
 	}
@@ -377,7 +377,7 @@ public abstract class CharacterScript : TileScript {
 	{
 		get { 
 			float radius = controller.radius;
-			float hitBoxX = ((BoxCollider)hitBox.collider).size.x/2.0f;
+			float hitBoxX = ((BoxCollider)hitBox.GetComponent<Collider>()).size.x/2.0f;
 			return new Vector3(radius + hitBoxX, 0 , 0); // 100, 0, 0
 		}
 	}

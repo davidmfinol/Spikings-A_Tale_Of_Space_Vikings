@@ -8,6 +8,6 @@ public class SkyboxScript : MonoBehaviour {
 
 	void Update() {
 		Vector2 vec = new Vector2 (-target.position.x * scrollSpeed, -target.position.z * scrollSpeed);
-		renderer.material.SetTextureOffset("_MainTex", vec);
+		GetComponent<Renderer>().material.SetTextureOffset("_MainTex", vec);
 	}
 }

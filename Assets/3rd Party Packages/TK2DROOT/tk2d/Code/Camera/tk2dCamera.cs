@@ -5,11 +5,11 @@ using System.Collections.Generic;
 [AddComponentMenu("2D Toolkit/Camera/tk2dCamera")]
 [ExecuteInEditMode]
 /// <summary>
-/// Maintains a screen resolution camera. 
+/// Maintains a screen resolution camera.
 /// Whole number increments seen through this camera represent one pixel.
 /// For example, setting an object to 300, 300 will position it at exactly that pixel position.
 /// </summary>
-public class tk2dCamera : MonoBehaviour 
+public class tk2dCamera : MonoBehaviour
 {
 	static int CURRENT_VERSION = 1;
 	public int version = 0;
@@ -17,7 +17,7 @@ public class tk2dCamera : MonoBehaviour
 	[SerializeField] private tk2dCameraSettings cameraSettings = new tk2dCameraSettings();
 
 	/// <summary>
-	/// The unity camera settings. 
+	/// The unity camera settings.
 	/// Use this instead of camera.XXX to change parameters.
 	/// </summary>
 	public tk2dCameraSettings CameraSettings {
@@ -37,7 +37,7 @@ public class tk2dCamera : MonoBehaviour
 	/// The currently used override
 	/// </summary>
 	public tk2dCameraResolutionOverride CurrentResolutionOverride {
-		get { 
+		get {
 			tk2dCamera settings = SettingsRoot;
 			Camera cam = ScreenCamera;
 
@@ -82,11 +82,11 @@ public class tk2dCamera : MonoBehaviour
 	}
 
 	/// <summary>
-	/// A tk2dCamera to inherit configuration from. 
+	/// A tk2dCamera to inherit configuration from.
 	/// All resolution and override settings will be pulled from the root inherited camera.
 	/// This allows you to create a tk2dCamera prefab in your project or a master camera
 	/// in the scene and guarantee that multiple instances of tk2dCameras referencing this
-	/// will use exactly the same paramaters. 
+	/// will use exactly the same paramaters.
 	/// </summary>
 	public tk2dCamera InheritConfig {
 		get { return inheritSettings; }
@@ -100,7 +100,7 @@ public class tk2dCamera : MonoBehaviour
 
 	[SerializeField]
 	private tk2dCamera inheritSettings = null;
-	
+
 	/// <summary>
 	/// Native resolution width of the camera. Override this in the inspector.
 	/// Don't change this at runtime unless you understand the implications.
@@ -112,13 +112,13 @@ public class tk2dCamera : MonoBehaviour
 	/// Don't change this at runtime unless you understand the implications.
 	/// </summary>
 	public int nativeResolutionHeight = 640;
-	
+
 	[SerializeField]
 	private Camera _unityCamera;
 	private Camera UnityCamera {
 		get {
 			if (_unityCamera == null) {
-				_unityCamera = camera;
+				_unityCamera = GetComponent<Camera>();
 				if (_unityCamera == null) {
 					Debug.LogError("A unity camera must be attached to the tk2dCamera script");
 				}
@@ -237,7 +237,7 @@ public class tk2dCamera : MonoBehaviour
 	/// The resolution to force the game window to when <see cref="forceResolutionInEditor"/> is enabled.
 	/// </summary>
 	public Vector2 forceResolution = new Vector2(960, 640);
-	
+
 #if UNITY_EDITOR
 	// When true, overrides the "forceResolutionInEditor" flag above
    	bool useGameWindowResolutionInEditor = false;
@@ -275,9 +275,9 @@ public class tk2dCamera : MonoBehaviour
 			UpdateCameraMatrix();
 		}
 		else {
-			this.camera.enabled = false;
+			this.GetComponent<Camera>().enabled = false;
 		}
-		
+
 		if (!viewportClippingEnabled) // the main camera can't display rect
 			inst = this;
 
@@ -292,7 +292,7 @@ public class tk2dCamera : MonoBehaviour
 			allCameras.RemoveAt( idx );
 		}
 	}
-	
+
 	void OnPreCull() {
 		// Commit all pending changes - this more or less guarantees
 		// everything is committed before drawing this camera.
@@ -330,15 +330,15 @@ public class tk2dCamera : MonoBehaviour
 		return 1;
 	}
 
-	
+
 	// This returns the tk2dCamera object which has the settings stored on it
 	// Trace back to the source, however far up the hierarchy that may be
 	// You can't change this at runtime
 	tk2dCamera _settingsRoot;
 	public tk2dCamera SettingsRoot {
-		get { 
+		get {
 			if (_settingsRoot == null) {
-				_settingsRoot = (inheritSettings == null || inheritSettings == this) ? this : inheritSettings.SettingsRoot;	
+				_settingsRoot = (inheritSettings == null || inheritSettings == this) ? this : inheritSettings.SettingsRoot;
 			}
 			return _settingsRoot;
 		}
@@ -354,7 +354,7 @@ public class tk2dCamera : MonoBehaviour
 		}
 	}
 #endif
-	
+
 #if UNITY_EDITOR
 	static bool Editor__getGameViewSizeError = false;
 	public static bool Editor__gameViewReflectionError = false;
@@ -400,7 +400,7 @@ public class tk2dCamera : MonoBehaviour
 				Vector2[] viewModeResolutions = (Vector2[])s_viewModeResolutions.GetValue(null);
 				float[] viewModeAspects = (float[])gameViewType.GetField("s_viewModeAspects", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic).GetValue(null);
 				string[] viewModeStrings = (string[])gameViewType.GetField("s_viewModeAspectStrings", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic).GetValue(null);
-				if (mainGameViewInst != null 
+				if (mainGameViewInst != null
 					&& viewModeStrings != null
 					&& viewModeResolutions != null && viewModeAspects != null) {
 					int aspectRatio = (int)gameViewType.GetField("m_AspectRatio", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic).GetValue(mainGameViewInst);
@@ -440,7 +440,7 @@ public class tk2dCamera : MonoBehaviour
 	public Matrix4x4 OrthoOffCenter(Vector2 scale, float left, float right, float bottom, float top, float near, float far) {
 		// Additional half texel offset
 		// Takes care of texture unit offset, if necessary.
-		
+
 		float x =  (2.0f) / (right - left) * scale.x;
 		float y = (2.0f) / (top - bottom) * scale.y;
 		float z = -2.0f / (far - near);
@@ -448,7 +448,7 @@ public class tk2dCamera : MonoBehaviour
 		float a = -(right + left) / (right - left);
 		float b = -(bottom + top) / (top - bottom);
 		float c = -(far + near) / (far - near);
-		
+
 		Matrix4x4 m = new Matrix4x4();
 		m[0,0] = x;  m[0,1] = 0;  m[0,2] = 0;  m[0,3] = a;
 		m[1,0] = 0;  m[1,1] = y;  m[1,2] = 0;  m[1,3] = b;
@@ -473,13 +473,13 @@ public class tk2dCamera : MonoBehaviour
 			scale.Set(s, s);
 			break;
 
-		case tk2dCameraResolutionOverride.AutoScaleMode.FitHeight: 
-			s = height / settings.nativeResolutionHeight; 
+		case tk2dCameraResolutionOverride.AutoScaleMode.FitHeight:
+			s = height / settings.nativeResolutionHeight;
 			scale.Set(s, s);
 			break;
 
-		case tk2dCameraResolutionOverride.AutoScaleMode.FitWidth: 
-			s = width / settings.nativeResolutionWidth; 
+		case tk2dCameraResolutionOverride.AutoScaleMode.FitWidth:
+			s = width / settings.nativeResolutionWidth;
 			scale.Set(s, s);
 			break;
 
@@ -491,7 +491,7 @@ public class tk2dCamera : MonoBehaviour
 				s = width / settings.nativeResolutionWidth;
 			else
 				s = height / settings.nativeResolutionHeight;
-			
+
 			if (currentOverride.autoScaleMode == tk2dCameraResolutionOverride.AutoScaleMode.ClosestMultipleOfTwo)
 			{
 				if (s > 1.0f)
@@ -499,7 +499,7 @@ public class tk2dCamera : MonoBehaviour
 				else
 					s = Mathf.Pow(2, Mathf.Floor(Mathf.Log(s, 2))); // minimise only as power of two
 			}
-			
+
 			scale.Set(s, s);
 			break;
 
@@ -508,7 +508,7 @@ public class tk2dCamera : MonoBehaviour
 			break;
 
 		default:
-		case tk2dCameraResolutionOverride.AutoScaleMode.None: 
+		case tk2dCameraResolutionOverride.AutoScaleMode.None:
 			s = currentOverride.scale;
 			scale.Set(s, s);
 			break;
@@ -526,14 +526,14 @@ public class tk2dCamera : MonoBehaviour
 		switch (currentOverride.fitMode) {
 			case tk2dCameraResolutionOverride.FitMode.Center:
 				if (settings.cameraSettings.orthographicOrigin == tk2dCameraSettings.OrthographicOrigin.BottomLeft) {
-					offset = new Vector2(Mathf.Round((settings.nativeResolutionWidth  * scale.x - width ) / 2.0f), 
+					offset = new Vector2(Mathf.Round((settings.nativeResolutionWidth  * scale.x - width ) / 2.0f),
 										 Mathf.Round((settings.nativeResolutionHeight * scale.y - height) / 2.0f));
 				}
 				break;
-				
+
 			default:
-			case tk2dCameraResolutionOverride.FitMode.Constant: 
-				offset = -currentOverride.offsetPixels; 
+			case tk2dCameraResolutionOverride.FitMode.Constant:
+				offset = -currentOverride.offsetPixels;
 				break;
 		}
 		return offset;
@@ -570,7 +570,7 @@ public class tk2dCamera : MonoBehaviour
 	Matrix4x4 GetProjectionMatrixForOverride( tk2dCamera settings, tk2dCameraResolutionOverride currentOverride, float pixelWidth, float pixelHeight, bool halfTexelOffset, out Rect screenExtents, out Rect unscaledScreenExtents ) {
 		Vector2 scale = GetScaleForOverride( settings, currentOverride, pixelWidth, pixelHeight );
 		Vector2 offset = GetOffsetForOverride( settings, currentOverride, scale, pixelWidth, pixelHeight);
-		
+
 		float left = offset.x, bottom = offset.y;
 		float right = pixelWidth + offset.x, top = pixelHeight + offset.y;
 		Vector2 nativeResolutionOffset = Vector2.zero;
@@ -583,7 +583,7 @@ public class tk2dCamera : MonoBehaviour
 			Vector4 sr = new Vector4((int)this.viewportRegion.x, (int)this.viewportRegion.y,
 									 (int)this.viewportRegion.z, (int)this.viewportRegion.w);
 
-	
+
 			float viewportLeft = -offset.x / pixelWidth + sr.x / vw;
 			float viewportBottom = -offset.y / pixelHeight + sr.y / vh;
 			float viewportWidth = sr.z / vw;
@@ -646,7 +646,6 @@ public class tk2dCamera : MonoBehaviour
 
 		// Only need the half texel offset on PC/D3D
 		bool needHalfTexelOffset = (Application.platform == RuntimePlatform.WindowsPlayer ||
-						   			Application.platform == RuntimePlatform.WindowsWebPlayer ||
 						   			Application.platform == RuntimePlatform.WindowsEditor);
 		float halfTexel = (halfTexelOffset && needHalfTexelOffset) ? 0.5f : 0.0f;
 
@@ -661,15 +660,15 @@ public class tk2dCamera : MonoBehaviour
 		}
 
 		float s = orthoSize * zoomScale;
-		screenExtents = new Rect(left * s / scale.x, bottom * s / scale.y, 
+		screenExtents = new Rect(left * s / scale.x, bottom * s / scale.y,
 						   		 (right - left) * s / scale.x, (top - bottom) * s / scale.y);
 
 		unscaledScreenExtents = new Rect(nativeResolutionOffset.x * s, nativeResolutionOffset.y * s,
 										 nativeResolutionWidth * s, nativeResolutionHeight * s);
 
 		// Near and far clip planes are tweakable per camera, so we pull from current camera instance regardless of inherited values
-		return OrthoOffCenter(scale, orthoSize * (left + halfTexel) * zoomScale, orthoSize * (right + halfTexel) * zoomScale, 
-									 orthoSize * (bottom - halfTexel) * zoomScale, orthoSize * (top - halfTexel) * zoomScale, 
+		return OrthoOffCenter(scale, orthoSize * (left + halfTexel) * zoomScale, orthoSize * (right + halfTexel) * zoomScale,
+									 orthoSize * (bottom - halfTexel) * zoomScale, orthoSize * (top - halfTexel) * zoomScale,
 									 UnityCamera.nearClipPlane, UnityCamera.farClipPlane);
 	}
 
@@ -701,7 +700,7 @@ public class tk2dCamera : MonoBehaviour
 			dimensions.y = settings.forceResolution.y;
 		}
 #endif
-		
+
 		return dimensions;
 	}
 
@@ -719,10 +718,10 @@ public class tk2dCamera : MonoBehaviour
 				}
 
 				// Mirror camera settings
-				Camera unityCamera = camera;
+				Camera unityCamera = GetComponent<Camera>();
 				if (unityCamera != null) {
 					cameraSettings.rect = unityCamera.rect;
-					if (!unityCamera.isOrthoGraphic) {
+					if (!unityCamera.orthographic) {
 						cameraSettings.projection = tk2dCameraSettings.ProjectionType.Perspective;
 						cameraSettings.fieldOfView = unityCamera.fieldOfView * ZoomFactor;
 					}
@@ -776,7 +775,7 @@ public class tk2dCamera : MonoBehaviour
 				float angle = (Screen.orientation == ScreenOrientation.LandscapeRight) ? 90.0f : -90.0f;
 				Matrix4x4 m2 = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0, 0, angle), Vector3.one);
 				m = m2 * m;
-			}			
+			}
 #endif
 
 			if (unityCamera.projectionMatrix != m) {
